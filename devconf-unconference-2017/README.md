@@ -24,9 +24,9 @@ The event is on the 2nd Floor of the FIT, Room XYZ.
 # Schedule
 Time | Session
 -----|--------
-13 | Dive into KubeVirt
-14 | Where do we want the storage to be to consume it
-15 | Where do we want the network to be to consume it
+13 | Idea: Dive into KubeVirt
+14 | Idea: Where do we want the storage to be to consume it
+15 | Idea: Where do we want the network to be to consume it
 16 | TBD
 17 | TBD
 18 | TBD
