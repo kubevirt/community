@@ -22,6 +22,11 @@ The event is on the 2nd Floor of the FIT, Room XYZ.
 
 
 # Schedule
+
+Every session can be up to 60min. A good rule of thumb is to plan for 45min.
+Where 5-15min can be slides and the remaining time can be used for discussion.
+
+
 Time | Session
 -----|--------
 13 | Idea: Dive into KubeVirt
