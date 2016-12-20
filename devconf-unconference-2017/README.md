@@ -30,10 +30,10 @@ Where 5-15min can be slides and the remaining time can be used for discussion.
 
 Time | Session
 -----|--------
-13 | KubeVirt Introduction & Hands-on
-14 | Design Patterns
+13 | KubeVirt Introduction & Hands-on (final architecture & vagrant)
+14 | Design Patterns (reactiveness, declarative)
 15 | Storage Architecture Design Brainstorm
 16 | Network Architecture Design Brainstorm
 17 | Virtualization Architecture Design Brainstorm
 18 | TBD
-18 | TBD
+19 | TBD
