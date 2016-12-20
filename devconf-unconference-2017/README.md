@@ -5,6 +5,7 @@ And a few sessions to have a little guidance/structure.
 
 # Tasks
 - [x] Provide KubeVirt informations ot organizer
+- [x] FInd a room
 - [ ] Find an assignee for local tasks
 - [ ] Finish website
 - [ ] Define session content
@@ -14,8 +15,10 @@ And a few sessions to have a little guidance/structure.
 The KubeVirt Unconference is an opportunity for developers interested in
 Kubernetes and Virtualization to connect face to face and mindshare about
 future development.
-
-<http://kubevirt.io>
+This gathering will cover an introduction to KubeVirt and a few additionail
+sessions to cover and brainstorm how specific topics can be solved in future
+in the Kubernetes context.
+More details on: <http://kubevirt.io>
 
 
 # Location
