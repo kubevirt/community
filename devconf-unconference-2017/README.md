@@ -4,9 +4,10 @@ And a few sessions to have a little guidance/structure.
 
 
 # Tasks
-- [ ] Provide KubeVirt informations ot organizer
+- [x] Provide KubeVirt informations ot organizer
 - [ ] Find an assignee for local tasks
 - [ ] Finish website
+- [ ] Define session content
 
 
 # Summary
@@ -29,9 +30,10 @@ Where 5-15min can be slides and the remaining time can be used for discussion.
 
 Time | Session
 -----|--------
-13 | Idea: Dive into KubeVirt
-14 | Idea: Where do we want the storage to be to consume it
-15 | Idea: Where do we want the network to be to consume it
-16 | TBD
-17 | TBD
+13 | KubeVirt Introduction & Hands-on
+14 | Design Patterns
+15 | Storage Architecture Design Brainstorm
+16 | Network Architecture Design Brainstorm
+17 | Virtualization Architecture Design Brainstorm
+18 | TBD
 18 | TBD
