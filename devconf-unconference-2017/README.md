@@ -15,9 +15,11 @@ And a few sessions to have a little guidance/structure.
 The KubeVirt Unconference is an opportunity for developers interested in
 Kubernetes and Virtualization to connect face to face and mindshare about
 future development.
+
 This gathering will cover an introduction to KubeVirt and a few additionail
 sessions to cover and brainstorm how specific topics can be solved in future
 in the Kubernetes context.
+
 More details on: <http://kubevirt.io>
 
 
