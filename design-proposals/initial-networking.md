@@ -44,7 +44,8 @@ Thus the `virt-controller` needs to translate this pod specific name into the ho
 
 The `virt-controller` would transfer this into:
 
-``    <interface type='direct'>
+```
+    <interface type='direct'>
       <source dev='veth0@mypod' mode='vepa'/>
     </interface>
 ```
