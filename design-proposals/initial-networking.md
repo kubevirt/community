@@ -13,6 +13,10 @@ On the other hand we want to connect VMs to the NIC(s) of the pod in which they 
 To keep it simple and work with what we have today, we just handle a single NIC (thus multiple should
 not make a difference).
 
+The broder scope is that: On the long run we expect that we can use the networking provided to pods.
+This proposal allows us to start working with this assumption.
+A separate discussion is how to get multiple NICs into a pod, but this is rather a kubernetes discussion taking place i.e. here https://github.com/kubernetes/kubernetes/issues/27398.
+
 This proposal does not require changes to Kubernetes.
 
 ### Use-case
