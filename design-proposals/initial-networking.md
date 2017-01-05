@@ -1,54 +1,59 @@
 # Initial networking for VMs using pod NICs
 
-Author: Michal Rostecki \<michal@kinvolk.io\>
+Author: Fabian Deutsch \<fabiand@redhat.com\>
 
 ## Introduction
 
-Annotations of the pod can be taken through the Kubernetes API, but currently
-there is no way to pass them to the application inside the container. This means
-that annotations can be used by the core Kubernetes services and the user outside
-of the Kubernetes cluster.
+VMs need network connectivity. This proposal is about a first start in this direction.
 
-Of course using Kubernetes API from the application running inside the container
-managed by Kubernetes is technically possible, but that's an idea which denies
-the principles of microservices architecture.
+The working assumption is that libvirtd is running with a host-view, thus in the host's
+network namespace.
+On the other hand we want to connect VMs to the NIC(s) of the pod in which they are running.
 
-The purpose of the proposal is to allow to pass the annotation as the environment
-variable to the container.
+To keep it simple and work with what we have today, we just handle a single NIC (thus multiple should
+not make a difference).
+
+This proposal does not require changes to Kubernetes.
 
 ### Use-case
 
-The primary usecase for this proposal are StatefulSets. There is an idea to expose
-StatefulSet index to the applications running inside the pods managed by StatefulSet.
-Since StatefulSet creates pods as the API objects, passing this index as an
-annotation seems to be a valid way to do this. However, to finally pass this
-information to the containerized application, we need to pass this annotation.
-That's why the downward API for annotations is needed here.
+The primary usecase for this proposal are VMs running in pods with libvirtd running on the host
+or in a DaemonSet.
+It is an easy way to get the VM simply connected to the NIC available inside the pod where
+it is intended to run.
 
 ## API
 
-The exact `fieldPath` to the annotation will look like:
+This proposal will enhance the `VM` Resoufce to also accept interfaces like:
 
 ```
-metadata.annotations[annotationKey]
+"interfaces": [
+  {
+    "source": {
+      "dev": "eth0",
+      "mode": "bridge"
+      },
+    "type": "direct"
+    }
+  }
+}
 ```
 
-So, assuming that we would want to pass the `pod.beta.kubernetes.io/petset-index`
-annotation as a `PETSET_INDEX` variable, the environment variable definition
-will look like:
+The `dev` value above is refering to the `dev` name _inside_ the pod.
+Thus the `virt-controller` needs to translate this pod specific name into the host sided endpoint.
 
+The `virt-controller` would transfer this into:
+
+``    <interface type='direct'>
+      <source dev='veth0@mypod' mode='vepa'/>
+    </interface>
 ```
-env:
-  - name: PETSET_INDEX
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.annotations[pod.beta.kubernetes.io/petset-index]
-```
+
+The `dev` name is now referring to the veth endpoint `veth0@mypod` in th ehost's network namespace.
 
 ## Implementation
 
-In general, this environment downward API part will be implemented in the same
-place as the other metadata - as a label conversion function.
+Obviously the 1:1 transofmration of the VM Spec to the domxml can be reused, except that the `virt-controller` needs to translate the pod centric name into a host centric name.
 
 <!-- BEGIN MUNGE: GENERATED_ANALYTICS -->
 [![Analytics](https://kubernetes-site.appspot.com/UA-36037335-10/GitHub/docs/proposals/annotations-downward-api.md?pixel)]()
