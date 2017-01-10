@@ -5,9 +5,9 @@ And a few sessions to have a little guidance/structure.
 
 # Tasks
 - [x] Provide KubeVirt informations ot organizer
-- [x] FInd a room
+- [x] Find a room
 - [ ] Find an assignee for local tasks
-- [ ] Finish website
+- [x] Finish website/readme in kubevirt repository
 - [ ] Define session content
 
 
@@ -20,14 +20,18 @@ This gathering will cover an introduction to KubeVirt and a few additionail
 sessions to cover and brainstorm how specific topics can be solved in future
 in the Kubernetes context.
 
-More details on: <http://kubevirt.io>
+More details on: <https://kubevirt.io>
 
 
 # Location
-The event is on the 2nd Floor of the FIT, Room XYZ.
+The event is on the 2nd Floor of the FIT, Room C236.
+
+We will also be offering a BlueJeans link for remote people and take recordings of the sessions.
 
 
 # Schedule
+
+**Note.** The official devconf.cz schedule is available here <https://devconf.cz/schedule.html>.
 
 Every session can be up to 60min. A good rule of thumb is to plan for 45min.
 Where 5-15min can be slides and the remaining time can be used for discussion.
