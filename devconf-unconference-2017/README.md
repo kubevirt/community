@@ -33,16 +33,17 @@ We will also be offering a BlueJeans link for remote people and take recordings 
 
 **Note.** The official devconf.cz schedule is available here <https://devconf.cz/schedule.html>.
 
-Every session can be up to 60min. A good rule of thumb is to plan for 45min.
-Where 5-15min can be slides and the remaining time can be used for discussion.
+* Every session can be up to 60min
+ * More discussion, less slides
+ * Up to 5 slides per session
 
 
-Time | Session
------|--------
-13 | [KubeVirt Introduction & Hands-on (final architecture & vagrant)](intro.md)
-14 | [Design Patterns (reactiveness, declarative)](patterns.md)
-15 | Storage Architecture Design Brainstorm
-16 | Network Architecture Design Brainstorm
-17 | Virtualization Architecture Design Brainstorm
-18 | TBD
-19 | TBD
+Time | Session | Owner
+-----|---------|-------
+13 | KubeVirt Introduction & Hands-on (architecture & vagrant) | @fabiand
+14 | |
+15 | How to gather a community - What we can do to get a vibrant community |
+16 | |
+17 | Design Patterns (reactiveness, declarative) | @rmohr
+18 | |
+19 | |
