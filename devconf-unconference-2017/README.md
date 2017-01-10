@@ -43,6 +43,6 @@ Time | Session | Owner
 13 | KubeVirt Introduction & Hands-on (architecture & vagrant) | @fabiand
    | Design Patterns (reactiveness, declarative) | @rmohr
 16 | KubeVirt and Kubernetes - How the realtionship is | @rmohr @fabiand
-   | oVirt and KubeVirt - How the integration looks (demo and future)  | @ybronheim @fabiand
-   | How to gather a community - What we can do to get a vibrant community | @ybronheim @fabiand
+   | oVirt and KubeVirt - How the integration looks (demo and future)  | @ybronheim
+   | How to gather a community - What we can do to get a vibrant community | @ybronheim
 19 | Room closes - maybe | @fabiand
