@@ -24,14 +24,13 @@ More details on: <https://kubevirt.io>
 
 
 # Location
-The event is on the 2nd Floor of the FIT, Room C236.
+The event is on the 2nd Floor of the FIT, Room C236. Take a look at the official devcon.cz venu page to get an idea where devconf-cz is locted <https://devconf.cz/index.html#venue>.
 
 We will also be offering a BlueJeans link for remote people and take recordings of the sessions.
 
 
 # Schedule
-
-**Note.** The official devconf.cz schedule is available here <https://devconf.cz/schedule.html>.
+**Note:** The official devconf.cz schedule is available here <https://devconf.cz/schedule.html>.
 
 * Every session can be up to 60min
  * More discussion, less slides
