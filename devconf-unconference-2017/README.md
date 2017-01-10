@@ -39,10 +39,10 @@ We will also be offering a BlueJeans link for remote people and take recordings 
 
 Time | Session | Owner
 -----|---------|-------
+12 | Room opens |
 13 | KubeVirt Introduction & Hands-on (architecture & vagrant) | @fabiand
-14 | Design Patterns (reactiveness, declarative) | @rmohr
-15 | KubeVirt and Kubernetes - How the realtionship is | 
-16 | oVirt and KubeVirt - How the integration looks (demo and future)  | @ybronheim @fabiand
-17 | How to gather a community - What we can do to get a vibrant community |
-18 | |
-19 | |
+   | Design Patterns (reactiveness, declarative) | @rmohr
+16 | KubeVirt and Kubernetes - How the realtionship is | 
+   | oVirt and KubeVirt - How the integration looks (demo and future)  | @ybronheim @fabiand
+   | How to gather a community - What we can do to get a vibrant community |
+19 | Room closes - maybe |
