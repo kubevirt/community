@@ -35,7 +35,7 @@ We will also be offering a BlueJeans link for remote people and take recordings 
 * Every session can be up to 60min
  * More discussion, less slides
  * Up to 5 slides per session
-
+* Slides deadline Thursday, January 19 2017
 
 Time (UTC+1) | Session | Owner
 -----|---------|-------
