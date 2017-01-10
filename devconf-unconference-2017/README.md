@@ -37,7 +37,7 @@ We will also be offering a BlueJeans link for remote people and take recordings 
  * Up to 5 slides per session
 
 
-Time | Session | Owner
+Time (UTC+1) | Session | Owner
 -----|---------|-------
 12 | Room opens | @fabiand
 13 | KubeVirt Introduction & Hands-on (architecture & vagrant) | @fabiand
