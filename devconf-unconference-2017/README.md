@@ -1,4 +1,4 @@
-# devconf.cz KubeVirt Unconference 2017
+# DevConf.cz KubeVirt Unconference 2017
 Have a room at devconf.cz 2017 to allow people interested in KubeVirt to sit together.
 And a few sessions to have a little guidance/structure.
 
