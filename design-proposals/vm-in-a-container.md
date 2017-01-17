@@ -11,7 +11,7 @@ This should be as transparent as possible to libvirt.
 
 We can create a small binary which will be invoked by libvirt as custom
 emulator. This binay makes sure the VM is started in the right cgroups and
-namespaces of the target container.  This binary will have the `suid` bit set.
+namespaces of the target container. This binary will have the `suid` bit set.
 
 To find out the one shim process associated to a VM, we can run the shim
 process with the uuid and the vm name in the commandline like this:
@@ -20,8 +20,8 @@ process with the uuid and the vm name in the commandline like this:
 virt-launcher -kubevirt.vm.uuid 1234-5678-1234-1234 -kubevirt.vm.name testvm
 ```
 
-Further we can for foward the same information to the emulator binary by
-passing additinoal qemu environment variables to it with the same information:
+Further virt-handler can for foward the same information to the emulator binary by
+passing additinoal qemu environment variables:
 
 ```xml
 <domain type='qemu' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
@@ -57,7 +57,8 @@ A few things can be done to reduce this risk:
  4. The binary checks that  the secret is present in the kubernetes metadata
     file before it starts something in that container 
 
-The secret can be delivered to the container through Kubernetes secrets. The
+The secret can be delivered to the container through 
+[Kubernetes secrets](https://kubernetes.io/docs/user-guide/secrets/). The
 binary can receive the secret via libvirts <qemu:commandline/> tag as
 environment variable:
 
@@ -67,9 +68,13 @@ environment variable:
 </qemu:commandline>
 ```
 
-Note that this means that the secret is exposed in the Domain xml. If we think
+Note that this means that the secret is exposed in the Domain XML. If we think
 that having a secret lifespan of e.g. one minute is not secure enough, the
-secret could be RSA encrypted. 
+secret could be encrypted.
+
+To further improve security, a [libvirt
+hook](https://libvirt.org/hooks.html#qemu) will check if the Domain XML has an
+emulator tag which points to the right binary.
 
 ### Flow
 
@@ -96,10 +101,11 @@ On the specified location, the host `/proc` can be mounted.
 
 ### Delivering the binary
 
-At the end, the binary needs to be present in the mount namespace of where
-libvirt is running. The binary should be delivered via an init container to the
-host via `hostDir` mount (if libvirt is running on the host), or via an
-`emptyDir` mount to a container (if libvirt is running in a container).
+At the end, the binary and the libvirt hook need to be present in the mount
+namespace where libvirt is running. They should be delivered via an init
+container to the host via `hostDir` mount (if libvirt is running on the host),
+or via an `emptyDir` mount to a container (if libvirt is running in a
+container).
 
 There are not many problems to be expected regarding to permissions since the
 binary can
