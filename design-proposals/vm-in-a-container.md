@@ -29,8 +29,8 @@ passing additinoal qemu environment variables:
     <emulator>/usr/local/bin/myemulator</emulator>
 </devices>
 <qemu:commandline>
-   <qemu:env value='kubevirt.io.vm.uuid 1234-5678-1234-1234'/>
-   <qemu:env value='kubevirt.io.vm.name testvm'/>
+   <qemu:env name='kubevirt.io.vm.uuid' value='1234-5678-1234-1234'/>
+   <qemu:env name='kubevirt.io.vm.name' value='testvm'/>
 </qemu:commandline>
 </domain>
 ```
@@ -64,7 +64,7 @@ environment variable:
 
 ```xml
 <qemu:commandline>
-   <qemu:env value='kubevirt.io.secret 3098tFJoswfwkjp4'/>
+   <qemu:env name='kubevirt.io.secret' value='3098tFJoswfwkjp4'/>
 </qemu:commandline>
 ```
 
@@ -114,6 +114,39 @@ binary can
  * have permission `-rwxr-xr-x`
 
 when we implement the secret properly.
+
+### NUMA
+
+Libvirt supports very detailed numa configurations.  To map Domain NUMA nodes
+to host NUMA nodes, libvirt asks qemu via the qmp protocol for the CPU PIDs,
+based on the CPU index.  Since qemu does not run in the host namespace anymore,
+libvirt would get the wrong information from qemu.  To work around that, the
+proposed binary should proxy all qmp traffic and replace the qemu namespace pid
+with the pid of the process in the namespace where libvirt is running.
+
+To get a rough idea on how QMP works, have a look at the [QMP wiki
+page](http://wiki.qemu.org/Documentation/QMP) wiki page.
+
+Here an example on how to get the process id of CPU 0 of a VM with one CPU.
+
+First start the qemu process and connect via telnet:
+
+```bash
+qemu -qmp tcp:localhost:4444,server,nowait &
+telnet localhost 4444
+```
+
+Then initiate the session and ask for CPU details:
+
+```
+$ { "execute": "qmp_capabilities" }
+$ { "execute": "query-cpus"}
+{"return": [{"arch": "x86", "current": true, "CPU": 0, "qom_path": "/machine/unattached/device[0]", "pc": 1030713, "halted": true, "thread_id": 32024}]}
+```
+
+The `thread_id` is equivalent to the CPU PID. Then we can do something like
+`lsns` does to translate the PIDs. This way libvirt gets the right PIDs and
+can do NUMA mapping as usual.
 
 ## Advantages
 
