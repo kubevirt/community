@@ -40,7 +40,7 @@ We will also be offering a BlueJeans link for remote people and take recordings 
 Time (UTC+1) | Session | Owner
 -----|---------|-------
 12 | Room opens | @fabiand
-13 | KubeVirt Introduction & Hands-on (architecture & vagrant) | @fabiand
+13 | KubeVirt Introduction & Hands-on (architecture & demo) | @fabiand
    | Design Patterns (reactiveness, declarative) | @rmohr
 16 | KubeVirt and Kubernetes - How the realtionship is | @rmohr @fabiand
    | oVirt and KubeVirt - How the integration looks (demo and future)  | @ybronheim
