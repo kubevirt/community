@@ -6,9 +6,9 @@ And a few sessions to have a little guidance/structure.
 # Tasks
 - [x] Provide KubeVirt informations ot organizer
 - [x] Find a room
-- [ ] Find an assignee for local tasks
+- [x] Find a volunteer for local tasks (Tomas J.)
 - [x] Finish website/readme in kubevirt repository
-- [ ] Define session content
+- [x] Define session content
 
 
 # Summary
