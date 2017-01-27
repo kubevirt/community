@@ -41,7 +41,7 @@ Time (UTC+1) | Session | Owner
 -----|---------|-------
 12 | Room opens | @fabiand
 13 | KubeVirt Introduction & Hands-on (architecture & demo) | @fabiand
-   | Design Patterns (reactiveness, declarative) | @rmohr
+   | [Design Patterns (reactiveness, declarative)](patterns.md) | @rmohr
 16 | KubeVirt and Kubernetes - How the realtionship is | @rmohr @fabiand
    | oVirt and KubeVirt - How the integration looks (demo and future)  | @ybronheim
    | How to gather a community - What we can do to get a vibrant community | @ybronheim
