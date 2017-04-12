@@ -10,6 +10,8 @@ But this low-level API might be too low-level for i.e. UIs to integrate. On the 
 
 The introduction of a high level plane also tries to prevent that too much logic is pushed into the lower level mechanics.
 
+There will be users for a high-level plane, but we assume that the low-level plane is still relevant, that is the reason why a separate API is suggested, instead of changing the existing one.
+
 ### Use-case
 
 The primary focus is to provide a convenient high-level API suitable for integration into UIs.
@@ -47,6 +49,7 @@ FIXME Is there a bidirectional conncetion between high- and low-level VM Spec?
 ## Implementation
 
 TBD
-Separate controller
-Watches for high-level specs
-Links to low level specs
+* Separate controller
+* Watches for high-level specs
+* Links to low level specs
+
