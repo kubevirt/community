@@ -48,6 +48,8 @@ FIXME Is there a bidirectional conncetion between high- and low-level VM Spec?
 
 ## Implementation
 
+The implemantation will reside in a separate controller, which can be an addon to KubeVirt.
+
 TBD
 * Separate controller
 * Watches for high-level specs
