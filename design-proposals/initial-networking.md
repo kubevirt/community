@@ -13,7 +13,7 @@ On the other hand we want to connect VMs to the NIC(s) of the pod in which they 
 To keep it simple and work with what we have today, we just handle a single NIC (thus multiple should
 not make a difference).
 
-Another benefit of this proposal is that we will connect to the veth of the pod - thus all the networking infrastructure beyong this point is not relevant to us. Which means we are independnt of it for now. It could be delivered by weave, flannel, or something else.
+Another benefit of this proposal is that we will connect to the veth of the pod - thus all the networking infrastructure beyond this point is not relevant to us. Which means we are independnt of it for now. It could be delivered by weave, flannel, or something else.
 The drawback is that we do not - yet - have the tight control over the real network connectivity.
 
 The broader scope is that: On the long run we expect that we can use the networking provided to pods.
@@ -31,7 +31,7 @@ it is intended to run.
 
 ## API
 
-This proposal will enhance the `VM` Resoufce to also accept interfaces like:
+This proposal will enhance the `VM` Resource to also accept interfaces like:
 
 ```
 "interfaces": [
@@ -47,7 +47,7 @@ This proposal will enhance the `VM` Resoufce to also accept interfaces like:
 ```
 
 The `dev` value above is refering to the `dev` name _inside_ the pod.
-Thus the `virt-controller` needs to translate this pod specific name into the host sided endpoint.
+Thus the `virt-handler` needs to translate this pod specific name into the host sided endpoint.
 
 The `virt-controller` would transfer this into:
 
@@ -57,7 +57,7 @@ The `virt-controller` would transfer this into:
     </interface>
 ```
 
-The `dev` name is now referring to the veth endpoint `veth0@mypod` in th ehost's network namespace.
+The `dev` name is now referring to the veth endpoint `veth0@mypod` in the host's network namespace.
 
 ## Implementation
 
