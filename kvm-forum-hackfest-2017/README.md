@@ -6,8 +6,9 @@ There will be a few sessions to have a little guidance/structure.
 
 # Tasks
 - [ ] Provide KubeVirt informations to organizer
-- [ ] Find a room
-- [ ] Find a volunteers for local tasks
+- [ ] Settle on the session dates
+- [ ] Find a location
+- [ ] Find a volunteers
 - [ ] Define session content
 
 
