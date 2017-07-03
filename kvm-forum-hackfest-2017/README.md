@@ -6,7 +6,7 @@ There will be a few sessions to have a little guidance/structure.
 ## KVM Forum Details
 
 - October 25 - 27, 2017
-- Hilton, Pargue, Czech Republic
+- Hilton, Prague, Czech Republic
 - <http://events.linuxfoundation.org/events/kvm-forum>
 
 
