@@ -3,10 +3,17 @@ Have a room at KVM Forum KubeVirt Workshop 2017 to allow people interested in
 KubeVirt to sit together and talk.
 There will be a few sessions to have a little guidance/structure.
 
+## KVM Forum Details
+
+- October 25 - 27, 2017
+- Hilton, Pargue, Czech Republic
+- <http://events.linuxfoundation.org/events/kvm-forum>
+
 
 # Tasks
 - [ ] Provide KubeVirt informations to organizer
 - [ ] Settle on the session dates
+  - Suggestion: October 23/24
 - [ ] Find a location
 - [ ] Find a volunteers
 - [ ] Define session content
