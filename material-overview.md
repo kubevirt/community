@@ -32,3 +32,10 @@ There is quite a lot material on KubeVirt, this document is summarizing this:
   ([Recording](https://www.youtube.com/watch?v=Wh-ejUyuHJ0))
 - ["KubeVirt - Kubernetes, Virtualization and Your Future Data Center"](https://www.youtube.com/watch?v=IfuL2rYhMKY) by @iheim and @fabiand at OpenShift Commons Briefing
 - ["KubeVirt - Kubernetes, Virtualization and Your Future Data Center"](https://www.youtube.com/watch?v=0dob7KsJizg) by @iheim and @fabiand and KubeCon NA 2017
+
+## Technical demos
+
+## 2018
+
+- ManageIQ Clone Template: https://www.youtube.com/watch?v=9Gf2Nv7h558
+- ManageIQ KubeVirt Provider: https://www.youtube.com/watch?v=6Z_kGj9_s6Q
