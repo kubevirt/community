@@ -31,4 +31,4 @@ There is quite a lot material on KubeVirt, this document is summarizing this:
 - ["Running Virtual Machines on Kubernetes with libvirtd and KVM"](http://redhat.slides.com/fdeutsch/running-virtual-machines-on-kubernetes-with-libvirt-and-kvm-at-kvm-forum-2017#/) by @rmohr and @fabiand at KVM Forum
   ([Recording](https://www.youtube.com/watch?v=Wh-ejUyuHJ0))
 - ["KubeVirt - Kubernetes, Virtualization and Your Future Data Center"](https://www.youtube.com/watch?v=IfuL2rYhMKY) by @iheim and @fabiand at OpenShift Commons Briefing
-- ["KubeVirt - Kubernetes, Virtualization and Your Future Data Center"](https://www.youtube.com/watch?v=0dob7KsJizg) by @iheim and æfabiand and KubeCon NA 2017
+- ["KubeVirt - Kubernetes, Virtualization and Your Future Data Center"](https://www.youtube.com/watch?v=0dob7KsJizg) by @iheim and @fabiand and KubeCon NA 2017
