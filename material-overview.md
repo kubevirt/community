@@ -22,7 +22,9 @@ There is quite a lot material on KubeVirt, this document is summarizing this:
 
 ### 2018
 
+- ["Kubernetes Cloud Autoscaler for Isolated Workloads"](https://www.youtube.com/watch?v=BzY2mzeVjrw) by @rmohr at devconf.cz
 - ["Outcast: Virtualization in a container world?"](https://www.slideshare.net/FabianDeutsch/outcast-virtualization-in-a-container-world) by @fabiand at devconf.cz
+  - [(recording)](https://www.youtube.com/watch?v=avxBRRwRa-8) by @fabiand
 
 ### 2017
 - ["Pet VMs in Kubernetes! WTH?"](http://redhat.slides.com/fdeutsch/kubevirt-intro-devconf-2017) by @fabiand at devconf.cz
