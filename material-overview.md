@@ -23,6 +23,7 @@ There is quite a lot material on KubeVirt, this document is summarizing this:
 
 ### 2018
 
+- ["Convergence of your virtualization and container infrastructures with KubeVirt"](http://redhat.slides.com/fdeutsch/fosdem-2018-kubevirt#/) by @fabiand at FOSDEM 2018
 - ["Kubernetes Cloud Autoscaler for Isolated Workloads"](https://www.youtube.com/watch?v=BzY2mzeVjrw) by @rmohr at devconf.cz
 - ["Outcast: Virtualization in a container world?"](https://www.slideshare.net/FabianDeutsch/outcast-virtualization-in-a-container-world) by @fabiand at devconf.cz
   - [(recording)](https://www.youtube.com/watch?v=avxBRRwRa-8) by @fabiand
