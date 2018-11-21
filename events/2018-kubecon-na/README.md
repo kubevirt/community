@@ -22,7 +22,7 @@ This gathering shall be used to discuss and brainstorm what topics are of intere
 
 The event is going to be held at the 
 
-* **[Sheraton Grand, Seattle](https://www.marriott.com/hotels/travel/seasi-sheraton-grand-seattle/)** ([Map](https://osm.org/go/WIdFFuG~p?m=&way=232078056)).
+* **Place**: 3rd floor, Kirkland room, [Sheraton Grand, Seattle](https://www.marriott.com/hotels/travel/seasi-sheraton-grand-seattle/) ([Map](https://osm.org/go/WIdFFuG~p?m=&way=232078056)).
 * **Date:** Tuesday, December 11th
 * **Time:** 6:45 - 8:45 PM PST
 
