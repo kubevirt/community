@@ -28,4 +28,7 @@ The event is going to be held at the
 
 # Schedule
 
-TBD
+- Machine API and Cloud Provider - Or KubeVirt as Under-Cloud work
+- Networking needs - good or not
+- Pains!!!!
+- Directly attached disks to qemu
