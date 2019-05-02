@@ -10,7 +10,7 @@ And a few sessions to have a little guidance/structure.
 
 # Tasks
 
-- [ ] Find a room
+- [X] Find a room
 - [ ] Finish website/readme in kubevirt repository
 - [ ] Define session content
 
