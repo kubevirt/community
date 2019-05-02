@@ -28,13 +28,8 @@ The event is going to be held at the
 
 # Schedule
 
-- Operator and Update flows
+- Status Update on Operator and Update flows
 - Machine API and Cloud Provider
-- Device Passthrough
-
-## Ideas
-
-- Networking needs - good or not
-- Pains!!!!
-- Directly attached disks to qemu
-
+- Thoughts on Device Passthrough
+- Known Pains of Hot Plug
+- Known Pains of Directly attached disks to qemu
