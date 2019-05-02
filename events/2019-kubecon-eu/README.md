@@ -30,6 +30,7 @@ The event is going to be held at the
 
 - Operator and Update flows
 - Machine API and Cloud Provider
+- Device Passthrough
 
 ## Ideas
 
