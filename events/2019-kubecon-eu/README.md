@@ -28,7 +28,11 @@ The event is going to be held at the
 
 # Schedule
 
-- Machine API and Cloud Provider - Or KubeVirt as Under-Cloud work
+- Operator and Update flows
+- Machine API and Cloud Provider
+
+## Ideas
+
 - Networking needs - good or not
 - Pains!!!!
 - Directly attached disks to qemu
