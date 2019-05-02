@@ -22,9 +22,9 @@ This gathering shall be used to discuss and brainstorm what topics are of intere
 
 The event is going to be held at the 
 
-* **Place**: 
-* **Date:** 
-* **Time:** 
+* **Place:** Hotel "Fira Renaissance", Room "Europa 3". Includes screen and projector. [OSM](https://www.openstreetmap.org/way/282270953)
+* **Date:** May 22nd 2019
+* **Time:** 1:30pm - 3:30pm
 
 # Schedule
 
