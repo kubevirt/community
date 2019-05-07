@@ -1,6 +1,9 @@
 # Logo
 
-There is no official logo yet, but `kubevirt-pre` can be used for the
-time being.
+This is the official logo of [KubeVirt.io](KubeVirt_logo.png). The text "KubeVirt" is white, with a transparent background.
 
-The font used for the `V` is Comfortaa.
+The icon is only
+
+![KubeVirt_icon.png](KubeVirt_icon.png)
+
+This should only be used as a favicon.
