@@ -26,10 +26,14 @@ The event is going to be held at the
 * **Date:** May 22nd 2019
 * **Time:** 1:30pm - 3:30pm
 
-# Schedule
+# Agenda
 
-- Status Update on Operator and Update flows
-- Machine API and Cloud Provider
+- Intro
+- Updates & OLM integration
 - Thoughts on Device Passthrough
+- Fencing nodes
+- Network operator
+- Using Ceph - Feedback
 - Known Pains of Hot Plug
 - Known Pains of Directly attached disks to qemu
+- Machine API and Cloud Provider
