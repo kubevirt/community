@@ -28,6 +28,8 @@ The event is going to be held at the
 
 # Agenda
 
+[Meeting Minutes](minutes.md)
+
 - Intro
 - Updates & OLM integration
 - Thoughts on Device Passthrough
