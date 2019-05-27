@@ -6,7 +6,7 @@ May 22 2019
 - The meetup is quite far away from conference venue
 
 ## Updates
-- Basics landet in 0.17 built into the virt-operator
+- Basics landed in 0.17 built into the virt-operator
 - Used by a few, not all yet
 
 ## Use-cases
@@ -14,7 +14,7 @@ May 22 2019
 - 1x "One-off-VMs"
 
 ## Question: Does live migration interrupt the network connection?
-- No - For additional networks as long as the underlying network provider supposrts to pick arbitrary MAC (i.e. multus)
+- No - For additional networks as long as the underlying network provider supports to pick arbitrary MAC (i.e. multus)
 - Yes - for pod network vNIC because it is kube like, which does not care about live migration
 - Remark: endpoints can be used to point to interfacs of additional networks
 
@@ -41,10 +41,10 @@ May 22 2019
 - To automatically resolve unknown node states on bare-metal
 - depends on "cloud provider" 
 - we can not distinguish between node not communicating and non-operatoinal
-- to resolve the unknown state iof  amachine
+- to resolve the unknown state of a machine
 - ties into machine api
-- machiner api to power off the machine ( depends on cloud provider)
-- in bare metal case we cre powering it offthe continues with node removal
+- machine api to power off the machine (depends on cloud provider)
+- in bare metal case when powering it off, continues with node removal
 
 ## Bare metal management
 - All running KubeVirt on bare-metal
@@ -63,7 +63,7 @@ May 22 2019
 - more parties started to look at it
 
 ## Hot-plug
-- is hotp-plug important or is it performance?
+- is hot-plug important or is it performance?
   For the kube on kube case, yes
   overcloud wants to use storage of undercloud
   over cloud node asking under cloud storage for a new volume to attach to node to expose to overcloud node pod
