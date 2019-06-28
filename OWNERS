@@ -5,10 +5,11 @@ reviewers:
   - karmab
   - tripledes
   - joeldavis84
-  - DirectedSoul1
+  - e-minguez
 approvers:
-  - iranzo
-  - tripledes
   - jparrill
+  - tripledes
   - codificat
+  - iranzo
   - karmab
+  - e-minguez
