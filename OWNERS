@@ -6,6 +6,7 @@ reviewers:
   - tripledes
   - joeldavis84
   - e-minguez
+  - ptrnull
 approvers:
   - jparrill
   - tripledes
@@ -13,3 +14,4 @@ approvers:
   - iranzo
   - karmab
   - e-minguez
+  - ptrnull
