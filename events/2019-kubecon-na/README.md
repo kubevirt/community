@@ -26,8 +26,9 @@ others can be solved - also in the Kubernetes context.
 
 ### Location and timing
 
-TBD. Proposed lunch time to minimize conflicts with other sessions.
+Date and time: Tuesday 19/Nov, 11:00 – 13:00.
 
+Location: TBD.
 
 ### Agenda
 
