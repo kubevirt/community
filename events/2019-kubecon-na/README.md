@@ -30,6 +30,12 @@ Date and time: Tuesday 19/Nov, 11:00 – 13:00 PST.
 
 Location: San Diego Marriott Gaslamp Quarter, 660 K Street, San Diego, CA 92101
 
+### Registration
+
+Attendance is free but there's limited capacity, so we ask people to register at:
+
+https://kubevirt-kubecon19na.eventbrite.com
+
 ### Agenda
 
 - CNCF membership updates
