@@ -38,7 +38,7 @@ TBD.
 
 Presentations related to KubeVirt during KubeCon NA 2019:
 
-- [KubeVirt Intro: Virtual Machine Management on Kubernetes](https://sched.co/VnjX) by Chandrakant Jakkidi (F5) and Steve Gordon (Red Hat).
+- [KubeVirt Intro: Virtual Machine Management on Kubernetes](https://sched.co/VyBC) by Chandrakanth Jakkidi (F5) and Steve Gordon (Red Hat).
 - [KubeVirt Deep-Dive: Virtualized GPU workloads on KubeVirt](https://sched.co/VnjX) by David Vossel and Vishesh Tanksale (NVIDIA)
 
 ## KubeVirt demos
