@@ -20,19 +20,26 @@ others can be solved - also in the Kubernetes context.
 
 ### Tasks
 
-- [ ] Find a room
+- [x] Find a room
 - [ ] Finish website/readme in kubevirt repository
 - [ ] Define session content
 
 ### Location and timing
 
-Date and time: Tuesday 19/Nov, 11:00 – 13:00.
+Date and time: Tuesday 19/Nov, 11:00 – 13:00 PST.
 
-Location: TBD.
+Location: San Diego Marriott Gaslamp Quarter, 660 K Street, San Diego, CA 92101
+
+### Registration
+
+Attendance is free but there's limited capacity, so we ask people to register at:
+
+https://kubevirt-kubecon19na.eventbrite.com
 
 ### Agenda
 
-TBD.
+- CNCF membership updates
+- TBD
 
 ## KubeVirt sessions
 
