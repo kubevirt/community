@@ -10,7 +10,7 @@
 
 # Video Recording
 
-- We use OBS for recording one screen in maximum size at 24 fps and export as MP4 file, recording one file per item to show, in order to reduce the amount of re-recording needed if something goes wrong. We don't care about audio here as we'll be recording audio at a later point
+- We use OBS for recording one screen in maximum size at 24 fps and export as MP4 file, recording one file per item to show, in order to reduce the amount of re-recording needed if something goes wrong. We don't care about audio here as we'll be recording audio at a later point.
 
 # Audio recording
 
