@@ -19,7 +19,7 @@
 
 # Video assembling
 
-- kdenlive is used to asseble audio tracks and video tracks
+- kdenlive is used to assemble audio tracks and video tracks
 - Additional `in` and `out` sequences are used for the logo
 - For titles, a title slide is used with fade-in with the text of the section
   - A background in `KubeVirt green` is used so that it doesn't happen over a black background
