@@ -14,7 +14,7 @@
 
 # Audio recording
 
-- Audacity is used to record the audio snippets while watching the videos recorded in prior step, so that audio lenght is more or less similar to video.
+- Audacity is used to record the audio snippets while watching the videos recorded in the prior step, so that audio length is more or less similar to video.
 - For post processing, an area without 'talk' is selected and `Effect/Noise Reduction/Create Noise profile` is selected, then the full track (`CTRL-A`) is selected, and `Effect/Noise Reduction/Accept` is executed to perform the noise reduction on the whole track
 
 # Video assembling
