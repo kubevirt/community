@@ -25,13 +25,13 @@ _Table of contents_
 
 This repository and its contents, aim to provide instructions and materials to be able to host a demo on KubeVirt technology.
 
-It contains links to different materials already available on the website or videos in the KubeVirt channel that could help set up a demonstration environment
+It contains links to different materials already available on the website or videos in the KubeVirt channel that could help set up a demonstration environment.
 
-**Note**: Videos from YouTube can be downloaded 'locally' for offline usage via `youtube-dl` or similar tools so that's also an option for booth display.
+**Note**: Videos from YouTube can be downloaded 'locally' for offline usage via `youtube-dl` or similar tools so, that's also an option for booth display.
 
 ## Demo
 
-In this section you'll find link to resources to prepare your demonstration about KubeVirt technology
+In this section you'll find links to resources to prepare your demonstration about KubeVirt technology.
 
 ### Demo Script
 
@@ -115,7 +115,7 @@ For offline demonstrations you can use:
 - [MiniKube](https://kubevirt.io/quickstart_minikube)
 - [Kind](https://kubevirt.io/quickstart_kind)
 
-Both of them makes it easy to have attendees to deploy KubeVirt using virtual machine or containers
+Both of them makes it easy to have attendees to deploy KubeVirt using virtual machine or containers.
 
 ## Additional resources on the technology
 
