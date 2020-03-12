@@ -1,0 +1,29 @@
+{
+  "name": "kubevirt.io",
+  "version": "1.0.0",
+  "description": "KubeVirt Community repository",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "publish-travis": "master _site",
+    "test": "yaspeller-ci --only-errors --find-repeat-words --ignore-digits --ignore-urls ./**/*.md"
+  },
+  "pre-commit": [
+    "test"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubevirt/community"
+  },
+  "author": "KubeVirt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kubevirt/community/issues"
+  },
+  "devDependencies": {
+    "pre-commit": "^1.2.2",
+    "yaspeller-ci": "^1.0.2"
+  }
+}

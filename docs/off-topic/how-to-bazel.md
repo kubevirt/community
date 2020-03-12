@@ -1,34 +1,38 @@
 # Bazel Introduction
 
 - [Bazel introduction](http://brendanjryan.com/golang/bazel/2018/05/12/building-go-applications-with-bazel.html)
-    - OpenSource software of internal Google tool called Blaze
-    - Created language called Skylark/Starlark (inspired in Python)
-    - Your application’s build process is guaranteed to be completely reproducible and consistent
-    - Bazel also takes strides to make your builds faster, spreading work across all of your machine’s processing power
-    - Agnostic Language
-    - Consistent Developer Experience
-    - Scaffolfind dependencies and BUILD file generation with Gazelle
+
+  - OpenSource software of internal Google tool called Blaze
+  - Created language called Skylark/Starlark (inspired in Python)
+  - Your application’s build process is guaranteed to be completely reproducible and consistent
+  - Bazel also takes strides to make your builds faster, spreading work across all of your machine’s processing power
+  - Agnostic Language
+  - Consistent Developer Experience
+  - Scaffolfind dependencies and BUILD file generation with Gazelle
 
 - [Skylark/Starlark Language](https://docs.bazel.build/versions/master/skylark/language.html)
 - Bazel Rules:
-    - [Docker](https://github.com/bazelbuild/rules_docker)
-    - [Webtesting](https://github.com/bazelbuild/rules_webtesting)
+
+  - [Docker](https://github.com/bazelbuild/rules_docker)
+  - [Webtesting](https://github.com/bazelbuild/rules_webtesting)
 
 - gRPC:
-    - [Building gRPC services with bazel and rules_protobuf](https://grpc.io/blog/bazel_rules_protobuf)
+
+  - [Building gRPC services with bazel and rules_protobuf](https://grpc.io/blog/bazel_rules_protobuf)
 
 - Others:
-    - https://golang.org/pkg/testing/
-    - https://github.com/bazelbuild/bazel-gazelle
-    - https://awesomebazel.com/
-    - [Building Go with Bazel](https://www.youtube.com/watch?v=2TKxuERTnks)
-    - [Building Software at Google Scale](https://www.youtube.com/watch?v=2qv3fcXW1mg)
-    - [Watch and rebuild (or run tests)](https://github.com/bazelbuild/bazel-watcher)
-    - [Dave Cheney - Reproducible Builds](http://go-talks.appspot.com/github.com/davecheney/presentations/reproducible-builds.slide#1)
+  - https://golang.org/pkg/testing/
+  - https://github.com/bazelbuild/bazel-gazelle
+  - https://awesomebazel.com/
+  - [Building Go with Bazel](https://www.youtube.com/watch?v=2TKxuERTnks)
+  - [Building Software at Google Scale](https://www.youtube.com/watch?v=2qv3fcXW1mg)
+  - [Watch and rebuild (or run tests)](https://github.com/bazelbuild/bazel-watcher)
+  - [Dave Cheney - Reproducible Builds](http://go-talks.appspot.com/github.com/davecheney/presentations/reproducible-builds.slide#1)
 
 ### Setting up Bazel for Golang
 
 - Create [WORKSPACE file](http://brendanjryan.com/golang/bazel/2018/05/12/building-go-applications-with-bazel.html#setting-up-bazel-for-go):
+
 ```
 # Bazel core
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -87,6 +91,7 @@ go_repository(
 ```
 
 - Scaffolding Dependencies with gazelle
+
 ```
 cat <<EOF > BUILD.bazel
 load("@bazel_gazelle//:def.bzl", "gazelle")
@@ -100,4 +105,3 @@ EOF
 
 bazel run //:gazelle
 ```
-

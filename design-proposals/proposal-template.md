@@ -18,7 +18,7 @@ variable to the container.
 
 ### Use-case
 
-The primary usecase for this proposal are StatefulSets. There is an idea to expose
+The primary use case for this proposal are StatefulSets. There is an idea to expose
 StatefulSet index to the applications running inside the pods managed by StatefulSet.
 Since StatefulSet creates pods as the API objects, passing this index as an
 annotation seems to be a valid way to do this. However, to finally pass this

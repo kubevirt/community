@@ -13,12 +13,10 @@ Claims.
 The purpose of this proposal is to describe a mechanism to use Persistent
 Volumes as a backing store for Virtual Machine disks.
 
-
 ### Use-case
 
 The primary use-case is to attach regular (writable) disks to Virtual Machines
-which are backed by Peristent Volumes.
-
+which are backed by Persistent Volumes.
 
 ## API
 
@@ -64,7 +62,7 @@ spec:
 release: "stable"
 ```
 
-this is used by the Vm in the following way:
+this is used by the VM in the following way:
 
 ```yaml
 kind: VM
@@ -79,7 +77,6 @@ spec:
           bus: scsi
           target: sda
 ```
-
 
 ## Implementation
 
@@ -99,7 +96,6 @@ to the storage.
 
 Because VMs only accept block storage as disks, the handler can only
 accept claims which are backed by block storage types.
-
 
 ### `virt-handler` changes
 

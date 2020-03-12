@@ -5,6 +5,7 @@
 - **Following**: https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md
 
 - [Configure Gcloud Storage](https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#configure-cloud-storage)
+
 ```
 mkdir ~/downloads
 wget https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-231.0.0-linux-x86_64.tar.gz -O google-cloud-sdk-231.0.0-linux-x86_64.tar.gz
@@ -37,8 +38,8 @@ run --verbose_failures //prow/cmd/checkconfig -- \
 
 - Prow Jobs overview: https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/prow/#prow-is-a-ci-cd-job-executor
 - Life of a Prow Job: https://github.com/kubernetes/test-infra/blob/master/prow/life_of_a_prow_job.md
-    - Webhook Payload sample: https://github.com/kubernetes/test-infra/tree/c8829eef589a044126289cb5b4dc8e85db3ea22f/prow/cmd/phony/examples
+  - Webhook Payload sample: https://github.com/kubernetes/test-infra/tree/c8829eef589a044126289cb5b4dc8e85db3ea22f/prow/cmd/phony/examples
 - Prow Jobs Deep Dive:
-    - https://github.com/kubernetes/test-infra/blob/master/prow/jobs.md
-    - https://github.com/kubernetes/test-infra/tree/master/prow/cmd/phaino
-    - https://github.com/kubernetes/test-infra/blob/master/prow/cmd/tide/config.md
+  - https://github.com/kubernetes/test-infra/blob/master/prow/jobs.md
+  - https://github.com/kubernetes/test-infra/tree/master/prow/cmd/phaino
+  - https://github.com/kubernetes/test-infra/blob/master/prow/cmd/tide/config.md

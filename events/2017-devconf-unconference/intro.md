@@ -11,6 +11,7 @@ The session is split into two:
 3. Gaps
 
 ## Demo
+
 ```bash
 $ git clone …
 $ vagrant up

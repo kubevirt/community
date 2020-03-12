@@ -2,7 +2,7 @@
 
 Prow is a Kubernetes based CI/CD system. Jobs can be triggered by various types of events and report their status to many different services. In addition to job execution, Prow provides GitHub automation in the form of policy enforcement, chat-ops via /foo style commands, and automatic PR merging.
 
-**NOTE|WARNING**: In order to make Prow work fine with your repo, the Kubernetes cluster **MUST** be reachable by GitHub Webhook. Then the most used option is to deploy it on GKE directly. 
+**NOTE|WARNING**: In order to make Prow work fine with your repo, the Kubernetes cluster **MUST** be reachable by GitHub Webhook. Then the most used option is to deploy it on GKE directly.
 
 ## Core Components
 
@@ -16,12 +16,12 @@ Prow is a Kubernetes based CI/CD system. Jobs can be triggered by various types 
 
 Reference: https://raw.githubusercontent.com/kubernetes/test-infra/master/prow/cmd/README.md
 
-
 ## Deploying on
 
 - Following **https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md**
 
 - Deploy instance on libvirt with terraform:
+
 ```
 cd ~cnv/repos/kubevirt-tutorial/administrator/terraform/libvirt
 terraform init -get -upgrade=true
@@ -29,6 +29,7 @@ terraform apply -var-file varfiles/jparrill.tf -refresh=true -auto-approve
 ```
 
 - Install [Golang](https://linux4one.com/how-to-install-go-on-centos-7/), [Bazel](https://docs.bazel.build/versions/master/install-redhat.html) and Tackel on guest
+
 ```
 cd ~ && curl -O https://dl.google.com/go/go1.11.5.linux-amd64.tar.gz
 sha256sum go1.11.5.linux-amd64.tar.gz
@@ -50,6 +51,7 @@ go get -u k8s.io/test-infra/prow/cmd/tackle
 ```
 
 - Create cluster elements to work with GitHub
+
 ```
 kubectl create clusterrolebinding cluster-admin-binding-kubernetes-admin --clusterrole=cluster-admin --user=kubernetes-admin
 mkdir ~/private
@@ -60,6 +62,7 @@ kubectl create secret generic oauth-token --from-file=oauth=$HOME/private/OAUTH_
 ```
 
 - Spin up Prow
+
 ```
 cd $HOME && git clone https://github.com/kubernetes/test-infra.git && cd $HOME/test-infra
 kubectl create namespace test-pods
@@ -68,12 +71,14 @@ kubectl apply -f prow/cluster/starter.yaml
 ```
 
 - If you are working with a local instance, just use sshuttle in order to validate the `deck` deployment
+
 ```
 # Use sshuttle to access the Prow interface
 sshuttle -r jparrill@192.168.1.XXX 192.168.123.0/24 -v
 ```
 
 - Then access to the NodePort using your Kubeadmin node (the deck one):
+
 ```
 [kubevirt@k8s-kubemaster test-infra]$ kubectl get svc
 NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
@@ -85,8 +90,8 @@ tide         NodePort    10.100.34.208   <none>        80:31840/TCP     2d21h
 
 - In order to be more standard depending if you are using GKE, you just could use an ingress with a LB. If not you could use directly the NodePorts
 
+* Add WebHook to Github
 
-- Add WebHook to Github
 ```
 # We need to update git in order to let Bazel to use "git -C ...." sentences
 sudo sh -c "cat <<EOF > /etc/yum.repos.d/wandisco-git.repo
@@ -114,14 +119,12 @@ bazel run //experiment/add-hook -- \
 - Add Plugins to Prow you could use [this](https://github.com/the-shadowmen/nostromo/blob/master/plugins.yaml) as an example
 - Add Labels management to Prow you could use [this](https://github.com/the-shadowmen/nostromo/blob/master/labels.yaml) as an example
 
-You also have a couple of make commands to work with, on [Nostromo repo](https://github.com/the-shadowmen/nostromo/blob/master/Makefile):
-    - `make update-config`
-    - `make update-plugins`
-    - `make update-labels`
+You also have a couple of make commands to work with, on [Nostromo repo](https://github.com/the-shadowmen/nostromo/blob/master/Makefile): - `make update-config` - `make update-plugins` - `make update-labels`
 
 **NOTE:** Depending on the plugin you will need to add some resources to the managed repo, like [OWNERS file](https://github.com/the-shadowmen/kubevirt.github.io/blob/master/OWNERS)
 
 - Now it's time to validate the config and upload it to Kubernetes as configmaps
+
 ```
 cd $HOME/test-infra
 bazel run //prow/cmd/checkconfig -- --plugin-config=$HOME/prow_conf/plugins.yaml --config-path=$HOME/prow_conf/config.yaml
@@ -144,14 +147,14 @@ We need to emulate what we're doing with Rake and TravisCI tool using Prow but a
 - A bot account with Admin permission on the Org: [Janitor](https://github.com/janitor-bot)
 - Prow Stagging [Configuration repo](https://github.com/the-shadowmen/nostromo)
 - New Prow CI/CD platform for stagging testing with:
-    - [Deck](http://kubevirt-prow-0.gce.sexylinux.net:30000/)
-    - [Hook](http://kubevirt-prow-0.gce.sexylinux.net:30300/hook)
-    - [Tide](http://kubevirt-prow-0.gce.sexylinux.net:30090) 
-    - GCS bucket to store the artifacts with the proper Secret and Service Account
-    - The secrets to allow Prow to deal with GitHub
-        - https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#tackle-deployment
-        - https://github.com/kubernetes/test-infra/blob/master/prow/docs/pr_status_setup.md
-        - https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#create-the-github-secrets
+  - [Deck](http://kubevirt-prow-0.gce.sexylinux.net:30000/)
+  - [Hook](http://kubevirt-prow-0.gce.sexylinux.net:30300/hook)
+  - [Tide](http://kubevirt-prow-0.gce.sexylinux.net:30090)
+  - GCS bucket to store the artifacts with the proper Secret and Service Account
+  - The secrets to allow Prow to deal with GitHub
+    - https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#tackle-deployment
+    - https://github.com/kubernetes/test-infra/blob/master/prow/docs/pr_status_setup.md
+    - https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#create-the-github-secrets
 
 ## Prow Jobs
 
@@ -175,14 +178,14 @@ You have 3 kind of jobs:
 - **Presubmit:** This kind of job have the context of the Repo and PR where you are working allowing you to execute the tests directly on that branch **BEFORE** the merge happens.
 - **Postsubmit:** This kind of job have the context of the Repo and PR where you are working and perform the tests **AFTER** the merge happens
 
-
 ## Managing notifications
 
 In the usual postsubmit and presubmit jobs there is not problems, Github will take care about the notifications but on periodic ones you need an additional component called `Crier` which will allow you to send notifications to external communication providers like Slack, Github, Gerrit, etc...
 
 To do that, we need some things (sample Slack):
+
 - Apply the necessary RBAC to make work Crier on K8s (located in test-infra/prow/cluster/crier_rbac.yaml)
-- Slack API Token to allow crier to push notifications to Slack, supplying K8s through  a secret on the (by default) `default` namespace
+- Slack API Token to allow crier to push notifications to Slack, supplying K8s through a secret on the (by default) `default` namespace
 - Modify the Crier deployment [adding the proper flags](https://github.com/kubernetes/test-infra/tree/master/prow/cmd/crier), in this case `--slack-workers=n` and `--slack-token-file=path-to-tokenfile`
 - Modify the config configmap to add a `slack_reporter` section including the desired configuration.
 - Deploy Crier component (located in test-infra/prow/cluster/crier_deployment.yaml)
@@ -209,13 +212,14 @@ To do that, we need some things (sample Slack):
 
 - Prow Jobs overview: https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/prow/#prow-is-a-ci-cd-job-executor
 - Life of a Prow Job: https://github.com/kubernetes/test-infra/blob/master/prow/life_of_a_prow_job.md
-    - Webhook Payload sample: https://github.com/kubernetes/test-infra/tree/c8829eef589a044126289cb5b4dc8e85db3ea22f/prow/cmd/phony/examples
+  - Webhook Payload sample: https://github.com/kubernetes/test-infra/tree/c8829eef589a044126289cb5b4dc8e85db3ea22f/prow/cmd/phony/examples
 - Prow Jobs Deep Dive:
-    - https://github.com/kubernetes/test-infra/blob/master/prow/jobs.md
-    - https://github.com/kubernetes/test-infra/tree/master/prow/cmd/phaino
-    - https://github.com/kubernetes/test-infra/blob/master/prow/cmd/tide/config.md
+  - https://github.com/kubernetes/test-infra/blob/master/prow/jobs.md
+  - https://github.com/kubernetes/test-infra/tree/master/prow/cmd/phaino
+  - https://github.com/kubernetes/test-infra/blob/master/prow/cmd/tide/config.md
 
 ### Prow SSL
+
 - [Configure SSL](https://github.com/kubernetes/test-infra/blob/master/prow/getting_started_deploy.md#configure-ssl)
 - [Cert Manager](https://github.com/jetstack/cert-manager)
 - [Cert Manager Tutorial](https://github.com/jetstack/cert-manager/blob/master/docs/tutorials/acme/quick-start/index.rst)
@@ -225,6 +229,6 @@ To do that, we need some things (sample Slack):
 - Another useful Article: https://kurtmadel.com/posts/native-kubernetes-continuous-delivery/native-k8s-cd/
 - Kubevirt Project-Infra: https://github.com/kubevirt/project-infra
 - NGINX Ingress Controller:
-	- https://github.com/kubernetes/ingress-nginx
-	- https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/index.md
-	- https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples
+  - https://github.com/kubernetes/ingress-nginx
+  - https://github.com/kubernetes/ingress-nginx/blob/master/docs/deploy/index.md
+  - https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples

@@ -29,6 +29,7 @@ There is quite a lot material on KubeVirt, this document is summarizing this:
   - [(recording)](https://www.youtube.com/watch?v=avxBRRwRa-8) by @fabiand
 
 ### 2017
+
 - ["Pet VMs in Kubernetes! WTH?"](http://redhat.slides.com/fdeutsch/kubevirt-intro-devconf-2017) by @fabiand at devconf.cz
 - ["Running Virtual Machines on Kubernetes with libvirtd and KVM"](http://redhat.slides.com/fdeutsch/running-virtual-machines-on-kubernetes-with-libvirt-and-kvm-at-kvm-forum-2017#/) by @rmohr and @fabiand at KVM Forum
   ([Recording](https://www.youtube.com/watch?v=Wh-ejUyuHJ0))
