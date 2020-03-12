@@ -27,6 +27,8 @@ This repository and its contents, aim to provide instructions and materials to b
 
 It contains links to different materials already available on the website or videos in the KubeVirt channel that could help set up a demonstration environment.
 
+Many links point to the documentation at `user-guide`, going exactly to the topic commented at that point.
+
 **Note**: Videos from YouTube can be downloaded 'locally' for offline usage via `youtube-dl` or similar tools so, that's also an option for booth display.
 
 ## Demo
@@ -35,20 +37,20 @@ In this section you'll find links to resources to prepare your demonstration abo
 
 ### Demo Script
 
-Check materials from <https://github.com/kubevirt/kubevirt-tutorial/> for preparing the contents.
+Check materials from [KubeVirt-Tutorial](https://github.com/kubevirt/kubevirt-tutorial) for preparing the contents. KubeVirt-tutorial contains a list of scenarios aimed at exploring interactively the technology, from deploying KubeVirt, then doing Virtual Machine operations, using DataVolumes, KubeVirt UI and Multus.
 
 #### Basic
 
 The basic demo should contain:
 
 - KubeVirt installation
-- VM Lifecycle (<https://kubevirt.io/user-guide/#/usage/life-cycle?id=life-cycle>)
+- [VM Lifecycle](https://kubevirt.io/user-guide/#/usage/life-cycle?id=life-cycle)
   - create VM
   - start VM
   - pause VM
   - resume VM
   - stop VM
-  - create container disk (<https://kubevirt.io/user-guide/#/creation/disks-and-volumes?id=containerdisk> )
+  - [create container disk](https://kubevirt.io/user-guide/#/creation/disks-and-volumes?id=containerdisk)
 
 So the demonstration should start with:
 
@@ -61,12 +63,11 @@ So the demonstration should start with:
 The advanced demo should contain:
 
 - Advanced operations
-  - Live Migration (<https://kubevirt.io/user-guide/#/installation/live-migration?id=live-migration>)
-  - Node Drain (<https://kubevirt.io/user-guide/#/installation/node-eviction?id=how-to-evict-all-vms-on-a-node>)
-- Install from ISO (<https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html>)
+  - [Live Migration](https://kubevirt.io/user-guide/#/installation/live-migration?id=live-migration)
+  - [Node Drain/Eviction](https://kubevirt.io/user-guide/#/installation/node-eviction?id=how-to-evict-all-vms-on-a-node)
+- Install from ISO ([Article covering Windows installation using an ISO](https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html))
   - Run a Windows VM
-    - Access via RDP over a dedicated network
-      - <https://kubevirt.io/user-guide/#/usage/network-service-integration?id=expose-virtualmachineinstance-as-a-loadbalancer-service>
+    - Access via RDP over a dedicated network [Expose virtual machine ports](https://kubevirt.io/user-guide/#/usage/network-service-integration?id=expose-virtualmachineinstance-as-a-loadbalancer-service)
 
 So the demonstration would start where 'basic' was left and perform:
 
@@ -79,7 +80,7 @@ So the demonstration would start where 'basic' was left and perform:
 
 #### Technology hands-on
 
-[Katacoda scenarios](http://katacoda.com/kubevirt) covers already some of the features and requires just a browser from participants:
+[Katacoda scenarios](http://katacoda.com/kubevirt) covers already some of the features and requires just a browser with internet connectivity from participants:
 
 - [Installing KubeVirt](https://katacoda.com/kubevirt/scenarios/kubevirt-101)
 - [Using Containerized Data Importer](https://katacoda.com/kubevirt/scenarios/kubevirt-cdi)
@@ -121,24 +122,24 @@ Both of them makes it easy to have attendees to deploy KubeVirt using virtual ma
 
 ### Networking
 
-- <https://kubevirt.io/2018/KubeVirt-Network-Deep-Dive.html>
-- <https://kubevirt.io/2018/KubeVirt-Network-Rehash.html>
-- <https://kubevirt.io/2018/attaching-to-multiple-networks.html>
+- [Network Deep Dive](https://kubevirt.io/2018/KubeVirt-Network-Deep-Dive.html)
+- [Network updates on top of Deep Dive](https://kubevirt.io/2018/KubeVirt-Network-Rehash.html)
+- [Attach to multiple networks](https://kubevirt.io/2018/attaching-to-multiple-networks.html)
 
 ### VM's
 
-- <https://kubevirt.io/2018/containerized-data-importer.html>
-- <https://kubevirt.io/2019/How-To-Import-VM-into-Kubevirt.html>
+- [Containerized Data importer](https://kubevirt.io/2018/containerized-data-importer.html) for importing VM's.
+- [How to import VM into KubeVirt](https://kubevirt.io/2019/How-To-Import-VM-into-Kubevirt.html)
 
 #### Windows workloads
 
-- <https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html>
+- [Install Windows from an ISO](https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html)
 
 ### Console access or UI
 
-- <https://kubevirt.io/2019/KubeVirt_UI_options.html>
-- <https://kubevirt.io/2020/OKD-web-console-install.html>
+- [KubeVirt UI options](https://kubevirt.io/2019/KubeVirt_UI_options.html)
+- [OKD UI console installation for KubeVirt](https://kubevirt.io/2020/OKD-web-console-install.html)
 
 ### Development
 
-- <https://kubevirt.io/2018/Use-VS-Code-for-Kube-Virt-Development.html>
+- [Use VSCode for KubeVirt development](https://kubevirt.io/2018/Use-VS-Code-for-Kube-Virt-Development.html)
