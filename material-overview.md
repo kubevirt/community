@@ -7,6 +7,7 @@ There is quite a lot material on KubeVirt, this document is summarizing this:
 - Demo: https://github.com/kubevirt/demo
 - User Guide: https://github.com/kubevirt/user-guide
 - API Reference: https://kubevirt-incubator.github.io/api-reference/
+- Demo Materials: [Demo Materials](docs/demomaterials/README.md)
 
 ## Repositories
 
