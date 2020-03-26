@@ -44,13 +44,13 @@ Check materials from [KubeVirt-Tutorial](https://github.com/kubevirt/kubevirt-tu
 The basic demo should contain:
 
 - KubeVirt installation
-- [VM Lifecycle](https://kubevirt.io/user-guide/#/usage/life-cycle?id=life-cycle)
+- [VM Lifecycle documentation on user-guide](https://kubevirt.io/user-guide/#/usage/life-cycle?id=life-cycle)
   - create VM
   - start VM
   - pause VM
   - resume VM
   - stop VM
-  - [create container disk](https://kubevirt.io/user-guide/#/creation/disks-and-volumes?id=containerdisk)
+  - [create container disk documentation on user-guide](https://kubevirt.io/user-guide/#/creation/disks-and-volumes?id=containerdisk)
 
 So the demonstration should start with:
 
@@ -63,15 +63,15 @@ So the demonstration should start with:
 The advanced demo should contain:
 
 - Advanced operations
-  - [Live Migration](https://kubevirt.io/user-guide/#/installation/live-migration?id=live-migration)
-  - [Node Drain/Eviction](https://kubevirt.io/user-guide/#/installation/node-eviction?id=how-to-evict-all-vms-on-a-node)
+  - [Live Migration documentation on user-guide](https://kubevirt.io/user-guide/#/installation/live-migration?id=live-migration)
+  - [Node Drain/Eviction documentation on user-guide](https://kubevirt.io/user-guide/#/installation/node-eviction?id=how-to-evict-all-vms-on-a-node)
 - Install from ISO ([Article covering Windows installation using an ISO](https://kubevirt.io/2020/KubeVirt-installing_Microsoft_Windows_from_an_iso.html))
   - Run a Windows VM
-    - Access via RDP over a dedicated network [Expose virtual machine ports](https://kubevirt.io/user-guide/#/usage/network-service-integration?id=expose-virtualmachineinstance-as-a-loadbalancer-service)
+    - Access via RDP over a dedicated network [Expose virtual machine ports documentation on user-guide](https://kubevirt.io/user-guide/#/usage/network-service-integration?id=expose-virtualmachineinstance-as-a-loadbalancer-service)
 
 So the demonstration would start where 'basic' was left and perform:
 
-- live migrate a vm
+- live migrate a VM
 - perform a node drain
 - install VM from ISO
 - Access VM console in graphical mode
@@ -79,6 +79,8 @@ So the demonstration would start where 'basic' was left and perform:
 ### Online resources
 
 #### Technology hands-on
+
+Katacoda is a platform for online experiencing of technologies and empowers to perform trainings from your browser. KubeVirt has 3 scenarios as of this writing that cover the topics on the website laboratories.
 
 [Katacoda scenarios](http://katacoda.com/kubevirt) covers already some of the features and requires just a browser with internet connectivity from participants:
 
@@ -119,6 +121,8 @@ For offline demonstrations you can use:
 Both of them makes it easy to have attendees to deploy KubeVirt using virtual machine or containers.
 
 ## Additional resources on the technology
+
+In this section you'll find links to different articles in KubeVirt website that can provide more information of topics of interest so that
 
 ### Networking
 
