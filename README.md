@@ -8,7 +8,7 @@ If you got enough of code and want to speak to people, then you got a couple
 of options:
 
 * Follow us on [Twitter](https://twitter.com/kubevirt) and our [blog](https://kubevirt.github.io/blogs/)
-* Chat with us on Slack via [https://kubernetes.slack.com/messages/virtualization](https://kubernetes.slack.com/messages/virtualization)
+* Chat with us on Slack via <https://kubernetes.slack.com/messages/virtualization> and <https://kubernetes.slack.com/messages/kubevirt-dev>
 * Discuss with us on the [kubevirt-dev Google Group](https://groups.google.com/forum/#!forum/kubevirt-dev)
 * Stay informed about designs and upcoming events by watching our [community content](https://github.com/kubevirt/community/)
 * Take a glance at [future planning](https://trello.com/b/50CuosoD/kubevirt)
