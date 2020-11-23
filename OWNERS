@@ -1,13 +1,11 @@
 reviewers:
   - codificat
-  - iranzo
-  - ptrnull
-  - alosadagrande
+  - mazzystr
 approvers:
   - codificat
-  - iranzo
-  - ptrnull
-  - alosadagrande
+  - mazzystr
+  - fabiand
+  - rmohr
 
 emeritus_approvers:
   - karmab # 10 july 2019
@@ -15,3 +13,6 @@ emeritus_approvers:
   - e-minguez # 10 july 2019
   - joeldavis84 # 10 july 2019
   - jparrill # 12 Nov 2019
+  - iranzo # April 2020
+  - ptrnull # April 2020
+  - alosadagrande # April 2020
