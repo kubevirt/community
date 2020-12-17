@@ -11,7 +11,8 @@ benefits of attending it / what can attendees expect to get from it).
 
 - Name, title, company, contact details (email, twitter, github - pick any/all)
 
-[ ] The presenters agree to abide by the KubeVirt Code of Conduct
+[ ] The presenters agree to abide by the
+    [Linux Foundation's Code of Conduct for Events](https://events.linuxfoundation.org/about/code-of-conduct/)
 
 # Session details
 
