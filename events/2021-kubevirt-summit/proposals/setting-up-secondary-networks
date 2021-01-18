@@ -1,0 +1,30 @@
+# Title
+
+Multiple Network Attachments with bridge CNI and kubernetes-nmstate
+
+# Abstract
+
+Explain what the session will be about, what will be covered, what will be the
+benefits of attending it / what can attendees expect to get from it).
+
+Over the last years the KubeVirt project has improved a lot regarding secondary interfaces networking configuration.
+This session will show an end to end configuration from host networking to a VM using just the Kubernetes API with special Custom Resource Definitions.
+After the sessions attendees will be able to conect VMs to secondary nics at nodes just using CDRs, without accessing the nodes.
+
+# Presenters
+
+- Quique Llorente, Senior Software Engineer, RedHat, ellorent@redhat.com|https://github.com/qinqon
+
+[x] The presenters agree to abide by the
+    [Linux Foundation's Code of Conduct for Events](https://events.linuxfoundation.org/about/code-of-conduct/)
+
+# Session details
+
+- Track: User
+- Session type: Presentation
+- Duration: 20m
+- Level: Beginner
+
+# Additional notes
+
+This presentation is a slide show from the kubevirt.io blogpost https://kubevirt.io/2020/Multiple-Network-Attachments-with-bridge-CNI.html
