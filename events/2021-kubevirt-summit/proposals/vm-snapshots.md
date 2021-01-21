@@ -10,6 +10,7 @@ The Virtual Machine Snapshot API was added to KubeVirt in release 0.34.0.  This 
 # Presenters
 
 - Michael Henriksen (henriksen.mike@gmail.com, github: mhenriks)
+- Ryan Hallisey (rhallisey@nvidia.com, github: rthallisey, twitter: @rthallisey)
 
 [X] The presenters agree to abide by the
     [Linux Foundation's Code of Conduct for Events](https://events.linuxfoundation.org/about/code-of-conduct/)
