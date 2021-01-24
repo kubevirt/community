@@ -20,12 +20,12 @@ Attendants will be able to know what job types are available, which one to use f
 
 - Daniel Hiller, Senior Software Engineer OpenShift Virtualization, Red Hat, [@dhill3r](https://twitter.com/dhill3r), [@dhiller (GitHub)](https://github.com/dhiller)
 
-[ ] The presenters agree to abide by the
+[x] The presenters agree to abide by the
     [Linux Foundation's Code of Conduct for Events](https://events.linuxfoundation.org/about/code-of-conduct/)
 
 # Session details
 
-- Track: User | Contributors
+- Track: Contributors
 - Session type: Tutorial/Workshop
 - Duration: 40m
 - Level: Beginner
