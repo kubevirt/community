@@ -19,7 +19,7 @@ This talk shares an experience of integrating KubeVirt as a cloud provider at Ga
 
 - Track: User
 - Session type: Presentation
-- Duration: 40m
+- Duration: 20m
 - Level: Intermediate
 
 
