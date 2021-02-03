@@ -22,7 +22,8 @@ An attendee will learn:
 
 # Presenters
 
-- Simone Tiraboschi, Principal Software Engineer, Red Hat, stirabos@redhat.com - https://github.com/tiraboschi
+- Nahshon Unna-Tsametet, Senior Software Engineer, Red Hat, nunnatsa@redhat.com, https://github.com/nunnatsa
+- Oren Cohen, Software Engineer, Red Hat, ocohen@redhat.com, https://github.com/orenc1
 
 [X] The presenters agree to abide by the
     [Linux Foundation's Code of Conduct for Events](https://events.linuxfoundation.org/about/code-of-conduct/)
