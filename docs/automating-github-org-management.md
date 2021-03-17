@@ -18,9 +18,9 @@ If you need to change settings within kubevirt org regarding
     - team maintainers and members
     - team access to repositories
 
-please file a PR against the [org configuration file].
+Please file a PR against the [org configuration file].
 
-After the PR got merged, those settings will get applied within one hour.
+After the PR is merged changes will be applied within one hour.
 
 Examples:
 * [Adding a github user to the org as member](https://github.com/kubevirt/project-infra/pull/929/files)
