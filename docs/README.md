@@ -2,6 +2,7 @@
 
 # Topics
 
+- [KubeVirt GitHub Org management](./automating-github-org-management.md)
 - [CI/CD](./CI-CD)
     - [Hands on Prow](./CI-CD/how-to-prow.md)
     - [Hands on Prow Jobs](./CI-CD/prow-jobs.md)
