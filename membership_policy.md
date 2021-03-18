@@ -35,48 +35,48 @@ Defined by: Member of the KubeVirt GitHub organization
   * Subscribed to kubevirt-dev@googlegroups.com
   * Has read the [contributor guide](CONTRIBUTING.md)
   * Actively contributing to the project
-  * Sponsored by 2 reviewers. Note the following requirements for sponsors:
-    * Sponsors must have close interactions with the prospective member - e.g. code/design/proposal review, coordinating on issues, etc.
+    * Contributions according to GitHub and/or Kubernetes metrics in the past 90 days.
+  * Sponsored by 2 org members. Note the following requirements for sponsors:
+    * Sponsors must have close interactions with the prospective member
     * Sponsors must be reviewers or approvers in the KubeVirt OWNERS file.
     * Sponsors should be from multiple member companies to demonstrate integration across community.
   * Open a PR against the [org members section](https://github.com/kubevirt/project-infra/blob/master/github/ci/prow/files/orgs.yaml#L21)
     * Ensure your sponsors are @mentioned on the issue
     * Complete every item on the [checklist](membership_checklist.md)
     * Make sure that the list of contributions included is representative of your work on the project.
-  * Have your sponsoring reviewers reply confirmation of sponsorship: +1
+  * Have your sponsoring org members reply confirmation of sponsorship: +1
   * Once your sponsors have responded, your request will be reviewed by KubeVirt project approvers. Any missing information will be requested.
 
 ## Responsibilities and privileges
 
   * Responsive to issues and PRs assigned to them
   * Responsive to mentions
-  * Active owner of code they have contributed (unless ownership is explicitly transferred)
-  * Code is well tested
+  * Active owner their contributions (unless ownership is explicitly transferred)
+  * Contribution is well tested
   * Tests consistently pass
-  * Addresses bugs or issues discovered after code is accepted
+  * Addresses bugs or issues discovered after contribution is accepted
   * Members can do /lgtm on open PRs.
   * They can be assigned to issues and PRs, and people can ask members for reviews with a /cc @username.
   * Tests can be run against their PRs automatically. No /ok-to-test needed.
   * Members can do /ok-to-test for PRs that have a needs-ok-to-test label, and use commands like /close to close PRs as well.
 
 !! note
-Members who frequently contribute code are expected to proactively perform code reviews and work towards becoming a primary reviewer.
+Members who frequently contribute are expected to proactively perform reviews and work towards becoming a primary reviewer.
 
 ## Reviewer
 
-Reviewers are trusted to review code for quality and correctness on some part of the project. They are knowledgeable about both the codebase and software engineering principles.
+Reviewers are trusted to review contributions for quality and correctness on some part of the project. They are knowledgeable about both the project and engineering principles.
 Defined by: reviewers entry in an OWNERS file of the KubeVirt project.
-Reviewer status is scoped to a part of the codebase.
-Note: Acceptance of code contributions requires at least one approver in addition to the assigned reviewers.
+Note: Acceptance of contributions requires at least one approver in addition to the assigned reviewers.
 
 ## Requirements
 
-The following apply to the part of codebase for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+The following apply to the part of project for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
 
   * Member for at least 3 months
-  * Primary reviewer for at least 5 PRs to the codebase
-  * Reviewed or merged at least 20 substantial PRs to the codebase
-  * Knowledgeable about the codebase
+  * Primary reviewer for at least 5 PRs to the project
+  * Reviewed or merged at least 20 substantial PRs to the project
+  * Knowledgeable about the project
   * Sponsored by an approver
     * With no objections from other approvers
     * Done through PR to update the OWNERS file
@@ -84,11 +84,11 @@ The following apply to the part of codebase for which one would be a reviewer in
 
 ### Responsibilities and privileges
 
-  * The following apply to the part of codebase for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+  * The following apply to the part of project for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
   * Tests are automatically run for PullRequests from members of the KubeVirt GitHub organization
-  * Code reviewer status may be a precondition to accepting large code contributions
-  * Responsible for project quality control via code reviews
-  * Focus on code quality and correctness, including testing and factoring
+  * Reviewer status may be a precondition to accepting L+ contributions
+  * Responsible for project quality control via reviews
+  * Focus on quality and correctness, including testing and factoring
   * May also review for more holistic issues, but not a requirement
   * Expected to be responsive to review requests as per community expectations
   * Assigned PRs to review related to project
@@ -100,26 +100,26 @@ The following apply to the part of codebase for which one would be a reviewer in
 
 Approvers are able to both review and approve contributions. While contribution review is focused on quality and correctness, approval is focused on holistic acceptance of a contribution including: backwards / forwards compatibility, adhering to API and flag conventions, subtle performance and correctness issues, interactions with other parts of the system, etc.
 Defined by: Approvers entry in an OWNERS file in a repo owned by the KubeVirt project.
-Approver Status is scoped to a part of the codebase.
+Approver Status is scoped to a part of the project.
 
 ### Requirements
-The following apply to the part of codebase for which one would be an approver in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+The following apply to the part of project for which one would be an approver in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
 
-  * Reviewer of the codebase for at least 3 months
-  * Primary reviewer for at least 10 substantial PRs to the codebase
-  * Reviewed or merged at least 30 PRs to the codebase
+  * Reviewer of the project for at least 3 months
+  * Primary reviewer for at least 10 substantial PRs to the project
+  * Reviewed or merged at least 30 PRs to the project
   * Nominated by an approver
-    * With no objections from other approver owners
+    * With no objections from other approvers
     * Done through PR to update the top-level OWNERS file
 
 ### Responsibilities and privileges
 
-The following apply to the part of codebase for which one would be an approver in the OWNERS file (for repos using the bot).
+The following apply to the part of project for which one would be an approver in the OWNERS file (for repos using the bot).
 
-  * Approver status may be a precondition to accepting large code contributions
+  * Approver status may be a precondition to accepting L+ contributions
   * Demonstrate sound technical judgement
-  * Responsible for project quality control via code reviews
+  * Responsible for project quality control via reviews
   * Focus on holistic acceptance of contribution such as dependencies with other features, backwards / forwards compatibility, API and flag definitions, etc
   * Expected to be responsive to review requests as per community expectations
   * Mentor contributors and reviewers
-  * May approve code contributions for acceptance
+  * May approve contributions for acceptance
