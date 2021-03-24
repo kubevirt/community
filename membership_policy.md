@@ -31,7 +31,7 @@ Defined by: Member of the KubeVirt GitHub organization
     * Authoring or reviewing PRs on GitHub
     * Filing or commenting on issues on GitHub
     * Contributing to community discussions (e.g. meetings, Slack, email discussion forums, Stack Overflow)
-    * GitHub Insight metrics will be reviewed periodically to
+    * GitHub Insight metrics will be reviewed periodically
   * Subscribed to kubevirt-dev@googlegroups.com
   * Has read the [contributor guide](CONTRIBUTING.md)
   * Actively contributing to the project
