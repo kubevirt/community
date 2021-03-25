@@ -7,7 +7,7 @@ This document outlines the various responsibilities of contributor roles in Kube
 | Contributor | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/master/code-of-conduct.md) | Submit at least one pull request | Active GitHub account
 | Member | Active contributor in the community | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project | KubeVirt GitHub org member
 | Reviewer | Review contributions from others | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver | [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file reviewer entry |
-| Approver| Approve accepting contributions | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project |  Sponsored by 2 approvers| [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file approver entry |
+| Approver| Approve accepting contributions | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers| [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file approver entry |
 
 
 ## New contributors
@@ -68,6 +68,7 @@ Members who frequently contribute are expected to proactively perform reviews an
 Reviewers are trusted to review contributions for quality and correctness on some part of the project. They are knowledgeable about both the project and engineering principles.
 Defined by: reviewers entry in an OWNERS file of the KubeVirt project.
 Note: Acceptance of contributions requires at least one approver in addition to the assigned reviewers.
+Reviewer Status is scoped to a part of the project.
 
 ## Requirements
 
@@ -116,7 +117,7 @@ The following apply to the part of project for which one would be an approver in
 
 The following apply to the part of project for which one would be an approver in the OWNERS file (for repos using the bot).
 
-  * Approver status may be a precondition to accepting L+ contributions
+  * Approver status may be a precondition to accepting contributions
   * Demonstrate sound technical judgement
   * Responsible for project quality control via reviews
   * Focus on holistic acceptance of contribution such as dependencies with other features, backwards / forwards compatibility, API and flag definitions, etc
