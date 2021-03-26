@@ -39,7 +39,7 @@ At KubeVirt's present scale the community opts to host a weekly meetings for all
 * Community organizers should introduced themselves and the meeting
 * Community organizers should allow new attendees to introduce themselves
 
-#### Agenda - typically planned discussions throughout the week
+#### Agenda - typically planned discussions added throughout the week
 * Community organizers should introduce each topic contributor and the topic
 * Community organizers should allow ample time to discuss the topic.  Some topics may need to be time boxed or broken out into mailing list, slack and/or separate community meetings
 
@@ -52,5 +52,16 @@ At KubeVirt's present scale the community opts to host a weekly meetings for all
 * Community organizers should allow ample time to discuss the pull req.  Some topics may need to be time boxed or broken out into mailing list, slack and/or separate community meetings
 
 #### Bug Scrub - typically engs will run this section and review unreviewed issues
-* repo kubevirt/kubevirt
-* repo kubevirt/user-guide
+Last 20 minutes of each community meeting are dedicated to scrubbing of KubeVirt Issues. Precedence should be given to Issues raised by attendees. The remaining of the time should be spent going over Issues one by one starting from the most recent one. Each Issue we visit should be given one of the following triage labels:
+
+* triage/accepted: Indicates an issue or PR is ready to be actively worked on.
+* triage/duplicate: Indicates an issue is a duplicate of other open issue.
+* triage/needs-information: Indicates an issue needs more information in order to work on it.
+* triage/not-reproducible: Indicates an issue can not be reproduced as described.
+* triage/unresolved: Indicates an issue that can not or will not be resolved.
+
+Some topics may need to be time boxed or broken out into mailing list, slack and/or separate community meetings
+
+Repos that should be reviewed:
+* [kubevirt/kubevirt](https://github.com/kubevirt/kubevirt/issues)
+* [kubevirt/user-guide](https://github.com/kubevirt/user-guide/issues)
