@@ -36,7 +36,7 @@ At KubeVirt's present scale the community opts to host a weekly meetings for all
 ## Meeting Content
 
 #### Introductions
-* Community organizers should introduced themselves and the meeting
+* Community organizers should introduce themselves and the meeting
 * Community organizers should allow new attendees to introduce themselves
 
 #### Agenda - typically planned discussions added throughout the week
