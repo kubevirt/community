@@ -34,6 +34,6 @@ In order to easily identify the KubeVirt recording rules, they should have a `ku
 When creating a KubeVirt alert rule, please see the following :
 
 1. Use [recording rules](https://prometheus.io/docs/prometheus/latest/configuration/recording_rules/#recording-rules) when doing calculations.
-2. Create an alert runbook at [KubeVirt runbooks](https://github.com/kubevirt/monitoring/runbooks).
+2. Create an alert runbook at [KubeVirt runbooks](https://github.com/kubevirt/monitoring/tree/main/runbooks).
 3.  Alert rule must include `runbook_url` with the link to your runbook                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           from step #2.
 4. Alert rule must include `severity`. One of: `critical`, `warning`, `info`.
