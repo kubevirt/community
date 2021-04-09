@@ -3,9 +3,9 @@
 # Topics
 
 - [KubeVirt GitHub Org management](./automating-github-org-management.md)
-- [CI/CD](./CI-CD)
-    - [Hands on Prow](./CI-CD/how-to-prow.md)
-    - [Hands on Prow Jobs](./CI-CD/prow-jobs.md)
-    - [CentOS ci-cd account](./CI-CD/centos-ci-cd.md)
+- CI/CD
+    - [Prow deployment](https://github.com/kubevirt/project-infra/blob/master/github/ci/prow-deploy/README.md)
+    - [Prow Jobs](https://github.com/kubevirt/project-infra/blob/master/github/ci/prow-deploy/files/jobs/README.md)
+    - [Additional CI/CD services](https://github.com/kubevirt/project-infra/tree/master/github/ci/services)
 - [Off-Topic](./off-topic)
     - [Hands on Bazel](./off-topic/how-to-bazel.md)
