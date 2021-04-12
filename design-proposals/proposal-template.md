@@ -1,51 +1,43 @@
-# Initial way of connecting VMs to pod NICs
+This template is simply a guide. When making proposals, feel free to add and
+remove portions of this outline to best fit your specific case. There is no
+expectation that people strictly stick to this outline, but it is a good place
+to start. 
 
-Author: FOO \<FOO@bar.org\>
+# Overview
+(Provide a brief overview of the topic)
 
-## Introduction
+## Motivation
+(Why this enhancement is important)
 
-Annotations of the pod can be taken through the Kubernetes API, but currently
-there is no way to pass them to the application inside the container. This means
-that annotations can be used by the core Kubernetes services and the user outside
-of the Kubernetes cluster.
+## Goals
+(The desired outcome)
 
-Of course using Kubernetes API from the application running inside the container
-managed by Kubernetes is technically possible, but that's an idea which denies
-the principles of microservices architecture.
+## Non Goals
+(limitations to the scope of the design)
 
-The purpose of the proposal is to allow to pass the annotation as the environment
-variable to the container.
+## Definition of Users
+(who is this feature set intended for)
 
-### Use-case
+## User Stories
+(list of user stories this design aims to solve)
 
-The primary usecase for this proposal are StatefulSets. There is an idea to expose
-StatefulSet index to the applications running inside the pods managed by StatefulSet.
-Since StatefulSet creates pods as the API objects, passing this index as an
-annotation seems to be a valid way to do this. However, to finally pass this
-information to the containerized application, we need to pass this annotation.
-That's why the downward API for annotations is needed here.
+## Repos
+(list of repose this design impacts)
 
-## API
+# Design
+(This should be brief and concise. We want just enough to get the point across)
 
-The exact `fieldPath` to the annotation will look like:
+## API Examples
+(tangible API examples used for discussion)
 
-```
-metadata.annotations[annotationKey]
-```
+## Scalability
+(overview of how the design scales)
 
-So, assuming that we would want to pass the `pod.beta.kubernetes.io/petset-index`
-annotation as a `PETSET_INDEX` variable, the environment variable definition
-will look like:
+## Update/Rollback Compatibility
+(does this impact update compatibility and how)
 
-```
-env:
-  - name: PETSET_INDEX
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.annotations[pod.beta.kubernetes.io/petset-index]
-```
+## Functional Testing Approach
+(an overview on the approaches used to functional test this design(
 
-## Implementation
-
-In general, this environment downward API part will be implemented in the same
-place as the other metadata - as a label conversion function.
+# Implementation Phases
+(How/if this design will get broken up into multiple phases)
