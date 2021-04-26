@@ -9,22 +9,23 @@ import (
 	"os"
 
 	yaml "gopkg.in/yaml.v3"
-
 )
 
 type Sigs struct {
-	Sigs       []*Sig       `yaml:"sigs"`
-	Usergroups []*Usergroup `usergroups:"sigs"`
+	Sigs       []*Group `yaml:"sigs"`
+	Usergroups []*Group `yaml:"usergroups"`
+	Committees []*Group `yaml:"committees"`
 }
 
-type Usergroup struct {
-	Dir              string      `yaml:"dir"`
-	Name             string      `yaml:"name"`
-	MissionStatement string      `yaml:"mission_statement"`
-	Label            string      `yaml:"label"`
-	Leadership       *Leadership `yaml:"leadership"`
-	Meetings         []*Meeting  `yaml:"meetings"`
-	Contact          *Contact    `yaml:"contact"`
+type Group struct {
+	Dir              string
+	Name             string
+	MissionStatement string         `yaml:"mission_statement,omitempty"`
+	Label            string         `yaml:",omitempty"`
+	Leadership       *Leadership    `yaml:",omitempty"`
+	Meetings         []*Meeting     `yaml:",omitempty"`
+	Contact          *Contact       `yaml:",omitempty"`
+	SubProjects      []*SubProjects `yaml:",omitempty"`
 }
 
 type Contact struct {
@@ -59,12 +60,6 @@ type Chair struct {
 	Company string `yaml:"company"`
 }
 
-type Sig struct {
-	Dir         string         `yaml:"dir"`
-	Name        string         `yaml:"name"`
-	SubProjects []*SubProjects `yaml:"subprojects"`
-}
-
 type SubProjects struct {
 	Name   string   `yaml:"name"`
 	Owners []string `yaml:"owners"`
@@ -91,7 +86,10 @@ func gatherOptions() options {
 	fs := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	fs.BoolVar(&o.dryRun, "dry-run", true, "Dry run for testing. Uses API tokens but does not mutate.")
 	fs.StringVar(&o.sigsFilePath, "sigs_file_path", "", "File path to the sigs.yaml file to check.")
-	fs.Parse(os.Args[1:])
+	err := fs.Parse(os.Args[1:])
+	if err != nil {
+		log.Fatalf("error parsing arguments %v: %v", os.Args[1:], err)
+	}
 	return o
 }
 
@@ -139,13 +137,19 @@ func main() {
 		log.Fatalf("in file %q: %v", options.sigsFilePath, err)
 	}
 	if options.dryRun {
-		os.Stdout.Write(output)
-	} else {
-		stat, err := os.Stat(options.sigsFilePath)
+		_, err := os.Stdout.Write(output)
 		if err != nil {
 			log.Fatalf("file %q: %v", options.sigsFilePath, err)
 		}
-		ioutil.WriteFile(options.sigsFilePath, output, stat.Mode())
+	} else {
+		stat, err := os.Stat(options.sigsFilePath)
+		if err != nil {
+			log.Fatalf("stat for file %q failed: %v", options.sigsFilePath, err)
+		}
+		err = ioutil.WriteFile(options.sigsFilePath, output, stat.Mode())
+		if err != nil {
+			log.Fatalf("write to file %q failed: %v", options.sigsFilePath, err)
+		}
 	}
 
 }

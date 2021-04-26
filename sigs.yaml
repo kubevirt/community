@@ -105,3 +105,4 @@ usergroups:
         teams:
             - name: kubevirt-community
               description: General Discussion
+committees: []
