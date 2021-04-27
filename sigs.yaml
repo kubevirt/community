@@ -105,4 +105,26 @@ usergroups:
         teams:
             - name: kubevirt-community
               description: General Discussion
+    - dir: kubevirt-sig-scale
+      name: KubeVirt Perf and Scale SIG
+      mission_statement: |
+        Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
+      label: kubevirt-community
+      leadership:
+        chairs: [rhallisey]
+      meetings:
+        - description: KubeVirt Perf and Scale SIG Meeting
+          day: Thursday
+          time: "15:00"
+          tz: UTC
+          frequency: bimonthy
+          url:
+          archive_url:
+          recordings_url:
+      contact:
+        slack: virtualization
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+            - name: kubevirt-community
+              description: General Discussion
 committees: []
