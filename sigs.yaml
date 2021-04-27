@@ -1,166 +1,108 @@
-# Copied from github.com/kubernetes/community - used for devstats sql generation
 sigs:
-- dir: sig-compute
-  name: compute
-  subprojects:
-  - name: kubevirt
-    owners:
-    - https://raw.githubusercontent.com/kubevirt/k8s-start/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/vAdvisor/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/community/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubevirt/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/run/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/libvirt/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubevirt-ansible/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/client-python/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/api-reference/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubernetes-device-plugins/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/gluster-kubernetes/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/external-storage/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/manageiq-providers-kubevirt/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/v2v-job/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/test-infra-containers/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/storage-demo/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/device-plugin-manager/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/qe-tools/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/vmctl/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/ovs-cni/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubevirt-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cdi-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cdi-api-reference/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cloud-provider-kubevirt/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubevirt-ssp-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/bridge-marker/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/must-gather/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/client-go/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/macvtap-cni/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/vm-import-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/secrets/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/controller-lifecycle-operator-sdk/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/master/OWNERS
-- dir: sig-documentation
-  name: documentation
-  subprojects:
-    - name: documentation
-      owners:
-      - https://raw.githubusercontent.com/kubevirt/demo/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/cockpit-demo/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/user-guide/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/blog/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/master/OWNERS
-- dir: sig-storage
-  name: storage
-  subprojects:
-  - name: containerized-data-importer
-    owners:
-    - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/master/OWNERS
-- dir: sig-testing
-  name: testing
-  subprojects:
-  - name: kubevirtci
-    owners:
-    - https://raw.githubusercontent.com/kubevirt/kubevirtci/master/OWNERS
-    - https://raw.githubusercontent.com/kubevirt/project-infra/master/OWNERS
-- dir: sig-virtctl
-  name: virtctl
-  subprojects:
-  - name: kubectl-virt-plugin
-    owners:
-    - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/master/OWNERS
-- dir: sig-virt
-  name: virtblocks
-  subprojects:
-  - name: virtblocks
-    owners:
-    - https://raw.githubusercontent.com/virtblocks/libvirt/master/OWNERS
-    - https://raw.githubusercontent.com/virtblocks/virtblocks/master/OWNERS
-    - https://raw.githubusercontent.com/virtblocks/kubevirt/master/OWNERS
-    - https://raw.githubusercontent.com/virtblocks/closefds/master/OWNERS
-- dir: sig-network
-  name: network
-  subprojects:
-  - name: nmstate
-    owners:
-    - https://raw.githubusercontent.com/nmstate/nmstate/master/OWNERS
-    - https://raw.githubusercontent.com/nmstate/nmstate.github.io/master/OWNERS
-    - https://raw.githubusercontent.com/nmstate/ansible-nmstate/master/OWNERS
-    - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/master/OWNERS
-  - name: k8snetworkplumbingwg
-    owners:
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-cni/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-device-plugin/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-net-spec/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/network-attachment-definition-client/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/net-attach-def-admission-controller/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/community/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/k8s-net-attach-def-controller/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/reference-deployment/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/toc/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/network-resources-injector/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/net-service-controller/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/helm-charts/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/device-info-spec/master/OWNERS
-    - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
-- dir: sig-userinterface
-  name: userinterface
-  subprojects:
-    - name: userinterface
-      owners:
-      - https://raw.githubusercontent.com/kubevirt/cockpit/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/origin-web-console/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/origin-web-console-server/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/web-ui-components/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/web-ui-design/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/web-ui/master/OWNERS
-      - https://raw.githubusercontent.com/kubevirt/web-ui-operator/master/OWNERS
+    - dir: sig-compute
+      name: compute
+      subprojects:
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/community/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/libvirt/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/external-storage/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/ovs-cni/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-ssp-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/must-gather/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/master/OWNERS
+    - dir: sig-documentation
+      name: documentation
+      subprojects:
+        - name: documentation
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/demo/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/user-guide/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/master/OWNERS
+    - dir: sig-storage
+      name: storage
+      subprojects:
+        - name: containerized-data-importer
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/master/OWNERS
+    - dir: sig-testing
+      name: testing
+      subprojects:
+        - name: kubevirtci
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirtci/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/project-infra/master/OWNERS
+    - dir: sig-virtctl
+      name: virtctl
+      subprojects:
+        - name: kubectl-virt-plugin
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/master/OWNERS
+    - dir: sig-virt
+      name: virtblocks
+      subprojects:
+        - name: virtblocks
+          owners:
+            - https://raw.githubusercontent.com/virtblocks/kubevirt/master/OWNERS
+    - dir: sig-network
+      name: network
+      subprojects:
+        - name: nmstate
+          owners:
+            - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/master/OWNERS
+        - name: k8snetworkplumbingwg
+          owners:
+            - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
+            - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS
+            - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
+    - dir: sig-userinterface
+      name: userinterface
+      subprojects:
+        - name: userinterface
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/web-ui/master/OWNERS
 usergroups:
-- dir: kubevirt-community
-  name: KubeVirt Community
-  mission_statement: >
-    Lorem Ipsum.
-
-  label: kubevirt-community
-  leadership:
-    chairs: []
-#    - github: erikerlandson
-#      name: Erik Erlandson
-#      company: Red Hat
-  meetings:
-  - description: Regular KubeVirt Community Meeting
-    day: Wednesday
-    time: "15:00"
-    tz: UTC
-    frequency: weekly
-    url: https://zoom.us/j/92221936273
-    archive_url: https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls/edit
-    recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
-  contact:
-    slack: virtualization
-    mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
-    teams:
-    - name: kubevirt-community
-      description: General Discussion
+    - dir: kubevirt-community
+      name: KubeVirt Community
+      mission_statement: |
+        Lorem Ipsum.
+      label: kubevirt-community
+      leadership:
+        chairs: []
+      meetings:
+        - description: Regular KubeVirt Community Meeting
+          day: Wednesday
+          time: "15:00"
+          tz: UTC
+          frequency: weekly
+          url: https://zoom.us/j/92221936273
+          archive_url: https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls/edit
+          recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
+      contact:
+        slack: virtualization
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+            - name: kubevirt-community
+              description: General Discussion
 committees: []
