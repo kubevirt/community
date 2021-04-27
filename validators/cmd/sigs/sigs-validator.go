@@ -40,29 +40,29 @@ type Team struct {
 }
 
 type Meeting struct {
-	Description   string `yaml:"description"`
-	Day           string `yaml:"day"`
-	Time          string `yaml:"time"`
-	TZ            string `yaml:"tz"`
-	Frequency     string `yaml:"frequency"`
-	URL           string `yaml:"url"`
+	Description   string
+	Day           string
+	Time          string
+	TZ            string
+	Frequency     string
+	URL           string
 	ArchiveURL    string `yaml:"archive_url"`
 	RecordingsURL string `yaml:"recordings_url"`
 }
 
 type Leadership struct {
-	Chairs []*Chair `yaml:"chairs"`
+	Chairs []*Chair
 }
 
 type Chair struct {
-	Github  string `yaml:"github"`
-	Name    string `yaml:"name"`
-	Company string `yaml:"company"`
+	Github  string
+	Name    string
+	Company string
 }
 
 type SubProjects struct {
-	Name   string   `yaml:"name"`
-	Owners []string `yaml:"owners"`
+	Name   string
+	Owners []string
 }
 
 type options struct {
@@ -73,10 +73,9 @@ type options struct {
 func (o *options) Validate() error {
 	if o.sigsFilePath == "" {
 		return fmt.Errorf("path to sigs.yaml is required")
-	} else {
-		if _, err := os.Stat(o.sigsFilePath); os.IsNotExist(err) {
+	}
+	if _, err := os.Stat(o.sigsFilePath); os.IsNotExist(err) {
 			return fmt.Errorf("file %s does not exist", o.sigsFilePath)
-		}
 	}
 	return nil
 }
@@ -118,14 +117,14 @@ func main() {
 			for _, ownersFileURL := range subProject.Owners {
 				response, err := http.DefaultClient.Head(ownersFileURL)
 				if err != nil {
-					log.Printf("failed to retrieve %s, continuing with next", ownersFileURL)
+					log.Printf("failed to retrieve %q, continuing with next", ownersFileURL)
 					continue
 				}
 				defer response.Body.Close()
 				if response.StatusCode >= http.StatusOK && response.StatusCode < http.StatusMultipleChoices {
 					foundOwners = append(foundOwners, ownersFileURL)
 				} else {
-					log.Printf("failed to retrieve %s", ownersFileURL)
+					log.Printf("failed to retrieve %q: %d", ownersFileURL, response.StatusCode)
 				}
 			}
 			subProject.Owners = foundOwners
