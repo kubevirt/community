@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"os"
 
-	yaml "gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3"
+	"k8s.io/test-infra/prow/config/org"
 )
 
 type Sigs struct {
@@ -92,12 +93,28 @@ func gatherOptions() options {
 	return o
 }
 
+const DefaultURIForKubevirtOrgsYAML = "https://raw.githubusercontent.com/kubevirt/project-infra/master/github/ci/prow-deploy/files/orgs.yaml"
+
 func main() {
 	options := gatherOptions()
 	if err := options.Validate(); err != nil {
 		log.Fatalf("invalid arguments: %v", err)
 	}
 	log.Printf("dry-run: %v", options.dryRun)
+
+	orgs, err := getOrgs()
+	org := "kubevirt"
+	generatedBaseOwnersFileURIs := map[string]struct{}{
+		"https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS": {},
+		"https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS": {},
+		"https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS": {},
+		"https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/master/OWNERS": {},
+		"https://raw.githubusercontent.com/virtblocks/kubevirt/master/OWNERS": {},
+	}
+	missingBaseOwnersFileURIs := make(map[string]struct{}, 0)
+	for repoName, _ := range orgs.Orgs[org].Repos {
+		generatedBaseOwnersFileURIs[fmt.Sprintf("https://raw.githubusercontent.com/%s/%s/master/OWNERS", org, repoName)] = struct{}{}
+	}
 
 	buf, err := ioutil.ReadFile(options.sigsFilePath)
 	if err != nil {
@@ -116,6 +133,9 @@ func main() {
 			foundOwners := make([]string, 0)
 			for _, ownersFileURL := range subProject.Owners {
 				response, err := http.DefaultClient.Head(ownersFileURL)
+				if _, exists := generatedBaseOwnersFileURIs[ownersFileURL]; !exists {
+					missingBaseOwnersFileURIs[ownersFileURL] = struct{}{}
+				}
 				if err != nil {
 					log.Printf("failed to retrieve %q, continuing with next", ownersFileURL)
 					continue
@@ -129,6 +149,10 @@ func main() {
 			}
 			subProject.Owners = foundOwners
 		}
+	}
+
+	if len(missingBaseOwnersFileURIs) > 0 {
+		log.Fatalf("missing links to repos in file %q: %v", options.sigsFilePath, missingBaseOwnersFileURIs)
 	}
 
 	output, err := yaml.Marshal(sigs)
@@ -151,4 +175,21 @@ func main() {
 		}
 	}
 
+}
+
+func getOrgs() (*org.FullConfig, error) {
+	response, err := http.DefaultClient.Get(DefaultURIForKubevirtOrgsYAML)
+	if err != nil {
+		return nil, fmt.Errorf("could not get %q: %v", DefaultURIForKubevirtOrgsYAML, err)
+	}
+	if response.StatusCode >= 300 || response.StatusCode < http.StatusOK {
+		return nil, fmt.Errorf("could not get %q: %v", DefaultURIForKubevirtOrgsYAML, response.Status)
+	}
+	defer response.Body.Close()
+
+	var cfg org.FullConfig
+	if err := yaml.NewDecoder(response.Body).Decode(&cfg); err != nil {
+		return nil, fmt.Errorf("failed to load %q: %v", DefaultURIForKubevirtOrgsYAML, err)
+	}
+	return &cfg, err
 }
