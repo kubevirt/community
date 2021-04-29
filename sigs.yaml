@@ -82,6 +82,28 @@ sigs:
         - name: userinterface
           owners:
             - https://raw.githubusercontent.com/kubevirt/web-ui/master/OWNERS
+    - dir: kubevirt-sig-scale
+      name: KubeVirt Perf and Scale SIG
+      mission_statement: |
+        Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
+      label: kubevirt-community
+      leadership:
+        chairs: [rhallisey]
+      meetings:
+        - description: KubeVirt Perf and Scale SIG Meeting
+          day: Thursday
+          time: "14:00"
+          tz: UTC
+          frequency: bimonthy
+          url: https://zoom.us/j/3205945033
+          archive_url: https://docs.google.com/document/d/1d_b2o05FfBG37VwlC2Z1ZArnT9-_AEJoQTe7iKaQZ6I/edit?usp=sharing
+          recordings_url:
+      contact:
+        slack: virtualization
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+            - name: kubevirt-community
+              description: General Discussion
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
@@ -99,28 +121,6 @@ usergroups:
           url: https://zoom.us/j/92221936273
           archive_url: https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls/edit
           recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
-      contact:
-        slack: virtualization
-        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
-        teams:
-            - name: kubevirt-community
-              description: General Discussion
-    - dir: kubevirt-sig-scale
-      name: KubeVirt Perf and Scale SIG
-      mission_statement: |
-        Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
-      label: kubevirt-community
-      leadership:
-        chairs: [rhallisey]
-      meetings:
-        - description: KubeVirt Perf and Scale SIG Meeting
-          day: Thursday
-          time: "15:00"
-          tz: UTC
-          frequency: bimonthy
-          url:
-          archive_url:
-          recordings_url:
       contact:
         slack: virtualization
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
