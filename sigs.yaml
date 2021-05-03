@@ -82,13 +82,16 @@ sigs:
         - name: userinterface
           owners:
             - https://raw.githubusercontent.com/kubevirt/web-ui/master/OWNERS
-    - dir: kubevirt-sig-scale
+    - dir: sig-scale
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
         Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
       label: kubevirt-community
       leadership:
-        chairs: [rhallisey]
+        chairs:
+          - github: rthallisey
+            name: "Ryan T. Hallisey"
+            company: Nvidia
       meetings:
         - description: KubeVirt Perf and Scale SIG Meeting
           day: Thursday
@@ -97,9 +100,9 @@ sigs:
           frequency: bimonthy
           url: https://zoom.us/j/3205945033
           archive_url: https://docs.google.com/document/d/1d_b2o05FfBG37VwlC2Z1ZArnT9-_AEJoQTe7iKaQZ6I/edit?usp=sharing
-          recordings_url:
+          recordings_url: https://www.youtube.com/channel/UC2FH36TbZizw25pVT1P3C3g
       contact:
-        slack: virtualization
+        slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
         teams:
             - name: kubevirt-community
