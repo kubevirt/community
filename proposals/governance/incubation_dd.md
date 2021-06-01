@@ -17,9 +17,23 @@ Benefits are broad and significant. Teams with a reliance on existing virtual ma
 
 ### Integrations
 
-### Community & End Users
+### Community
 
-#### Community
+#### Communications
+
+Kubevirt uses several technologies to maintain the community.
+
+Source code is stored in git repositories under a GitHub organization provided by the CNCF (https://www.github.com/kubevirt).  GitHub issues are used to track reqs for engineering and bug tracking.  GitHub pull requests are used to peer review contributions.
+
+The project utilizes Google Groups as a mailing list where use, support, proposal topics are discussed.
+
+The project holds a video conference every week via a Zoom account provided by the CNCF.  General topics, support and bug triage are conducted in this meeting.  The project also conducts a weekly meeting based on the topic of performance and scale.  Both meetings are recorded and posted to the project YouTube channel.  Meeting notes are emailed to the general mailing list.
+
+The project uses two channels on the CNCF/Kubernetes Slack server.  #virtualization is used to handle general use and support topics.  #kubevirt-dev is used for developer oriented communication.
+
+KubeVirt utilizes email, website blog and Twitter for important announcements such as version releases.
+
+KubeVirt advertises communications channels via https://kubevirt.io/community as well as project README (https://github.com/kubevirt/kubevirt/blob/master/README.md).
 
 #### End Users
 
