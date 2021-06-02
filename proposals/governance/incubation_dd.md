@@ -9,13 +9,27 @@ Benefits are broad and significant. Teams with a reliance on existing virtual ma
 
 ## Project progress since sandbox
 
-### Metrics
+## Metrics
 
-#### Github
+### Mailing list
+KubeVirt currently (2021/06/01) has 436 subscribers.  The mailing list typically get 0-5 new threads per day.
 
-#### Downloads
+### GitHub
+* 171 official members in the organization
+* About 50 contributors measured by multiple L or greater sized contributions
+* 96 watched tags
+* 2562 stars
+* 615 forks
+
+### Slack
+Slack channels typically get 0-5 new threads per day.
+
+### Downloads
 
 ### Integrations
+* Kubernetes / minikube
+* Red Hat OKD / OpenShift 4.x
+* oVirt / Red Hat Virtualization
 
 ### Community
 
