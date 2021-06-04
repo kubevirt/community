@@ -56,5 +56,17 @@ KubeVirt advertises communications channels via https://kubevirt.io/community as
 ## Features & Roadmap
 
 ### Roadmap at Sandbox
+* [DONE] GA v1 API for core KubeVirt APIs
+ * API v1 features need to rely on GA’ed Kubernetes entities, fully fledged (incl e.g. explain, validation)
+ * An OpenAPI definition as the only source of truth for KubeVirt’s API
+ * https://github.com/kubevirt/kubevirt/pull/3349
+* [DONE] Stabilize or replace bridge network binding
 
 ### Future Roadmap
+* [WIP] Non-root VMI Pods
+* [WIP] Persistent containerDisk volumes
+* [WIP] Establish predictable community release and support patterns
+* [WIP] Define a deprecation policy
+* [WIP] Review and Revise User Guide
+* [WIP] Virt-launcher live updates
+* [WIP] Templating mechanism for VMs
