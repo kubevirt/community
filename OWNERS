@@ -1,10 +1,13 @@
 reviewers:
   - codificat
+  - cwilkers
+  - jobbler
   - mazzystr
   - jean-edouard
 
 approvers:
   - codificat
+  - cwilkers
   - mazzystr
   - fabiand
   - rmohr
