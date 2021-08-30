@@ -27,11 +27,11 @@ Benefits are broad and significant. Teams with a reliance on existing virtual ma
 ### GitHub source code repository
 
 * About 50 contributors measured by multiple L or greater sized contributions
-* Avg of 5 commits per week
 * 171 official members in the organization
 * 2562 stars
 * 615 forks
 * 96 watched tags
+* Aprox 40 commits per week avg
 
 ### Communications
 The project utilizes Google Groups as a mailing list where where users have a chance to interact with core developers and discuss general topics. There are currently (2021/06/01) 436 subscribers.  The mailing list typically receives 0-5 new threads per day.
@@ -90,11 +90,11 @@ Kubevirt has a establihed and documented release process and cadence
  * An OpenAPI definition as the only source of truth for KubeVirt’s API
  * https://github.com/kubevirt/kubevirt/pull/3349
 * [DONE] Zero downtime live updates
-* [DONE] Stabilize or replace bridge network binding
+* [DONE] Stabilize bridge network binding
 * [DONE] Disk hotplug
 * [DONE] IPv6 support
 * [DONE] Device passthrough support
-* [DONE] CPU pinning support
+* [DONE] Numa topology support
 * [DONE] Memory metrics gathering support
 * [DONE] Affinity / Anti-Affinity rules
 * [DONE] Live-Migration support
@@ -112,8 +112,8 @@ Kubevirt has a establihed and documented release process and cadence
 * [WIP] Review and Revise User Guide
 * [WIP] Templating mechanism for VMs
 * [WIP] Monitoring and metrics standardization
+* [WIP] Online Snapshots
 * [WIP] CPU NUMA topology support
-* [WIP] Macvtap support
 * [WIP] SSH proxy ingress support
 
 ## Incubation Stage Requirements
