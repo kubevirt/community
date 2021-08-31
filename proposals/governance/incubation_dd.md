@@ -16,7 +16,7 @@ Benefits are broad and significant. Teams with a reliance on existing virtual ma
 
 ### SIGs
 
-* [SIG blah](https://github.com/kubevirt/community/blob/master/sigs.yaml)
+* [SIG yaml](https://github.com/kubevirt/community/blob/master/sigs.yaml)
 
 ### Maintainers
 
@@ -38,7 +38,7 @@ The project utilizes Google Groups as a mailing list where where users have a ch
 
 The project holds a video conference every week where users have a chance to interact with core developers, discuss general topics and participate in bug triage. Recently the performance and scale working group started conducting a weekly meeting based on the topic. Both meetings are recorded and posted to the project YouTube channel. Meeting notes are also emailed to the general mailing list to keep the community informed.
 
-The project uses two channels on the CNCF/Kubernetes Slack server. #virtualization is used to handle general use topics. #kubevirt-dev is used for developer oriented topics.  Slack channels typically receive 0-5 new threads per day.
+The project uses two channels on the CNCF Kubernetes Slack server. #virtualization is used to handle general use topics. The channel hosts over 1000 users. #kubevirt-dev is used for developer oriented topics. The channel hosts 350 users. The channels typically receive 0-5 new threads per day.
 
 Important announcements are relayed via mailing list, website blog and Twitter.
 
@@ -46,8 +46,8 @@ KubeVirt advertises communications channels via https://kubevirt.io/community as
 
 ### Integrations
 
-* [oVirt](https://www.ovirt.org)
-* [Gardener](https://gardener.cloud/blog/2020-10/00/)
+* [oVirt](https://www.ovirt.org) ... Virtual machines can be run in a container using the external provider feature.
+* [Gardener](https://gardener.cloud/blog/2020-10/00/) ...
 * [Kubermatic Virtualization](https://www.kubermatic.com/products/kubevirt/)
 * [SUSE/Rancher Harvester](https://github.com/rancher/harvester/blob/766abd06561b059c1af623aacc4e505db471ceee/deploy/charts/harvester/README.md)
 * [Google Anthos](https://youtu.be/RE0A3kHT3LA?t=126)
@@ -78,7 +78,7 @@ Design proposals to allow community members to gain feedback on their designs fr
 
 ### Release cadence
 
-Kubevirt has a establihed and documented release process and cadence
+Kubevirt has an established and documented release process and cadence
 
 * [Release process](https://github.com/kubevirt/kubevirt/blob/main/docs/release.md)
 * [Release cadence](https://github.com/kubevirt/kubevirt/blob/main/docs/release.md#cadence-and-timeline)
