@@ -8,21 +8,60 @@ Benefits are broad and significant. Teams with a reliance on existing virtual ma
 
 ## Statement on alignment with the CNCF mission
 
+* Project is self-governing
+
+* Is there a documented Code of Conduct that adheres to the CNCF guidelines?
+
+[Kubevirt CoC](https://github.com/kubevirt/kubevirt/blob/main/CODE_OF_CONDUCT.md)
+
+* Does the project have production deployments that are high quality and high-velocity?
+
+Yes. See End Users below.
+
+* Is the project committed to achieving the CNCF principles and do they have a committed roadmap to address any areas of concern raised by the community?
+
+The KubeVirt project exists to aid users in moving from older frameworks to Cloud Native ones.
+
+* Document that the project has a fundamentally sound design without obvious critical compromises that will inhibit potential widespread adoption
+
+KubeVirt is built on top of standardized architectures and interfaces, particularly the Container Runtime Interface and the Libvirt API. Building on top of agreed cloud native and virtualization standards means that KubeVirt remains compatible with many other technologies, not only now but for years to come.
+
+* Document that the project is useful for cloud native deployments & degree that it’s architected in a cloud native style
+
+* Document that the project has an affinity for how CNCF operates and understand the expectation of being a CNCF project.
+
+KubeVirt has been a CNCF project for two years.
+
+## Sandbox Graduation Requirements
+
+* Document that it is being used successfully in production by at least three independent end users which with focus on adequate quality and scope defined.
+
+See End Users Below. Currently 10 organizations use KubeVirt, some of them for internal use (such as CloudFlare and Nvidia) and some incorporate it into products (such as Red Hat and SUSE).
+
+* Have a healthy number of committers. A committer is defined as someone with the commit bit; i.e., someone who can accept contributions to some or all of the project.
+
+* Demonstrate a substantial ongoing flow of commits and merged contributions.
+
+For the last year, KubeVirt has averaged [more than 350 merged PRs per month](https://kubevirt.devstats.cncf.io/d/74/contributions-chart?orgId=1&var-period=m&var-metric=mergedprs&var-repogroup_name=All&var-country_name=All&var-company_name=All&var-company=all) from more than 60 contributors. Of those, [10-20 per month](https://kubevirt.devstats.cncf.io/d/14/new-and-episodic-pr-contributors?orgId=1&from=now-1y&to=now-1w&var-period=m&var-repogroup_name=All) come from new contributors, showing ongoing interest in joining the project.
+
 ## Community
 
 ### Governance
 
+* [WIP Governance](https://github.com/kubevirt/community/pull/123)
 * [Membership policy](https://github.com/kubevirt/community/blob/master/membership_policy.md)
+
+As the project is in the process of growing beyond its initial group of contributors, we are working on adopting additional written governance rules.
 
 ### SIGs
 
-* [SIG yaml](https://github.com/kubevirt/community/blob/master/sigs.yaml)
+* [SIG list](https://github.com/kubevirt/community/blob/master/sigs.yaml)
+
+Most of those SIGs are not yet independent committees. The Performance and Scale SIG has its own leadership and contributors, and both Documentation and Storage SIG should soon have the same. The community plan is to, as the community grows, foster dedicated contributors in each SIG area. As well as expanding our contribution pipeline, this will provide more opportunities for new contributors to rise to leadership of the project.
 
 ### Maintainers
 
-*
-*
-*
+* https://github.com/kubevirt/community/blob/master/MAINTAINERS.md
 
 ### GitHub source code repository
 
@@ -31,7 +70,6 @@ Benefits are broad and significant. Teams with a reliance on existing virtual ma
 * 2562 stars
 * 615 forks
 * 96 watched tags
-* Aprox 40 commits per week avg
 
 ### Communications
 The project utilizes Google Groups as a mailing list where where users have a chance to interact with core developers and discuss general topics. There are currently (2021/06/01) 436 subscribers.  The mailing list typically receives 0-5 new threads per day.
@@ -43,14 +81,6 @@ The project uses two channels on the CNCF Kubernetes Slack server. #virtualizati
 Important announcements are relayed via mailing list, website blog and Twitter.
 
 KubeVirt advertises communications channels via https://kubevirt.io/community as well as project [README](https://github.com/kubevirt/kubevirt/blob/master/README.md).
-
-### Integrations
-
-* [oVirt](https://www.ovirt.org) ... Virtual machines can be run in a container using the external provider feature.
-* [Gardener](https://gardener.cloud/blog/2020-10/00/) ...
-* [Kubermatic Virtualization](https://www.kubermatic.com/products/kubevirt/)
-* [SUSE/Rancher Harvester](https://github.com/rancher/harvester/blob/766abd06561b059c1af623aacc4e505db471ceee/deploy/charts/harvester/README.md)
-* [Google Anthos](https://youtu.be/RE0A3kHT3LA?t=126)
 
 ### End Users
 
@@ -66,6 +96,14 @@ Significant users include:
 * CloudFlare
 * Ateme
 * Cloudbase Solutions
+
+### Integrations
+
+* [oVirt](https://www.ovirt.org) ... Virtual machines can be run in a container using the external provider feature.
+* [Gardener](https://gardener.cloud/blog/2020-10/00/) ...
+* [Kubermatic Virtualization](https://www.kubermatic.com/products/kubevirt/)
+* [SUSE/Rancher Harvester](https://github.com/rancher/harvester/blob/766abd06561b059c1af623aacc4e505db471ceee/deploy/charts/harvester/README.md)
+* [Google Anthos](https://youtu.be/RE0A3kHT3LA?t=126)
 
 ### CNCF Sponsored Security Audit
 
