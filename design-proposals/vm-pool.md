@@ -13,26 +13,26 @@ The ability to manage groups (or fleets) of similar VMs using a higher level abs
 * Automated and manual scale-out and scale-in VMs associated with a pool
 * Autohealing (delete and replace) of VMs in a pool not passing health checks
 * Ability to specify unique secrets and configMap data per VM within a VMPool
+* Ability to detach VMs from VMPool for debug and analysis
 
 ## Non-Goals
 
-* Not designing a pool abstraction capable of managing multiple VM shapes within a single pool. A VMPool consists only of VMs replicated from a single config.
+* Not designing a VM fleet abstraction capable of managing multiple VM groupings containing VMs which are dissimilar to one another. A VMPool consists only of VMs which are similar in shape to one another that are derived from a single config.
 
 ## Terms
 
-* **VirtualMachine [VM]** - Refers specifically to the KubeVirt VirtualMachine api object. 
-* **VirtualMachinePool [VMPool]** - KubeVirt API for scaling out/in replicas of KubeVirt VirtualMachines
+* **VirtualMachine [VM]** - Refers specifically to the KubeVirt VirtualMachine API object.
+* **VirtualMachinePool [VMPool]** - KubeVirt API for scaling out/in replicas of KubeVirt VirtualMachines.
 * **VirtualMachineConfig [VMConfig]** - KubeVirt API representing a VirtualMachine spec which is referenced by a VirtualMachinePool.
-* **Scale-out and Scale-in** - Terms to describe the action of adding/removing to the count of VMs within a VMPool.
+* **Scale-out and Scale-in** - Terms to describe the action of modifying the replica count of VMs within a VMPool.
 * **Detach VM** - The process of manually separating a VirtualMachine from a VirtualMachinePool.
-* **Scale-in Strategy** - The policy used to define how a VMPool both selects and tears down VMs during scale-in.
-* **Update Strategy** - The policy used to define how changes to a VMConfig propagate to VMs within a VMPool. 
+* **Disruption Strategy** - The policy used to define how a VMPool selects VMs during scale-in and update.
 
 ## User Stories
 
 * As a cluster user, I want to automate batch rollout of changes (CPU/Memory/Disk/PubSSHKeys/etc…) across a fleet of VMs.
 * As a cluster user managing fleets of VMs I want to automate scale out of VM instances based on utilization
-* As a cluster user managing fleets of VMs I want to automate scale in of iden VM instances to optimize cluster resource consumption
+* As a cluster user managing fleets of VMs I want to automate scale-in of identical VM instances to optimize cluster resource consumption
 * As a user transitioning workloads to KubeVirt I want to use similar management patterns provided by existing Iaas platforms (AWS, Azure, GCP)
 * As a cluster admin managing nested Kubernetes clusters on top of KubeVirt VMs, I want the ability to elastically scale the underlying KubeVirt VM infrastructure.
 * As a SRE managing the availability of VM fleets I want to automate VM recovery by auto detecting and deleting misbehaving VMs and having the platform spin up fresh new instances as a replacement.
@@ -53,7 +53,7 @@ In order to make this even more tangible, below is a figure that outlines the ty
 
 ## VirtualMachineConfig (VMConfig) API
 
-The VMConfig api contains a VirtualMachineSpec structure that is identical to a VM object, which makes it similar to a VM object itself. However there are some key differences here between the two objects.
+The VMConfig API contains a VirtualMachineSpec structure that is identical to a VM object, which makes it similar to a VM object itself. However there are some key differences here between the two objects.
 
 **VMConfig vs VM**
 
@@ -68,7 +68,7 @@ The VMConfig api contains a VirtualMachineSpec structure that is identical to a 
 
 ## VirtualMachinePool (VMPool) API
 
-The VMPool api represents all the tunings necessary for managing a pool of stateful VMs. This API is very simple and leverages the VMConfig object for most of the heavy lifting pertaining to what the VM instances within the pool actually look like.
+The VMPool API represents all the tunings necessary for managing a pool of stateful VMs. This API is very simple and leverages the VMConfig object for most of the heavy lifting pertaining to what the VM instances within the pool actually look like.
 
 The VMPools spec contains the following tunings and values
 
@@ -79,15 +79,23 @@ The VMPools spec contains the following tunings and values
 	* **VMPrefix (Defaults to VMPool.Name)** - String representing the prefix to use for when naming VMs.
 	* **AppendPostfixToSecretReferences: (default false)** - Boolean that indicates if VM’s unique postfix should be appended to references to Secrets in the VMI’s Volumes list. This is useful when needing to pre-generate unique secrets for VMs within a pool.
 	* **AppendPostfixToConfigMapReferences (default false)** - Boolean that indicates if VM’s unique postfix should be appended to ConfigMap references in the VMI’s Volumes list. This is useful when needing to pre-generate unique secrets for VMs within a pool.
-* **ScaleInStrategy** - (Optional) Specifies how the VMPool controller manages scaling in a VMPool when the desired number of replicas exceeds the number of VMs currently active in the pool
-	* **Manual** - No automation during scale in. Users manually deletes VMs in a pool. Persistent state preservation is up to the user removing the VMs.
-	* **Halted** - Opportunistic scale in of VMs which are in a halted state. Each VM’s PVCs are preserved for future scale out
-	* **Shutdown** - Proactive scale in by shutting down VM. Each VM’s PVCs are preserved for future scale out
-	* **Delete (Default)** - Proactive scale in by deletion of VM entirely. No PVC state is preserved
-* **UpdateStrategy** - (Optional) Specifies how the VMPool controller manges rolling out updates to a VMConfig to the VMs active within the pool.
-	* **Proactive** - VMs in pool are power cycled to automatically pick up new changes
-	* **Opportunistic (Default)** - New changes are only applied to VM specs and those changes are only applied to an active VMI after restart.
-	* **Unmanaged** - Only new VMs pick up spec changes, existing VMs are never touched.
+* **DisruptionStrategy** - (Optional) Specifies how the VMPool controller manages scaling in and updating VMs within a VMPool
+	* **Unmanaged** - No automation during scale-in or updates. The VM is never touched after creation. Users manually delete and update individual VMs in a pool. Persistent state preservation is up to the user removing the VMs
+	* **Opportunistic** - Opportunistic scale-in and update of VMs which are in a halted state.
+		* **ScaleInStatePreservation** - (Optional) specifies if and how to preserve state of VMs selected for scale-in.
+			* **Disabled** - (Default) all state for VMs selected for scale-in will be deleted
+			* **Offline** - PVCs for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning time during scale out)
+			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out)
+Each VM’s PVCs are preserved for future scale out
+	* **Proactive** - Proactive scale-in and update by forcing VMs to shutdown during scale-in and restart during update.
+		* **ScaleInPriority** - The priority in which VM instances are selected for proactive scale-in
+			* **Random** (Default) - Pick VMs by random for scale-in first
+			* **Oldest** - Pick oldest VMs by creation time for scale-in first
+		* **ScaleInStatePreservation** - (Optional) specifies if and how to preserve state of VMs selected for scale-in.
+			* **Disabled** - (Default) all state for VMs selected for scale-in will be deleted
+			* **Offline** - PVCs for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning time during scale out)
+			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out)
+Each VM’s PVCs are preserved for future scale out
 * **AutohealingStrategy** - (Optional) 
 	* **None (Default)** - VM state is preserved, even during crashloop. No action is taken to auto recover the VM.
 	* **ReprovisionOnFailure** - VM is completely reprovisioned with persistent state refresh if the VM’s VMI terminates unexpectedly with VMI.Status.Phase=failed. This is useful in instances where a VM has data corruption and continues to fail liveness checks.
@@ -95,7 +103,7 @@ The VMPools spec contains the following tunings and values
 
 ## VMPool API Examples
 
-**Automatic rolling updates and “Shutdown” as scale-in strategy to optimization of boot times during scale-out**
+**Automatic rolling updates and "Shutdown" as scale-in strategy to optimization of boot times during scale-out**
 
 ```yaml
 apiVersion: kubevirt.io/v1
@@ -106,12 +114,11 @@ spec:
   virtualMachineRef:                                                                
     name: my-template
     kind: VirtualMachineConfig
-  desiredSize: 100                                                   
-  updateStrategy:                                                    
-    RollingUpdate:                                                   
-      batchCount: 5                                                  
-      maxUnavailable: 10                                             
-  scaleInStrategy: "Shutdown"
+  replicas: 100                                                   
+  maxUnavailable: 10                                             
+  disruptionStrategy:
+    proactive:
+      scaleInStatePreservation: Offline
 ```
 
 **Manual rolling updates and Manual scale-in strategy**
@@ -124,10 +131,9 @@ metadata:
 spec:                                                                
   VirtualMachineConfigRef:                                                                
     name: my-template                                                
-  desiredSize: 100                                                   
-  updateStrategy:                                                    
-    Manual: {}
-  scaleInStrategy: "Manual"
+  replica: 100                                                   
+  disruptionStrategy:
+    unmanaged: {}
 ```
 
 # Special Topics
@@ -146,9 +152,9 @@ By default, VM names are generated from the VMPool’s name by appending the VMP
 
 ## State Preservation during Scale-in
 
-During scale-in when the ScaleInStrategy is set to Halted or Shutdown, the VM’s being removed from the pool will have their PVC state preserved. In order to ensure on the next scale-out event that VMs using the exact same state are started again, the previous VM names will be reused during scale-out. This is similar in concept to how a StatefulSet uses predictable sequential names.
+During scale-in when the disruptionStrategy is set to `Proactive` with `ScaleInStatePreservation=Offline`, the VM’s being removed from the pool will have their PVC state preserved. In order to ensure on the next scale-out event that VMs using the exact same state are started again, the previous VM names will be reused during scale-out. This is similar in concept to how a StatefulSet uses predictable sequential names.
 
-When ScaleInStrategy is set to Delete, all PVC state will be completely removed from VMs during scale-in and reprovisioned during scale-out.
+When disruptionStrategy is set to `Proactive` with `ScaleInStatePreservation=Disabled`, all PVC state will be completely removed from VMs during scale-in and reprovisioned during scale-out.
 
 ## Handling of Annotations and Labels
 
