@@ -72,15 +72,19 @@ The common templates shipped with SSP need to have their DataVolumeTemplate sect
 
 ## HCO: Integration with SSP Operator
 
-During installation, the HCO bundle's CSV will pass into the HCO operator (as ENV VARs) locations where disk images are sourced from for the automated disk image delivery/update feature. The end user can opt-in to automatic delivery/updates of these image sources through a tuning on the HCO's CR. From there the HCO is responsible for configuring DataImportCrons on the SSP operator's CR.
+During installation, the HCO bundle's CSV will pass into the HCO operator (as a local yaml file within the HCO image) locations where disk images are sourced from for the automated disk image delivery/update feature. 
 
-This document doesn't include within it's scope how the HCO should expose this feature to the end user. The general expectation is that we will start with a simple tuning that enables toggling automated delivery/updates on and then consider advanced tunings in future releases. The exact structure of where this tuning belongs on the HCO API is left up to the HCO community.
+The end user can opt-in to automatic delivery/updates of these image sources through a tuning on the HyperConverged CR, by setting the `enableCommonBootImageImport` feature gate to `true`. From there the HCO is responsible for configuring DataImportCrons on the SSP operator's CR.
+
+For these images, HCO will set the `schedule` field to check the images every 12 hours. In order to spread the reading from the image registries and prevent DDoS, HCO will select a random minute and will set the schedule accordingly. For example, if the random minute is 42, the schedule will be `"42 */12 * * *"`. HCO will store the random schedule in the HyperConverged `status.dataImportSchedule` field, so it will keep using the same schedule even if the HCO pod was restarted. 
+
+The HCO will support an API to add custom golden images, to allow the end user to add golden images, in addition to the images in the HCO image. The `schedule` field in a custom dataImportCronTemplate object is mandatory. Custom data import cron templates are populated even if the `enableCommonBootImageImport` feature gate is set to `false`.
 
 ## HCO Disconnected Environments
 
 For the initial feature set, the HCO will not target enabling automated disk delivery/updates for disconnected environments.
 
-Admins in disconnected environments have the option to create their own DataSourceCrons to automate importing disk images from a local container registery if they so choose. 
+Admins in disconnected environments have the option to create their own DataSourceCrons to automate importing disk images from a local container registery if they so choose, using the custom data import cron templates API in the HyperConverged CR.
 
 ## OCP UI: Integration with DataSources
 
@@ -317,3 +321,30 @@ spec:
       managedDataSource: centos8
 ```
 
+## HyperConverged example
+```yaml
+apiVersion: hco.kubevirt.io/v1beta1
+kind: HyperConverged
+metadata:
+  name: kubevirt-hyperconverged
+spec:
+  featureGates:
+    enableCommonBootImageImport: true
+  dataImportCronTemplates:
+  - metadata:
+      name: custom-image1
+    spec:
+      schedule: "0 */12 * * *"
+      source:
+        registry:
+          url: docker://myprivateregistry/custom1
+      managedDataSource: custom1
+  - metadata:
+      name: custom-image2
+    spec:
+      schedule: "1 */12 * * *"
+      source:
+        registry:
+          url: docker://myprivateregistry/custom2
+      managedDataSource: custom2
+```
