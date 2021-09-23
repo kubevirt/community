@@ -1,6 +1,6 @@
 # Overview
 
-This design provides an approach for creating a VM grouping and replication abstraction for KubeVirt called a VirtualMachinePool. 
+This design provides an approach for creating a VM grouping and replication abstraction for KubeVirt called a VirtualMachinePool.
 
 ## Motivation
 
@@ -86,6 +86,9 @@ The VMPools spec contains the following tunings and values
 	* **Unmanaged** - No automation during updates. The VM is never touched after creation. Users manually update individual VMs in a pool.
 	* **Opportunistic** - Opportunistic update of VMs which are in a halted state.
 	* **Proactive** - (Default) Proactive update by forcing VMs to restart during update.
+		* **SelectionPolicy** - (Optional) (Defaults to "random" base policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
+			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Policies include [LabelSelector|NodeSelector]
+			* **BasePolicy** - (Optional) Catch all polices [Oldest|Newest|Random]
 * **ScaleInStrategy** - (Optional) Specifies how the VMPool controller manages scaling in VMs within a VMPool
 	* **Unmanaged** - No automation during scale-in. The VM is never touched after creation. Users manually delete individual VMs in a pool. Persistent state preservation is up to the user removing the VMs
 	* **Opportunistic** - Opportunistic scale-in of VMs which are in a halted state.
@@ -95,15 +98,15 @@ The VMPools spec contains the following tunings and values
 			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out)
 Each VM’s PVCs are preserved for future scale out
 	* **Proactive** - (Default) Proactive scale-in by forcing VMs to shutdown during scale-in.
-		* **Priority** - The priority in which VM instances are selected for proactive scale-in
-			* **Random** (Default) - Pick VMs by random for scale-in first
-			* **Oldest** - Pick oldest VMs by creation time for scale-in first
+		* **SelectionPolicy** - (Optional) (Defaults to "random" base policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
+			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Policies include [LabelSelector|NodeSelector]
+			* **BasePolicy** - (Optional) Catch all polices [Oldest|Newest|Random]
 		* **StatePreservation** - (Optional) specifies if and how to preserve state of VMs selected for scale-in.
 			* **Disabled** - (Default) all state for VMs selected for scale-in will be deleted
 			* **Offline** - PVCs for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning time during scale out)
 			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out)
 Each VM’s PVCs are preserved for future scale out
-* **AutohealingStrategy** - (Optional) 
+* **AutohealingStrategy** - (Optional)
 	* **None** - (Default) VM state is preserved, even during crashloop. No action is taken to auto recover the VM.
 	* **ReprovisionOnFailure** - VM is completely reprovisioned with persistent state refresh if the VM’s VMI terminates unexpectedly with VMI.Status.Phase=failed. This is useful in instances where a VM has data corruption and continues to fail liveness checks.
 
@@ -114,37 +117,69 @@ Each VM’s PVCs are preserved for future scale out
 
 ```yaml
 apiVersion: kubevirt.io/v1
-kind: VirtualMachinePool                                             
-metadata:                                                            
-  name: my-vm-pool                                                   
-spec:                                                                
-  virtualMachineRef:                                                                
-  VirtualMachineConfigRef:                                                                
+kind: VirtualMachinePool
+metadata:
+  name: my-vm-pool
+spec:
+  VirtualMachineConfigRef:
     name: my-template
-  replicas: 100                                                   
-  maxUnavailable: 10                                             
+  replicas: 100
+  maxUnavailable: 10
   scaleInStrategy:
     proactive:
       statePreservation: Offline
+      selectionPolicy:
+        basePolicy: "Oldest"
   updateStrategy:
-    proactive: {}
+    proactive:
+      selectionPolicy:
+        basePolicy: "Oldest"
 ```
 
 **Manual rolling updates and Manual scale-in strategy**
 
 ```yaml
 apiVersion: kubevirt.io/v1
-kind: VirtualMachinePool                                             
-metadata:                                                            
-  name: my-vm-pool                                                   
-spec:                                                                
-  VirtualMachineConfigRef:                                                                
-    name: my-template                                                
-  replica: 100                                                   
+kind: VirtualMachinePool
+metadata:
+  name: my-vm-pool
+spec:
+  VirtualMachineConfigRef:
+    name: my-template
+  replica: 100
   scaleInStrategy:
     unmanaged: {}
   updateStrategy:
     unmanaged: {}
+```
+
+**Automatic rolling updates and scale-in strategy with VM ordered selection policy on scale-in**
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachinePool
+metadata:
+  name: my-vm-pool
+spec:
+  VirtualMachineConfigRef:
+    name: my-template
+  replicas: 100
+  maxUnavailable: 10
+  scaleInStrategy:
+    proactive:
+      selectionPolicy:
+        orderedPolicies:
+          - labelSelector
+            - non-important-vms
+          - nodeSelector
+            - node2
+            - node3
+        basePolicy: "Oldest"
+      statePreservation: Offline
+  updateStrategy:
+    proactive:
+      selectionPolicy:
+        basePolicy: "Oldest"
 ```
 
 # Special Topics
@@ -171,7 +206,7 @@ When scaleInStrategy is set to `Proactive` with `Preservation=Disabled`, all PVC
 
 VMs will inherit the Labels/Annotations from the VMPool.
 
-VMIs will inherit the Labels/Annotations from the VMITemplate section of a VMConfig in the same fashion that VMIs inherit Labels/Annotations from the VMITemplate of a VM. 
+VMIs will inherit the Labels/Annotations from the VMITemplate section of a VMConfig in the same fashion that VMIs inherit Labels/Annotations from the VMITemplate of a VM.
 
 ## Handling Persistent Storage
 
