@@ -106,10 +106,8 @@ Each VM’s PVCs are preserved for future scale out
 			* **Offline** - PVCs for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning time during scale out)
 			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out)
 Each VM’s PVCs are preserved for future scale out
-* **AutohealingStrategy** - (Optional)
-	* **None** - (Default) VM state is preserved, even during crashloop. No action is taken to auto recover the VM.
-	* **ReprovisionOnFailure** - VM is completely reprovisioned with persistent state refresh if the VM’s VMI terminates unexpectedly with VMI.Status.Phase=failed. This is useful in instances where a VM has data corruption and continues to fail liveness checks.
-
+* **Autohealing** - (Optional)  (Defaults to disabled with nil pointer) Pointer to struct which specifies when a VMPool should should completely replace a failing VM with a reprovisioned instance. 
+	* **StartupFailureThreshold** - (Optional) (Defaults to 3) An integer representing how many consecutive failures to reach a running state (which includes failing to pass liveness probes at startup when liveness probes are enabled) should result in reprovisioning.
 
 ## VMPool API Examples
 
@@ -220,11 +218,20 @@ This default behavior can be modified by setting the **AppendPostfixToSecretRefe
 
 ## Autohealing
 
-When managing VMs at large scale, it is useful to automate the recovery of VMs which continually fail to reach a ready state. This automatically fixes scenarios where a VM’s state has somehow been corrupted and needs to be completely refreshed.
+When managing VMs at large scale, it is useful to automate the recovery of VMs which continually fail to reach a running phase or pass the liveness probes. This automatically fixes scenarios where a VM’s state has somehow been corrupted and needs to be completely refreshed.
 
-By setting `AutohealingStrategy=ReprovisionOnFailure` on the VMPool’s spec, VMs which reach an unexpected failure state will automatically be completely deleted (including persistent storage) and re-provisioned. This allows for auto recovery in application scenarios that can withstand such an action.
+Autohealing has two layers.
 
-Autohealing must have an CrashLoopBackoff mechanism to prevent it from causing unnecessary strain on the cluster.
+* VMI Recovery - This is configured at the VMConfig layer through the use of LivenessProbes on the VMI template within the VMConfig. More info about Liveness proves can be found [here](http://kubevirt.io/user-guide/virtual_machines/liveness_and_readiness_probes/#liveness-and-readiness-probes)
+* VM Recovery - This is configured at the VMPool layer through the use of the `Autohealing` tunable on the VMPool's struct.
+
+VMI recovery involves simply tearing down a VM's active VMI and restarting it. The VM's volumes are preserved and the new VMI is launched using the existing volumes. This is essentially an automated VM restart.
+
+VM recovery involves a VMPool completely deleting a VM and the VM's state, then reprovisioning the VM. This is a complete state refresh.
+
+By enabling `Autohealing: {}` on the VMPool’s spec, VMs which continually fail to successfully launch and pass an initial liveness check will automatically be deleted (including persistent storage) and re-provisioned. This allows for auto recovery in application scenarios that can withstand such an action.
+
+Autohealing must have an exponential backoff mechanism to prevent it from causing unnecessary strain on the cluster due to state reprovisioning.
 
 ## Throttling Parallel VM Creation/Update
 
