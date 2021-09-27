@@ -57,8 +57,72 @@ to call the ADD / DEL for **all** networks listed in its
 `k8s.v1.cni.cncf.io/networks` annotation.
 
 As such, the first part of the design implementation must focus on multus; it
-must be refactored to work as a thick plugin, which enables it to be triggered
-not only when the pod's sandbox is created, but also on-demand.
+must be refactored to enable it to be triggered not only when the pod's sandbox
+is created, but also on-demand - i.e. whenever the pod's
+`k8s.v1.cni.cncf.io/networks` are updated.
+
+To do that, a controller residing on a long lived process must be introduced.
+An important detail to take into account is this controller **must** be
+executed on the host's PID, network, and mount namespaces, in order to access
+whatever resources the delegate CNI requires which are available in the host
+file system (e.g. log files, sockets, etc). The alternative would be for the
+multus configuration to somehow know which resources to bind mount into the pod,
+which, in my opinion is not reasonable without major changes in multus - we'd
+need some discovery mechanism between multus & the CNI plugins.
+
+There are multiple alternatives to run the controller process, each of which
+with advantages / disadvantages:
+1. the controller simply listens for pod network annotation updates, and spawns
+   a new process (the "thin" CNI plugin) that runs on the host's PID, net, and
+   mount namespaces.
+
+   This alternative **requires** multus to share the PID namespace of the host,
+   but only shares the host's mount namespace on the CNI process running the CNI
+   binary - the controller part runs in its own mount namespace.
+2. multus is re-architected as a thick plugin. This could achieved - for
+   instance - by bind mounting the host's filesystem as a volume in the multus
+   pod.
+
+   While this solution does **not** require the pod to share the host's PID
+   namespace, it does grant the controller side access to the host's
+   filesystem.
+
+   This solution requires each delegate CNI's configuration to be updated,
+   pointing at the mounted path, rather than the path on the host - something
+   that is dependent of each individual plugin's implementation.
+
+   This solution also implies a larger attack surface on multus, since it is a
+   privileged container with access to the host's filesystem.
+
+### Simple controller
+This controller would just start a new process on the host's mount namespace.
+
+To achieve it, the following code snippet could be explored:
+
+```golang
+hostMountNamespace := "/proc/1/ns/mnt"
+fd, err := os.Open(hostMountNamespace)
+if err != nil {
+    return fmt.Errorf("failed to open mount namespace: %v", err)
+}
+defer fd.Close()
+
+if err = unix.Unshare(unix.CLONE_NEWNS); err != nil {
+    return fmt.Errorf("failed to detach from parent mount namespace: %v", err)
+}
+if err := unix.Setns(int(fd.Fd()), unix.CLONE_NEWNS); err != nil {
+    return fmt.Errorf("failed to join the mount namespace: %v", err)
+}
+
+const cniBinDir = "/opt/cni/bin/"
+
+netCont := ...
+runtimeConfig := ...
+
+cniDriver := libcni.NewCNIConfig([]string{cniBinDir}, nil)
+cniDriver.AddNetwork(context.Background(), netConf, runtimeConfig)
+...
+```
 
 ### Thickening multus
 A "thin CNI plugin" runs as a one-shot process, typically as a binary on disk
@@ -79,6 +143,15 @@ provided for the multus pod.
 The CNI shim will then be invoked by kubelet, and send the CNI ADD/DELETE
 commands to the server side of multus via the unix domain socket previously
 mentioned.
+
+As previously mentioned in the [multus section](#multus), this approach
+requires the full host's filesystem to be bind mounted into the multus pod,
+and each of the delate CNI plugins to use these bind mounted paths instead of
+whatever their defaults are. This could be inconvenient - at best - or, break
+under plugins having an hard-coded path.
+
+The upside of this approach, is that it seems to not require to share the
+host's PID namespace.
 
 Refer to the sequence diagram below for more information:
 
