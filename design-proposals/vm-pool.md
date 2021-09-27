@@ -9,8 +9,8 @@ The ability to manage groups (or fleets) of similar VMs using a higher level abs
 ## Goals
 
 * VM pool abstraction capable of managing replication of stateful VMs at scale
-* Automated rollout of spec changes across and other updates across a pool of stateful VMs
-* Automated and manual scale-out and scale-in VMs associated with a pool
+* Automated rollout of spec changes and other updates across a pool of stateful VMs
+* Automated and manual scale-out and scale-in of VMs associated with a pool
 * Autohealing (delete and replace) of VMs in a pool not passing health checks
 * Ability to specify unique secrets and configMap data per VM within a VMPool
 * Ability to detach VMs from VMPool for debug and analysis
@@ -26,8 +26,8 @@ The ability to manage groups (or fleets) of similar VMs using a higher level abs
 * **VirtualMachineConfig [VMConfig]** - KubeVirt API representing a VirtualMachine spec which is referenced by a VirtualMachinePool.
 * **Scale-out and Scale-in** - Terms to describe the action of modifying the replica count of VMs within a VMPool.
 * **Detach VM** - The process of manually separating a VirtualMachine from a VirtualMachinePool.
-* **UpdateIn Strategy** - The policy used to define how a VMPool handles rolling out VMConfig updates to VMs within the pool.
-* **ScaleIn Strategy** - The policy used to define how a VMPool handles removing VMs from a pool during scale-in.
+* **Update Strategy** - The policy used to define how a VMPool handles rolling out VMConfig updates to VMs within the pool.
+* **Scale-In Strategy** - The policy used to define how a VMPool handles removing VMs from a pool during scale-in.
 
 ## User Stories
 
@@ -193,6 +193,26 @@ Since VMs within a VMPool each have a unique sequential postfix applied to each 
 ## VM Naming
 
 By default, VM names are generated from the VMPool’s name by appending the VMPool’s name with a sequential unique postfix. This is similar to how pods are generated from a StatefulSet’s name.
+
+Here is an example of how the VMPools sequential postfix will work in practice.
+
+Starting with a VMPool that has 3 VMs.
+
+my-vm-1
+my-vm-2
+my-vm-3
+
+During scale-in (replicas:2), my-vm-2 is removed, which results in the set looking like this.
+
+my-vm-1
+my-vm-3
+
+On the next scale-out event, the VMPool is going to search sequentially to fill any gaps before appending new sequence numbers. If the VMPool's replica count is set to 4 (replicas:4), the new set will fill in the missing my-vm-2 and create a new my-vm-4
+
+my-vm-1
+my-vm-2 (recreated from previous state if ScaleInPreserveState=offline
+my-vm-3
+my-vm-4 (newly provisioned)
 
 ## State Preservation during Scale-in
 
