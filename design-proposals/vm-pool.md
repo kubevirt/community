@@ -23,10 +23,9 @@ The ability to manage groups (or fleets) of similar VMs using a higher level abs
 
 * **VirtualMachine [VM]** - Refers specifically to the KubeVirt VirtualMachine API object.
 * **VirtualMachinePool [VMPool]** - KubeVirt API for scaling out/in replicas of KubeVirt VirtualMachines.
-* **VirtualMachineConfig [VMConfig]** - KubeVirt API representing a VirtualMachine spec which is referenced by a VirtualMachinePool.
 * **Scale-out and Scale-in** - Terms to describe the action of modifying the replica count of VMs within a VMPool.
 * **Detach VM** - The process of manually separating a VirtualMachine from a VirtualMachinePool.
-* **Update Strategy** - The policy used to define how a VMPool handles rolling out VMConfig updates to VMs within the pool.
+* **Update Strategy** - The policy used to define how a VMPool handles rolling out VM spec updates to VMs within the pool.
 * **Scale-In Strategy** - The policy used to define how a VMPool handles removing VMs from a pool during scale-in.
 
 ## User Stories
@@ -41,44 +40,16 @@ The ability to manage groups (or fleets) of similar VMs using a higher level abs
 
 # Design
 
-The VMPool design introduces two new APIs represented as CRDs, the VirtualMachinePool (VMPool) object and the VirtualMachineConfig (VMConfig) object. For the most part, a VMConfig object is simply a VM object without a status section that is used by a VMPool to stamp out multiple replicas.
-
-The figure below illustrates the relationship between a VMPool, VMConfig, and VM. The VMPool stamps out new VM replicas using the contents as in the VMConfig.
-
-
-![VMPool+VMConfig+VM](vm-pool-images/figure1.png "VMPool and VMConfig relationship")
-
-In order to make this even more tangible, below is a figure that outlines the types of tunings present in each of these APIs.
-
-![VMPool vs. VMConfig](vm-pool-images/figure2.png "VMPool vs. VMConfig")
-
-## VirtualMachineConfig (VMConfig) API
-
-The VMConfig API contains a VirtualMachineSpec structure that is identical to a VM object, which makes it similar to a VM object itself. However there are some key differences here between the two objects.
-
-**VMConfig vs VM**
-
-**Differences**
-* A VMConfig object can never be started. Instead the VMConfig object is referenced by higher level controllers (like a VMPool) which can start many instances of VMs using the VMConfig.
-* The VMConfig has a different status section from VM
-* A VMConfig’s name does not correlate in any way to a VM generated from the VMConfig
-* In a VMConfig, all naming resulting in newly created objects are treated as generated names in practice. For example, the name of a DataVolumeTemplate in a VMConfig.Spec.DataVolumeTemplates list will be treated as a generated name when VMs are spawned using the config. This ensures all VMs derived from a VMConfig are unique.
-
-**Similarities**
-* VMConfig and VM object’s spec structure are identical
+The VMPool design introduces a new API represented as a CRD called the VirtualMachinePool (VMPool) object. This object contains tunings related to managing a set of replicated stateful VMs as well as a template that defines the configuration applied creating the VM replicas. Conceptually, The VMPool's templating mechanism is very similar to how Kubernetes Deployments operate.
 
 ## VirtualMachinePool (VMPool) API
 
-The VMPool API represents all the tunings necessary for managing a pool of stateful VMs. This API is very simple and leverages the VMConfig object for most of the heavy lifting pertaining to what the VM instances within the pool actually look like.
+The VMPool API represents all the tunings necessary for managing a pool of stateful VMs. The VMPools spec contains the following tunings and values
 
-The VMPools spec contains the following tunings and values
-
-* **VirtualMachineConfigRef** - (Required) A structure that points to a VMConfig object
-	* **Name** - (Required) The name of the VMConfig to assign to this VMPool. Assumes the object type is VirtualMachineConfig and that the object exists in the same namespace as the pool.
+* **Template** - (Required) A VirtualMachine spec used as a template when creating each VM in the pool.
 * **Replicas** - (Required) An integer representing the desired number of VM replicas
 * **MaxUnavailable**  - (Optional) (Defaults to 25%) Integer or string pointer, that when set represents either a percentage or number of VMs in a pool that can be unavailable (ready condition false) at a time during automated update.
 * **NameGeneration** - (Optional) Specifies how objects within a pool have their names generated
-	* **VMPrefix** - (Defaults to VMPool.Name) - String representing the prefix to use for when naming VMs.
 	* **AppendPostfixToSecretReferences** - (default false) Boolean that indicates if VM’s unique postfix should be appended to references to Secrets in the VMI’s Volumes list. This is useful when needing to pre-generate unique secrets for VMs within a pool.
 	* **AppendPostfixToConfigMapReferences** - (default false) Boolean that indicates if VM’s unique postfix should be appended to ConfigMap references in the VMI’s Volumes list. This is useful when needing to pre-generate unique secrets for VMs within a pool.
 
@@ -119,8 +90,6 @@ kind: VirtualMachinePool
 metadata:
   name: my-vm-pool
 spec:
-  VirtualMachineConfigRef:
-    name: my-template
   replicas: 100
   maxUnavailable: 10
   scaleInStrategy:
@@ -132,6 +101,35 @@ spec:
     proactive:
       selectionPolicy:
         basePolicy: "Oldest"
+  template
+    spec:
+      dataVolumeTemplates:
+      - metadata:
+          name: alpine-dv
+        spec:
+          pvc:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 2Gi
+          source:
+            http:
+              url: http://cdi-http-import-server.kubevirt/images/alpine.iso
+      running: false
+      template:
+        spec:
+          domain:
+            devices:
+              disks:
+              - disk:
+                  bus: virtio
+                name: datavolumedisk
+          terminationGracePeriodSeconds: 0
+          volumes:
+          - dataVolume:
+              name: alpine-dv
+            name: datavolumedisk
 ```
 
 **Manual rolling updates and Manual scale-in strategy**
@@ -142,13 +140,40 @@ kind: VirtualMachinePool
 metadata:
   name: my-vm-pool
 spec:
-  VirtualMachineConfigRef:
-    name: my-template
   replica: 100
   scaleInStrategy:
     unmanaged: {}
   updateStrategy:
     unmanaged: {}
+  template
+    spec:
+      dataVolumeTemplates:
+      - metadata:
+          name: alpine-dv
+        spec:
+          pvc:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 2Gi
+          source:
+            http:
+              url: http://cdi-http-import-server.kubevirt/images/alpine.iso
+      running: false
+      template:
+        spec:
+          domain:
+            devices:
+              disks:
+              - disk:
+                  bus: virtio
+                name: datavolumedisk
+          terminationGracePeriodSeconds: 0
+          volumes:
+          - dataVolume:
+              name: alpine-dv
+            name: datavolumedisk
 ```
 
 **Automatic rolling updates and scale-in strategy with VM ordered selection policy on scale-in**
@@ -159,8 +184,6 @@ kind: VirtualMachinePool
 metadata:
   name: my-vm-pool
 spec:
-  VirtualMachineConfigRef:
-    name: my-template
   replicas: 100
   maxUnavailable: 10
   scaleInStrategy:
@@ -178,6 +201,35 @@ spec:
     proactive:
       selectionPolicy:
         basePolicy: "Oldest"
+  template
+    spec:
+      dataVolumeTemplates:
+      - metadata:
+          name: alpine-dv
+        spec:
+          pvc:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+              requests:
+                storage: 2Gi
+          source:
+            http:
+              url: http://cdi-http-import-server.kubevirt/images/alpine.iso
+      running: false
+      template:
+        spec:
+          domain:
+            devices:
+              disks:
+              - disk:
+                  bus: virtio
+                name: datavolumedisk
+          terminationGracePeriodSeconds: 0
+          volumes:
+          - dataVolume:
+              name: alpine-dv
+            name: datavolumedisk
 ```
 
 # Special Topics
@@ -222,17 +274,17 @@ When scaleInStrategy is set to `Proactive` with `Preservation=Disabled`, all PVC
 
 ## Handling of Annotations and Labels
 
-VMs will inherit the Labels/Annotations from the VMPool.
+VMs inherit the Labels/Annotations from the VMPool.Spec.Template.Metadata section.
 
-VMIs will inherit the Labels/Annotations from the VMITemplate section of a VMConfig in the same fashion that VMIs inherit Labels/Annotations from the VMITemplate of a VM.
+VMIs inherit the Labels/Annotations from the VMPool.Spec.Template.Spec.Template.Metadata section of a VMPool.
 
 ## Handling Persistent Storage
 
-Usage of a DataVolumeTemplate within a VMConfig will result in unique persistent storage getting created for each VM within a VMPool. The DataVolumeTemplate name will have the VM’s sequential postfix appended to when the VM is created from the VMConfig which makes each VM a completely unique stateful workload.
+Usage of a DataVolumeTemplate within a VMPool.Spec.Template will result in unique persistent storage getting created for each VM within a VMPool. The DataVolumeTemplate name will have the VM’s sequential postfix appended to when the VM is created from the VMPool.Spec.Template which makes each VM a completely unique stateful workload.
 
 ## Handling Unique VM CloudInit and ConfigMap Volumes at Scale
 
-By default, any secrets or configMaps references in a VMConfig’s Volume section will be used directly as is, without any modification to the naming. This means if you specify a secret in a CloudInitNoCloud volume within a VMConfig, that every VM instance spawned from that VMConfig will get the exact same secret used for their cloud-init user data.
+By default, any secrets or configMaps references in a VMPool.Spec.Template.Spec.Template’s Volume section will be used directly as is, without any modification to the naming. This means if you specify a secret in a CloudInitNoCloud volume, that every VM instance spawned from the VMPool with this volume will get the exact same secret used for their cloud-init user data.
 
 This default behavior can be modified by setting the **AppendPostfixToSecretReferences** and **AppendPostfixToConfigMapReferences** booleans to true on the VMPool spec. When these booleans are enabled, references to secret and configMap names will have the VM’s sequential postfix appended to the secret and configmap name. This allows someone to pre-generate unique per VM secret and configMap data for a VMPool ahead of time in a way that will be predictably assigned to VMs within the VMPool.
 
@@ -242,8 +294,8 @@ When managing VMs at large scale, it is useful to automate the recovery of VMs w
 
 Autohealing has two layers.
 
-* VMI Recovery - This is configured at the VMConfig layer through the use of LivenessProbes on the VMI template within the VMConfig. More info about Liveness proves can be found [here](http://kubevirt.io/user-guide/virtual_machines/liveness_and_readiness_probes/#liveness-and-readiness-probes)
-* VM Recovery - This is configured at the VMPool layer through the use of the `Autohealing` tunable on the VMPool's struct.
+* VMI Recovery - This is configured at vmi layer through the use of LivenessProbes on the VMI template within the VMPool. More info about Liveness proves can be found [here](http://kubevirt.io/user-guide/virtual_machines/liveness_and_readiness_probes/#liveness-and-readiness-probes)
+* VM Recovery - This is configured at the VMPool management layer through the use of the VMPool.Spec.Autohealing tunable.
 
 VMI recovery involves simply tearing down a VM's active VMI and restarting it. The VM's volumes are preserved and the new VMI is launched using the existing volumes. This is essentially an automated VM restart.
 
