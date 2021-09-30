@@ -58,7 +58,7 @@ The VMPool API represents all the tunings necessary for managing a pool of state
 	* **Opportunistic** - Opportunistic update of VMs which are in a halted state.
 	* **Proactive** - (Default) Proactive update by forcing VMs to restart during update.
 		* **SelectionPolicy** - (Optional) (Defaults to "random" base policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
-			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Policies include [LabelSelector|NodeSelector]
+			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Initial policies include [LabelSelector]. Future policies may include a [NodeSelector] or other selection mechanisms.
 			* **BasePolicy** - (Optional) Catch all polices [Oldest|Newest|Random]
 * **ScaleInStrategy** - (Optional) Specifies how the VMPool controller manages scaling in VMs within a VMPool
 	* **Unmanaged** - No automation during scale-in. The VM is never touched after creation. Users manually delete individual VMs in a pool. Persistent state preservation is up to the user removing the VMs
@@ -70,7 +70,7 @@ The VMPool API represents all the tunings necessary for managing a pool of state
 Each VM’s PVCs are preserved for future scale out
 	* **Proactive** - (Default) Proactive scale-in by forcing VMs to shutdown during scale-in.
 		* **SelectionPolicy** - (Optional) (Defaults to "random" base policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
-			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Policies include [LabelSelector|NodeSelector]
+			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Initial policies include [LabelSelector]. Future policies may include a [NodeSelector] or other selection mechanisms.
 			* **BasePolicy** - (Optional) Catch all polices [Oldest|Newest|Random]
 		* **StatePreservation** - (Optional) specifies if and how to preserve state of VMs selected for scale-in.
 			* **Disabled** - (Default) all state for VMs selected for scale-in will be deleted
@@ -192,9 +192,6 @@ spec:
         orderedPolicies:
           - labelSelector
             - non-important-vms
-          - nodeSelector
-            - node2
-            - node3
         basePolicy: "Oldest"
       statePreservation: Offline
   updateStrategy:
@@ -310,6 +307,14 @@ Autohealing must have an exponential backoff mechanism to prevent it from causin
 The VMPool controller should establish some default upper limits when it comes to how many VMs can be batch created and updated at a time. This is similar to the VMIReplicaSet controller's internal `BurstReplicas` global variable. By default VMIReplicaSets will only create at most 250 VMIs at a time, but this is configurable as a global setting. The VMPool controller should adopt the same pattern of a max upper limit of 250 VMs per a VMPool with a global configurable setting.
 
 This setting is primarily meant as a way of preventing the VMPool controller from creating an unintentionally cluster DoS.
+
+## VM Selection during Scale-In and Updates
+
+The VMPool spec includes a `selectionPolicy` field for proactive scale-in and proactive updates. This field allows creators of a VMPool to define how VMs will be selected to proactively act upon.
+
+Within the `selectionPolicy` there's a tuning called the `basePolicy` that is meant to act as a "catch all" policy, meaning it is always possible to find a VM which matches the base policy. Examples of base policies are values such as "oldest", "newest", and "random".
+
+In addition to the base policy, there's an ordered list called `orderedPolicies` which allows the VMPool creator to define custom criteria for selecting VMs as well as a priority for the criteria. Initially for the first implementation of VMPools, the ordered policies will be limited to a `labelSelector`. Multiple label selectors can be defined in the ordered policies list and the priority each label selector has is based on its order in the list. In the future, new types of ordered policies may exist, such as node selector for example. The types of ordered policies can expanded as new use cases arise.
 
 ## VirtualMachinePool vs VirtualMachineInstanceReplicaSet
 
