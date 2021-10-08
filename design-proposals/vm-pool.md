@@ -324,3 +324,11 @@ A VMIReplicaSet makes sense for a user who wants to manage stateless VMI objects
 
 A VMPool makes sense for a user who wants to manage stateful VM objects using similar patterns found in Iaas public clouds, like AWS, GCP, Azure. In this way, a VMPool is more similar to an AWS AutoscalingGroup or a GCP ManagedInstanceGroup than it is to any core Kubernetes API.
 
+## VirtualMachinePool Metrics
+
+While it is expected that the type and number of metrics collected that are specific to the VMPool object will change as production use cases continue to evolve, we do have an idea of some metrics that are useful.
+
+* A rate metric measuring the number of VM starts within a pool
+* A rate metric measuring the number of VM stops within a pool
+* Adding a vmpool label to the phase transition time histograms allowing us to isolate transition times by pool
+
