@@ -312,7 +312,7 @@ This setting is primarily meant as a way of preventing the VMPool controller fro
 
 The VMPool spec includes a `selectionPolicy` field for proactive scale-in and proactive updates. This field allows creators of a VMPool to define how VMs will be selected to proactively act upon.
 
-Within the `selectionPolicy` there's a tuning called the `basePolicy` that is meant to act as a "catch all" policy, meaning it is always possible to find a VM which matches the base policy. Examples of base policies are values such as "oldest", "newest", and "random".
+Within the `selectionPolicy` there's a tuning called the `basePolicy` that is meant to act as a "catch all" policy, meaning it is always possible to find a VM which matches the base policy. Examples of base policies are values such as "oldest", "newest", and "random". The "random" policy will include optimizations that attempt to select VMs in the pool based on the least amount of disruption.
 
 In addition to the base policy, there's an ordered list called `orderedPolicies` which allows the VMPool creator to define custom criteria for selecting VMs as well as a priority for the criteria. Initially for the first implementation of VMPools, the ordered policies will be limited to a `labelSelector`. Multiple label selectors can be defined in the ordered policies list and the priority each label selector has is based on its order in the list. In the future, new types of ordered policies may exist, such as node selector for example. The types of ordered policies can expanded as new use cases arise.
 
