@@ -101,7 +101,7 @@ spec:
     proactive:
       selectionPolicy:
         basePolicy: "Oldest"
-  template
+  template:
     spec:
       dataVolumeTemplates:
       - metadata:
@@ -145,7 +145,7 @@ spec:
     unmanaged: {}
   updateStrategy:
     unmanaged: {}
-  template
+  template:
     spec:
       dataVolumeTemplates:
       - metadata:
@@ -198,7 +198,7 @@ spec:
     proactive:
       selectionPolicy:
         basePolicy: "Oldest"
-  template
+  template:
     spec:
       dataVolumeTemplates:
       - metadata:
@@ -247,27 +247,27 @@ Here is an example of how the VMPools sequential postfix will work in practice.
 
 Starting with a VMPool that has 3 VMs.
 
-my-vm-1
-my-vm-2
-my-vm-3
+* `my-vm-1`
+* `my-vm-2`
+* `my-vm-3`
 
-During scale-in (replicas:2), my-vm-2 is removed, which results in the set looking like this.
+During scale-in (`replicas: 2`), my-vm-2 is removed, which results in the set looking like this.
 
-my-vm-1
-my-vm-3
+* `my-vm-1`
+* `my-vm-3`
 
-On the next scale-out event, the VMPool is going to search sequentially to fill any gaps before appending new sequence numbers. If the VMPool's replica count is set to 4 (replicas:4), the new set will fill in the missing my-vm-2 and create a new my-vm-4
+On the next scale-out event, the VMPool is going to search sequentially to fill any gaps before appending new sequence numbers. If the VMPool's replica count is set to 4 (`replicas: 4`), the new set will fill in the missing my-vm-2 and create a new my-vm-4.
 
-my-vm-1
-my-vm-2 (recreated from previous state if ScaleInPreserveState=offline
-my-vm-3
-my-vm-4 (newly provisioned)
+* `my-vm-1`
+* `my-vm-2` (recreated from previous state if `scaleInPreserveState=Offline`)
+* `my-vm-3`
+* `my-vm-4` (newly provisioned)
 
 ## State Preservation during Scale-in
 
-During scale-in when the scaleInStrategy is set to `Proactive` with `StatePreservation=Offline`, the VM’s being removed from the pool will have their PVC state preserved. In order to ensure on the next scale-out event that VMs using the exact same state are started again, the previous VM names will be reused during scale-out. This is similar in concept to how a StatefulSet uses predictable sequential names.
+During scale-in when the `scaleInStrategy` is set to `Proactive` with `StatePreservation=Offline`, the VM’s being removed from the pool will have their PVC state preserved. In order to ensure on the next scale-out event that VMs using the exact same state are started again, the previous VM names will be reused during scale-out. This is similar in concept to how a StatefulSet uses predictable sequential names.
 
-When scaleInStrategy is set to `Proactive` with `Preservation=Disabled`, all PVC state will be completely removed from VMs during scale-in and reprovisioned during scale-out.
+When `scaleInStrategy` is set to `Proactive` with `Preservation=Disabled`, all PVC state will be completely removed from VMs during scale-in and reprovisioned during scale-out.
 
 ## Handling of Annotations and Labels
 
@@ -291,7 +291,7 @@ When managing VMs at large scale, it is useful to automate the recovery of VMs w
 
 Autohealing has two layers.
 
-* VMI Recovery - This is configured at vmi layer through the use of LivenessProbes on the VMI template within the VMPool. More info about Liveness proves can be found [here](http://kubevirt.io/user-guide/virtual_machines/liveness_and_readiness_probes/#liveness-and-readiness-probes)
+* VMI Recovery - This is configured at vmi layer through the use of LivenessProbes on the VMI template within the VMPool. More info about Liveness probes can be found [here](http://kubevirt.io/user-guide/virtual_machines/liveness_and_readiness_probes/#liveness-and-readiness-probes).
 * VM Recovery - This is configured at the VMPool management layer through the use of the VMPool.Spec.Autohealing tunable.
 
 VMI recovery involves simply tearing down a VM's active VMI and restarting it. The VM's volumes are preserved and the new VMI is launched using the existing volumes. This is essentially an automated VM restart.
