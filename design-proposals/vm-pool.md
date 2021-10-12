@@ -4,7 +4,7 @@ This design provides an approach for creating a VM grouping and replication abst
 
 ## Motivation
 
-The ability to manage groups (or fleets) of similar VMs using a higher level abstraction is a staple among commonly utilized Iaas operational patterns. By bringing stateful VM group management to KubeVirt, we open the door for operation teams to utilize their existing patterns for managing KubeVirt VMs. This feature further aligns KubeVirt as an Iaas offering comparable to the public clouds which makes KubeVirt a more attractive option for Iaas management on baremetal hardware.
+The ability to manage a group (or pool) of similar VMs using a higher level abstraction is a staple among commonly utilized Iaas operational patterns. By bringing stateful VM group management to KubeVirt, we open the door for operation teams to utilize their existing patterns for managing KubeVirt VMs. This feature further aligns KubeVirt as an Iaas offering comparable to the public clouds which makes KubeVirt a more attractive option for Iaas management on baremetal hardware.
 
 ## Goals
 
@@ -30,12 +30,12 @@ The ability to manage groups (or fleets) of similar VMs using a higher level abs
 
 ## User Stories
 
-* As a cluster user, I want to automate batch rollout of changes (CPU/Memory/Disk/PubSSHKeys/etc…) across a fleet of VMs.
-* As a cluster user managing fleets of VMs I want to automate scale out of VM instances based on utilization
-* As a cluster user managing fleets of VMs I want to automate scale-in of identical VM instances to optimize cluster resource consumption
+* As a cluster user, I want to automate batch rollout of changes (CPU/Memory/Disk/PubSSHKeys/etc…) across a pool of VM replicas.
+* As a cluster user managing a pool of VM replicas I want to automate scale out of VM instances based on utilization
+* As a cluster user managing a pool of VM replicas I want to automate scale-in of VM instances to optimize cluster resource consumption
 * As a user transitioning workloads to KubeVirt I want to use similar management patterns provided by existing Iaas platforms (AWS, Azure, GCP)
 * As a cluster admin managing nested Kubernetes clusters on top of KubeVirt VMs, I want the ability to elastically scale the underlying KubeVirt VM infrastructure.
-* As a SRE managing the availability of VM fleets I want to automate VM recovery by auto detecting and deleting misbehaving VMs and having the platform spin up fresh new instances as a replacement.
+* As a SRE managing the availability VM replicas in a pool, I want to automate VM recovery by auto detecting and deleting misbehaving VMs and having the platform spin up fresh new instances as a replacement.
 * As a pool user/manager I want to remove a VM from the pool without modifying it for debugging. The missing VM can be replaced by the pool.
 
 # Design
