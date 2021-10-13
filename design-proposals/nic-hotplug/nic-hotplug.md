@@ -30,6 +30,10 @@ on a device plugin - and thus require the update of the pod's resources - i.e.
 request the VF resource - something which, is not possible on a running pod.
 This particular goal requires more study, and should be discussed in a separate
 design document.
+- Propagating networking changes / reconfiguration of existing interfaces;
+the API is a bit misleading, since a user might want to think that updating an
+existing interface is possible (since these are actually `NetworkSelectionElement`s
+from the [multus api](https://github.com/k8snetworkplumbingwg/multus-cni/blob/dc9315f12549d70a9fa40a95a11bd8ea88b95577/pkg/types/types.go#L118)).
 
 ## Definition of Users
 This feature is intended for cluster users who want to connect their existing
@@ -142,7 +146,8 @@ provided for the multus pod.
 
 The CNI shim will then be invoked by kubelet, and send the CNI ADD/DELETE
 commands to the server side of multus via the unix domain socket previously
-mentioned.
+mentioned. The multus daemon would also contact the shim whenever a new network
+is to be added - or removed.
 
 As previously mentioned in the [multus section](#multus), this approach
 requires the full host's filesystem to be bind mounted into the multus pod,
