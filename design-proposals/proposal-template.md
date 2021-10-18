@@ -37,7 +37,7 @@ to start.
 (does this impact update compatibility and how)
 
 ## Functional Testing Approach
-(an overview on the approaches used to functional test this design(
+(an overview on the approaches used to functional test this design)
 
 # Implementation Phases
 (How/if this design will get broken up into multiple phases)
