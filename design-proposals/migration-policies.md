@@ -1,5 +1,5 @@
 # Overview
-One of Kubevirt's most important capabilities is the ability to perform [Live Migrations](https://kubevirt.io/user-guide/operations/live_migration/).
+KubeVirt allows [Live Migrations](https://kubevirt.io/user-guide/operations/live_migration/) of Virtual Machine workloads.
 Today migration settings can be configurable only on the cluster-wide scope by editing [KubevirtCR's spec](https://kubevirt.io/api-reference/master/definitions.html#_v1_kubevirtspec)
 or more specifically [MigrationConfiguration](https://kubevirt.io/api-reference/master/definitions.html#_v1_migrationconfiguration)
 CRD. 
