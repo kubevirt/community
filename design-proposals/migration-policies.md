@@ -37,6 +37,11 @@ VM owners/creators, by contrast, should not know or care about their migration c
 Moreover, the design should take into account that one of the goals is to allow the cluster administrator to dynamically
 define and change existing policies with as little participation as possible from the VM owner.
 
+Another goal is to let the admin the possibility to expose different policies to the users in a way he can then
+use. For example, an admin can set two policies for fast/slow migration that will apply to any VM with a
+`migration-type: slow` or `migration-type: fast` and this way a user can apply different policies by defining
+the relevant label.
+
 ## User Stories
 As an admin I would like to have different migration policies for different groups of VMs.
 * By "migration policies" I mean controlling one or more of the following migration aspects:
