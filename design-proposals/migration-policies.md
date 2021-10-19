@@ -30,6 +30,10 @@ it needs to obey to.
 Another goal is to allow the cluster administrator to define these policies without the participation of the VM's owner
 (as written in "Definition of Users" below).
 
+## Non Goals
+* Allowing users to transparently choose migration policies for their workloads
+* Preventing misconfigurations regarding overlapping selectors
+
 ## Definition of Users
 This feature's most obvious user is the cluster administrator.
 
