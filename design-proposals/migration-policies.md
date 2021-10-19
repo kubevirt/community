@@ -56,7 +56,7 @@ As an admin I would like to have different migration policies for different grou
 * As an admin I want that the migration policy would be as transparent as possible for the VM owner / creator.
 
 ## Repos
-Kubevirt/kubevirt only?
+Kubevirt/kubevirt
 
 # Design
 The design will be similar to Kubernetes' [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
