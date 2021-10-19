@@ -132,7 +132,7 @@ kind: MigrationPolicy
 kind: MigrationPolicy
   spec:
   selectors:
-    - VMSelector:
+    - virtualMachineInstanceSelector:
         matchLabels:
           workload-type: db       # Matches a key and a value 
           operating-system: ""    # Matches the key only, any value applies
@@ -148,13 +148,13 @@ kind: MigrationPolicy
         matchLabels:
           hpc-workloads: true
           xyz-workloads-type: ""
-    - VMSelector:
+    - virtualMachineInstanceSelector:
         matchLabels:
           workload-type: db
           operating-system: ""
 ```
 
-_NOTE_: It's possible to add `matchName` to `VMSelector` as well to match to VMs by name (or regular expressions).
+_NOTE_: It's possible to add `matchName` to `virtualMachineInstanceSelector` as well to match to VMs by name (or regular expressions).
 
 ### Full Manifest:
 
@@ -176,7 +176,7 @@ spec:
         matchLabels:
           hpc-workloads: true
           xyz-workloads-type: ""
-    - VMSelector:
+    - virtualMachineInstanceSelector:
         matchLabels:
           workload-type: db
           operating-system: ""
