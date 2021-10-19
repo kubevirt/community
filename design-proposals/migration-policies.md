@@ -54,6 +54,8 @@ As an admin I would like to have different migration policies for different grou
 * As an admin I want to have the ability to temporarily tune migrations for a specific event such as draining
   a node or performing an upgrade.
 * As an admin I want that the migration policy would be as transparent as possible for the VM owner / creator.
+* As a user I want to be able to tell admins the workload characteristics of my VMs so that admins can create
+  policies and/or namespaces with the desired characteristics.
 
 ## Repos
 Kubevirt/kubevirt
