@@ -66,17 +66,17 @@ relevant fields from KubevirtCR's [MigrationConfiguration](https://kubevirt.io/a
 configurations (or status related fields) that inherently relate to non-global context could be added,
 thus the configurations on NetworkPolicy and KubevirtCR's MigrationConfigurations may diverge to some degree.
 
-In addition, the new CRD's spec will include the following ways of specifying the groups of VMs on which
+In addition, the new CRD's spec will include the following ways of specifying the groups of VMIs on which
 to apply the policy:
-* _(By VM names / regular expressions)?_
-* By VM's labels
+* _(By VMI names / regular expressions)?_
+* By VMI's labels
 * By namespace's name
 * By namespace's labels
 
-All of these methods can be combined, for example a policy can require both VM labels and namespace labels in
+All of these methods can be combined, for example a policy can require both VMI labels and namespace labels in
 order to match.
 
-It is possible that a multiple policies apply to the same VM. In such cases, the precedence is in the
+It is possible that a multiple policies apply to the same VMI. In such cases, the precedence is in the
 same order as the bullets above. It is not allowed to define two policies with the exact same selectors.
 
 ## API Examples
