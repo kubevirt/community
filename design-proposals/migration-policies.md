@@ -33,7 +33,7 @@ Another goal is to allow the cluster administrator to define these policies with
 ## Definition of Users
 This feature's most obvious user is the cluster administrator.
 
-VM owners/creators, by contrast, should not know or care about their migration configuration at most cases.
+VM owners/creators, by contrast, should not know or care about their migration configuration in most cases.
 Moreover, the design should take into account that one of the goals is to allow the cluster administrator to dynamically
 define and change existing policies with as little participation as possible from the VM owner.
 
