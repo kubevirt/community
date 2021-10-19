@@ -122,8 +122,8 @@ are the following.
 kind: MigrationPolicy
   spec:
   selectors:
-    - namespaceSelector:
-        matchName: my-namespace
+    namespaceSelector:
+      matchName: my-namespace
 ```
 In the future it's possible to also support matching by regular expressions.
 
@@ -132,10 +132,10 @@ In the future it's possible to also support matching by regular expressions.
 kind: MigrationPolicy
   spec:
   selectors:
-    - namespaceSelector:
-        matchLabels:
-          hpc-workloads: true       # Matches a key and a value 
-          xyz-workloads-type: ""    # Matches the key only, any value applies
+    namespaceSelector:
+      matchLabels:
+        hpc-workloads: true       # Matches a key and a value 
+        xyz-workloads-type: ""    # Matches the key only, any value applies
 ```
 
 **This policy applies for the VMs that have all the required labels:**
@@ -143,10 +143,10 @@ kind: MigrationPolicy
 kind: MigrationPolicy
   spec:
   selectors:
-    - virtualMachineInstanceSelector:
-        matchLabels:
-          workload-type: db       # Matches a key and a value 
-          operating-system: ""    # Matches the key only, any value applies
+    virtualMachineInstanceSelector:
+      matchLabels:
+        workload-type: db       # Matches a key and a value 
+        operating-system: ""    # Matches the key only, any value applies
 ```
 
 **It is also possible to combine the previous two:**
@@ -155,14 +155,14 @@ kind: MigrationPolicy
 kind: MigrationPolicy
   spec:
   selectors:
-    - namespaceSelector:
-        matchLabels:
-          hpc-workloads: true
-          xyz-workloads-type: ""
-    - virtualMachineInstanceSelector:
-        matchLabels:
-          workload-type: db
-          operating-system: ""
+    namespaceSelector:
+      matchLabels:
+        hpc-workloads: true
+        xyz-workloads-type: ""
+    virtualMachineInstanceSelector:
+      matchLabels:
+        workload-type: db
+        operating-system: ""
 ```
 
 _NOTE_: It's possible to add `matchName` to `virtualMachineInstanceSelector` as well to match to VMs by name (or regular expressions).
@@ -183,14 +183,14 @@ spec:
   
   # Matching to VMs
   selectors:
-    - namespaceSelector:
-        matchLabels:
-          hpc-workloads: true
-          xyz-workloads-type: ""
-    - virtualMachineInstanceSelector:
-        matchLabels:
-          workload-type: db
-          operating-system: ""
+    namespaceSelector:
+      matchLabels:
+        hpc-workloads: true
+        xyz-workloads-type: ""
+    virtualMachineInstanceSelector:
+      matchLabels:
+        workload-type: db
+        operating-system: ""
 ```
 
 ## Functional Testing Approach
