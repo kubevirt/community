@@ -39,7 +39,7 @@ define and change existing policies with as little participation as possible fro
 
 ## User Stories
 As an admin I would like to have different migration policies for different groups of VMs.
-* By “migration policies” I mean controlling one or more of the following migration aspects:
+* By "migration policies" I mean controlling one or more of the following migration aspects:
     * Bandwidth
     * Scheduling
     * Storage
