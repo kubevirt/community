@@ -44,7 +44,7 @@ administrator to provision it for them.
 
 ## User Stories
 * as a user, I want to add a new network interface to a running VM.
-* as a user, I want to remove a new network interface from a running VM.
+* as a user, I want to remove an existing network interface from a running VM.
 
 ## Repos
 - [CNAO](https://github.com/kubevirt/cluster-network-addons-operator)
@@ -313,7 +313,7 @@ type VirtualMachineInterfaceRequest struct {
     // AddInterfaceOptions when set indicates an interface should be added.
     AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
 
-    // RemoveInterfaceOptions when set indicates a volume should be removed.
+    // RemoveInterfaceOptions when set indicates an interface  should be removed.
     RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
 }
 
@@ -322,25 +322,21 @@ type AddInterfaceOptions struct {
     // Name is the name of the interface in the KubeVirt VMI spec
     Name string `json:”name”`
 
-    // NetworkName is the name of the network
+    // NetworkName is the name of the multus network
     NetworkName string `json:”networkName”`
-
-    // PodInterfaceName is the name of the interface inside the pod
-    PodInterfaceName string `json:”podInterfaceName”`
 }
 
 // RemoveInterfaceOptions are used when hot unplugging network interfaces
 type RemoveInterfaceOptions struct {
-    // Name is the name of the interface in the KubeVirt VMI spec
+    // Name is the name of the interface in the KubeVirt VMI spec. Must match
+    // the name of the network defined in the VMI spec.
     Name string `json:"name"`
-
-    // NetworkName is the name of the network
-    NetworkName string `json:”networkName”`
-
-    // PodInterfaceName is the name of the interface inside the pod
-    PodInterfaceName string `json:”podInterfaceName,omitempty”`
 }
 ```
+
+**Note:** KubeVirt will **always** explicitly define the pod interface name for
+multus-cni. It will be computed from the VMI spec interface name, to allow
+multiple connections to the same multus provided network.
 
 ### VMIS
 ```golang
@@ -360,10 +356,10 @@ type InterfaceHotplugStatus struct {
 
 type InterfaceHotplugPhase string
 
-const InterfaceHotplugPhasePending    InterfaceHotplugPhase = "Pending"
-const InterfaceHotplugPhaseInfraReady InterfaceHotplugPhase = "InfraReady"
-const InterfaceHotplugPhaseReady      InterfaceHotplugPhase = "Ready"
-const InterfaceHotplugPhaseFailed     InterfaceHotplugPhase = "Failed"
+const InterfaceHotplugPhasePending    InterfaceHotplugPhase = "Pending"    # network configuration did not start yet
+const InterfaceHotplugPhaseInfraReady InterfaceHotplugPhase = "InfraReady" # network configuration phase1 completed (networking infra created and configured)
+const InterfaceHotplugPhaseReady      InterfaceHotplugPhase = "Ready"      # network configuration phase1 and phase2 completed (all is OK from the networking perspective)
+const InterfaceHotplugPhaseFailed     InterfaceHotplugPhase = "Failed"     # plugging the new interface failed. More details on `DetailedMessage`.
 ```
 
 
