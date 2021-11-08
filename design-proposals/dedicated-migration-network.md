@@ -49,10 +49,8 @@ spec:
     developerConfiguration:
       featureGates:
       - LiveMigration
-    network:
-      roles:
-      - networkAttachmentDefinition: my-secondary-network
-        role: migration
+    migrations:
+      network: my-secondary-network
 ```
 
 ## Cluster setup example 1: (recommended) IPs managed by whereabouts
