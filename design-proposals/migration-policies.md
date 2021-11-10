@@ -110,21 +110,23 @@ And let's say the namespace to which the VMI belongs contains the following labe
 * hpc-workload: true
 
 The following policies are listed by their precedence (high to low):
-1) VMI labels: {size: small, gpu: nvidia, os: RHEL}, Namespace labels: {}
-   * size and gpu labels match, "gpu" is the first in lexicographic order
-2) VMI labels: {size: small, gpu: intel, os: fedora}, Namespace labels: {priority: high}
-   * size and os labels match, "os" is the first in lexicographic order
-3) VMI labels: {size: small, gpu: intel, os: fedora}, Namespace labels: {}
-   * same as before but without matching namespace label. Since the VMI labels are at the same precedence we choose by
+1) VMI labels: `{size: small, gpu: nvidia}`, Namespace labels: `{}`
+   * Size and gpu labels match, "gpu" is the first in lexicographic order
+2) VMI labels: `{size: small, os: fedora}`, Namespace labels: `{priority: high}`
+   * Size and os labels match, "os" is the first in lexicographic order
+3) VMI labels: `{size: small, os: fedora}`, Namespace labels: `{}`
+   * Same as before but without matching namespace label. Since the VMI labels are at the same precedence we choose by
 Namespace labels
-4) VMI labels: {size: small}, Namespace labels: {priority: high, bandwidth: medium}
+4) VMI labels: `{size: small}`, Namespace labels: `{priority: high, bandwidth: medium}`
    * Only one VMI label matches, two namespace labels match, "bandwidth" is the first in lexicographic order
-5) VMI labels: {size: small}, Namespace labels: {priority: high, hpc-workload:true}
+5) VMI labels: `{size: small}`, Namespace labels: `{priority: high, hpc-workload:true}`
    * Only one VMI label matches, two namespace labels match, "hpc-workload" is the first in lexicographic order
-6) VMI labels: {size: small}, Namespace labels: {priority: high}
+6) VMI labels: `{size: small}`, Namespace labels: `{priority: high}`
    * Only one VMI label matches and only one VMI label matches
-7) VMI labels: {size: huge}, Namespace labels: {priority: high, bandwidth: medium, hpc-workload:true}
+7) VMI labels: `{}`, Namespace labels: `{priority: high, bandwidth: medium, hpc-workload:true}`
    * No VMI labels match
+8) VMI labels: `{size: small, os: RHEL}`, Namespace labels: `{priority: high}`
+    * one or more VMI / Namespace labels do not match at all.
 
 ## API Examples
 ### Migration Configurations
