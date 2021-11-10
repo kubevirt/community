@@ -53,9 +53,9 @@ As an admin I would like to have different migration policies for different grou
     * Scheduling
     * Storage
 * By “different groups of VMs” I could mean:
-    * All VMs in the same namespace
     * All VMs that have certain label defined
     * All VMs that have certain label with certain value defined
+    * All VMs that belong to a namespace with certain label key/value
 * As an admin I know that some workloads are in higher priority than others and therefore need different 
   migration policies.
 * As an admin I know that some workloads are not migration-friendly and demand careful configurations in order
@@ -79,9 +79,7 @@ thus the configurations on NetworkPolicy and KubevirtCR's MigrationConfiguration
 
 In addition, the new CRD's spec will include the following ways of specifying the groups of VMIs on which
 to apply the policy:
-* _(By VMI names / regular expressions)?_
 * By VMI's labels
-* By namespace's name
 * By namespace's labels
 
 All of these methods can be combined, for example a policy can require both VMI labels and namespace labels in
@@ -117,16 +115,6 @@ define all the configurations.
 Next in the spec are the selectors that define the group of VM on which to apply the policy. The options to do so
 are the following.
 
-**This policy applies for the VMs in a given namespace name(s):**
-```yaml
-kind: MigrationPolicy
-  spec:
-  selectors:
-    namespaceSelector:
-      matchName: my-namespace
-```
-In the future it's possible to also support matching by regular expressions.
-
 **This policy applies for the VMs in namespaces that have all the required labels:**
 ```yaml
 kind: MigrationPolicy
@@ -150,7 +138,6 @@ kind: MigrationPolicy
 ```
 
 **It is also possible to combine the previous two:**
-
 ```yaml
 kind: MigrationPolicy
   spec:
@@ -164,8 +151,6 @@ kind: MigrationPolicy
         workload-type: db
         operating-system: ""
 ```
-
-_NOTE_: It's possible to add `matchName` to `virtualMachineInstanceSelector` as well to match to VMs by name (or regular expressions).
 
 ### Full Manifest:
 
