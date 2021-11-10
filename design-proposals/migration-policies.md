@@ -179,7 +179,8 @@ spec:
 ```
 
 ## Functional Testing Approach
-Open for discussion, might be tricky.
+- Reliably distinguish after a migration if it was pre- or post-copy
+- create scenarios where throttled VMIs fail the migration reliably
 
 # Implementation Phases
 [This PR](https://github.com/kubevirt/kubevirt/pull/6399) is a very basic implementation of migration policies (POC)
