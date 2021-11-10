@@ -85,8 +85,46 @@ to apply the policy:
 All of these methods can be combined, for example a policy can require both VMI labels and namespace labels in
 order to match.
 
+## Policies' Precedence
+
 It is possible that a multiple policies apply to the same VMI. In such cases, the precedence is in the
-same order as the bullets above. It is not allowed to define two policies with the exact same selectors.
+same order as the bullets above (VMI labels first, then namespace labels). It is not allowed to define
+two policies with the exact same selectors.
+
+If two policies apply to the same VMI, both have VMI:
+* First it is matched by VMI labels, only then to namespace labels
+* If multiple policies match to VMI labels, the policy with the highest number of matched labels has higher precedence.
+* If multiple policies match to VMI labels and have the same number of matched labels precedence is by the matched 
+  labels' lexicographic order.
+  
+### Example
+
+For example, let's imagine a VMI with the following labels:
+* size: small
+* os: fedora
+* gpu: nvidia
+
+And let's say the namespace to which the VMI belongs contains the following labels:
+* priority: high
+* bandwidth: medium
+* hpc-workload: true
+
+The following policies are listed by their precedence (high to low):
+1) VMI labels: {size: small, gpu: nvidia, os: RHEL}, Namespace labels: {}
+   * size and gpu labels match, "gpu" is the first in lexicographic order
+2) VMI labels: {size: small, gpu: intel, os: fedora}, Namespace labels: {priority: high}
+   * size and os labels match, "os" is the first in lexicographic order
+3) VMI labels: {size: small, gpu: intel, os: fedora}, Namespace labels: {}
+   * same as before but without matching namespace label. Since the VMI labels are at the same precedence we choose by
+Namespace labels
+4) VMI labels: {size: small}, Namespace labels: {priority: high, bandwidth: medium}
+   * Only one VMI label matches, two namespace labels match, "bandwidth" is the first in lexicographic order
+5) VMI labels: {size: small}, Namespace labels: {priority: high, hpc-workload:true}
+   * Only one VMI label matches, two namespace labels match, "hpc-workload" is the first in lexicographic order
+6) VMI labels: {size: small}, Namespace labels: {priority: high}
+   * Only one VMI label matches and only one VMI label matches
+7) VMI labels: {size: huge}, Namespace labels: {priority: high, bandwidth: medium, hpc-workload:true}
+   * No VMI labels match
 
 ## API Examples
 ### Migration Configurations
