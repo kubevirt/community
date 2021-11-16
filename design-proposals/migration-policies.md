@@ -49,9 +49,10 @@ the relevant label.
 ## User Stories
 As an admin I would like to have different migration policies for different groups of VMs.
 * By "migration policies" I mean controlling one or more of the following migration aspects:
-    * Bandwidth
-    * Scheduling
-    * Storage
+    * Sensitivity to overall migration time
+    * Migration progress timeout
+    * Determining if and when post-copy / auto-converge are safe.
+    * Control number of migration threads, dirty rate (in the future)
 * By “different groups of VMs” I could mean:
     * All VMs that have certain label defined
     * All VMs that have certain label with certain value defined
