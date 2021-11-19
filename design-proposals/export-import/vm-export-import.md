@@ -83,7 +83,7 @@ spec:
         name: vm1
 ```
 
-### Export a VirtualMachine
+### Export a VirtualMachineSnapshot
 
 ``` yaml
 apiVersion: export.kubevirt.io/v1alpha1
