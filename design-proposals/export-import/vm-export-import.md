@@ -4,7 +4,7 @@ Proposal for exporting/importing KubeVirt Virtual Machine data from/to a Kuberne
 ## Motivation
 The Containerized Data Importer (CDI) project is mostly focused on getting Virtual Machine data into a cluster. The DataVolume API declares import and upload operations that populate and initialize individual Persistent Volume Claims (PVCs) with external data.  Of course that data is very likely to change once the PVCs are mounted and consumed by VirtualMachines (VMs).  But there is no standard way to get that valuable data out of the cluster.  Maybe an external backup would be useful for Disaster Recovery purposes?  Or for migrating VMs between clusters?
 
-Once there is a standard API for exporting all persistent data for a VM, it follows that a new type of import operation is required, one that operates on a higher level than the existing CDI primitatives.  It should be able to parse an exported arhive and restore the Virtual Machine configuration and data.
+Once there is a standard API for exporting all persistent data for a VM, it follows that a new type of import operation is required, one that operates on a higher level than the existing CDI primitives.  It should be able to parse an exported archive and restore the Virtual Machine configuration and data.
 
 ## Goals
 * Define Virtuam Machine Archive file format
