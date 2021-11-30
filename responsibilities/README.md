@@ -35,6 +35,8 @@
 
 ### Other
 
+## [Community Communications](community_communications.md)
+
 ## [Community Meeting](community_meeting.md)
 
 ## [Community Onboarding](community_onboarding.md)

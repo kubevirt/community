@@ -19,6 +19,6 @@ It is important to be thinking of how KubeVirt activities can be advertised.
 
 ## CNCF Code of Conduct
 
-If you're here then now is a good time ot review the [CNCF Code of conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md)
+If you're here then now is a good time to review the [CNCF Code of conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md)
 
 ## Crucial language

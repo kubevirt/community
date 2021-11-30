@@ -23,7 +23,7 @@ in adding a `Let's get to know each other` touch to project work.
 
 * Recordings
   * The Zoom meeting is set to record to the platform
-  * Recording needs to be dowloaded then uploaded to KubeVirt’s YouTube channel
+  * Recording needs to be downloaded then uploaded to KubeVirt’s YouTube channel
   and the Community Meetings playlist.
   * Community organizers will add the YouTube link to the meeting notes
 

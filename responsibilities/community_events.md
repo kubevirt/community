@@ -34,7 +34,7 @@ The following presentations will work for both virtual and in-person events
 
 ### Red Hat Summit / https://www.redhat.com/en/summit
 
-Red Hat is curerntly the main sponsor of project KubeVirt.  It is expected that KubeVirt
+Red Hat is currently the main sponsor of project KubeVirt.  It is expected that KubeVirt
 will have a strong presence at Red Hat Summit.  Typically this means having a
 presence at the Red Hat Communities booth and giving a full 1 hour presentation
 with demonstration.
