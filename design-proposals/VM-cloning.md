@@ -26,6 +26,7 @@ annotations / labels.
 In first implementation iteration the following limitations exist:
 * Only offline cloning will be supported, meaning cloning a VM when it's stopped.
 * Cloned VM would be in the same namespace as the original one.
+* Host disks would not be supported.
 
 ## Definition of Users
 Everyone who creates a VM might create a VM clone.
@@ -83,11 +84,13 @@ Most of the implementation can be fairly simple, but there are a couple of thing
     * Things are pretty easy thanks to CDI's [smart-cloning](https://github.com/kubevirt/containerized-data-importer/blob/main/doc/smart-clone.md).
 With smart cloning we can simply reference the existing DVs to smart-clone them. Smart cloning is supported only for
 offline usage, therefore it is a current limitation for VM cloning.
+      * CDI would have to be installed on the cluster in order to clone disks and volumes.
     *  Everything that is backed by a container-disk can be copied very easily, that includes CDRoms, ephemeral disks,
   etc.
     * Since secrets and config-maps are namespace scoped, if the VM is cloned to the same namespace it's no problem
   to reference the same secret / config-maps in the new VM. This ia a reason for limiting the clone to be at the same
       namespace.
+    * Host disks will not be supported.
       
 * Network:
   * The only important thing is the MAC address which needs to either be deleted or changed (a MAC address would be
