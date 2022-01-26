@@ -1,14 +1,10 @@
 reviewers:
-  - codificat
   - cwilkers
   - jobbler
-  - mazzystr
   - jean-edouard
 
 approvers:
-  - codificat
   - cwilkers
-  - mazzystr
   - fabiand
   - rmohr
 
@@ -21,3 +17,5 @@ emeritus_approvers:
   - iranzo # April 2020
   - ptrnull # April 2020
   - alosadagrande # April 2020
+  - codificat # Jan 2022
+  - mazzystr # Jan 2022
