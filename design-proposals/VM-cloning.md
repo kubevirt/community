@@ -66,10 +66,10 @@ kind: VirtualMachineClone
     newMacAddress: my-new-mac-address         # Optional - new mac address can be generated automatically
     
     # All of the fields below are optional and defaults to true
-    cloneAnnotations: true
-    cloneLabels: true
-    cloneDisks: true
-    cloneNetwork: true
+    cloneAllAnnotations: true
+    cloneAllLabels: true
+    cloneAllDisks: true
+    cloneAllNetwork: true
 ```
 
 In the future, we may want to support configuring new namespace for the cloned VM. However, this requires
