@@ -57,7 +57,11 @@ Here's a sketch for the new CRD:
 ```yaml
 kind: VirtualMachineClone
   spec:
-    sourceVirtualMachineName: my-cool-vm
+    source:
+      # More sources may be supported in the future, e.g. VirtualMachinInstance or VirtualMachineSnapshot
+      kind: VirtualMachine
+      name: my-other-cool-vm
+    
     targetVirtualMachineName: my-cool-clone   # Optional - a new name can be generated, e.g. my-cool-vm-jfh54b 
     newMacAddress: my-new-mac-address         # Optional - new mac address can be generated automatically
     
