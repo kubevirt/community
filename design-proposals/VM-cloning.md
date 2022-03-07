@@ -40,36 +40,58 @@ Kubevirt/kubevirt
 
 # Design
 Design can be inspired by the way VMIs are being migrated. In order to migrate a VMI, a [VirtualMachineInstanceMigration](https://kubevirt.io/user-guide/operations/live_migration/#initiate-live-migration)
-CRD is posted into the cluster. This CRD is very thin and basically triggers a migration with basic parameters.
+CRD is posted into the cluster. This CRD is very thin and basically triggers a migration with basic parameters. Another
+example is VM snapshots / restores.
 
 For VM cloning a similar approach can be taken: a new CRD would be introduced that would provide some basic parameters like:
 * The VM that needs to be cloned
 * A new name for the VM (could be optional - a new name will be generated)
 * New MAC address (optional: if not provided MAC would be erased)
-* Whether to clone or skip labels / annotations etc.
+* Which labels / annotations etc to clone or skip.
 
 More parameters could be added in the future, like the new namespace for the VM, and more.
 
+Also, in the future it's possible to expand cloning beyond VMs. For example, we can clone to / from
+VMIs, snapshots, VMPools, etc.
+
 ## API Examples
-As said above, API can be similar to [VirtualMachineInstanceMigration](https://kubevirt.io/user-guide/operations/live_migration/#initiate-live-migration).
+As said above, API can be similar to [VirtualMachineInstanceMigration](https://kubevirt.io/user-guide/operations/live_migration/#initiate-live-migration)
+and [VirtualMachineSnapshot](https://kubevirt.io/api-reference/master/definitions.html#_v1alpha1_virtualmachinesnapshot).
 
 Here's a sketch for the new CRD:
 ```yaml
 kind: VirtualMachineClone
   spec:
     source:
-      # More sources may be supported in the future, e.g. VirtualMachinInstance or VirtualMachineSnapshot
+      # More sources may be supported in the future, e.g. VirtualMachineInstance or VirtualMachineSnapshot
       kind: VirtualMachine
       name: my-other-cool-vm
     
-    targetVirtualMachineName: my-cool-clone   # Optional - a new name can be generated, e.g. my-cool-vm-jfh54b 
-    newMacAddress: my-new-mac-address         # Optional - new mac address can be generated automatically
+    target:
+      # Again, more types will maybe be supported in the future
+      kind: VirtualMachine
+      name: my-target-vm  # Optional - a new name can be generated, e.g. my-cool-vm-jfh54b
     
-    # All of the fields below are optional and defaults to true
-    cloneAllAnnotations: true
-    cloneAllLabels: true
-    cloneAllDisks: true
-    cloneAllNetwork: true
+    # All of the fields below are optional. Default is to clone everything.
+    # In the future we can expend this to clone more aspects
+    Annotations:
+      cloneAllByDefault: true
+      exclude:
+      - "key-to-exclude"
+      - "another-key"
+      include:  # This is valuable when "cloneAllByDefault" is set to false
+      - "key-to-include"
+    Labels:
+      # This is an example for how the default setting looks like
+      cloneAllByDefault: true
+    Disks:
+      # Same as above
+    Network:
+      # Same as above
+
+    # This is the place to specify certain fine-tunings. In the future this can allow choosing
+    # under-the-hood optimizations / algorithms etc.
+    newMacAddress: my-new-mac-address  # Optional - new mac address can be generated automatically
 ```
 
 In the future, we may want to support configuring new namespace for the cloned VM. However, this requires
