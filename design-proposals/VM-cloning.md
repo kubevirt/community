@@ -104,31 +104,21 @@ I don't see any scalability issues.
 New API so should not affect updates / rollbacks.
 
 ## Implementation details / challenges (in short)
-Most of the implementation can be fairly simple, but there are a couple of things that better be in mind
+Implementation utilizes VM Snapshots / VM Restores. As a start, a cloning operation would simply wrap snapshotting
+and restoring a VM. In other words, if a VirtualMachineClone object that asks to clone VM into VM`, the following 
+will happen under the hood:
 
-* Storage:
-    * Things are pretty easy thanks to CDI's [smart-cloning](https://github.com/kubevirt/containerized-data-importer/blob/main/doc/smart-clone.md).
-With smart cloning we can simply reference the existing DVs to smart-clone them. Smart cloning is supported only for
-offline usage, therefore it is a current limitation for VM cloning.
-      * CDI would have to be installed on the cluster in order to clone disks and volumes.
-    *  Everything that is backed by a container-disk can be copied very easily, that includes CDRoms, ephemeral disks,
-  etc.
-    * Since secrets and config-maps are namespace scoped, if the VM is cloned to the same namespace it's no problem
-  to reference the same secret / config-maps in the new VM. This ia a reason for limiting the clone to be at the same
-      namespace.
-    * Host disks will not be supported.
-      
-* Network:
-  * The only important thing is the MAC address which needs to either be deleted or changed (a MAC address would be
-    generated for a new VM that does not specify it).
-    
-* Metadata:
-  * Obviously, name should be changed
-  * Also: timestamps, UIDs and similar fields should be deleted
-  * Regarding annotations / labels - I think it's better to keep them as-is by default as it's difficult to say which
-    one are important to the user. However, this can be configurable.
-    
-< Please feel free to provide feedback on any of these > 
+* A VirtualMachineSnapshot will be created for VM
+* VM' would be created (VM' doesn't need to start/boot)
+* A VirtualMachineRestore will be created, asking to restore VM's snapshot into VM'
+* The snapshot object would be deleted
+
+Many optimizations and tweaks can and should pop up in the future to both allow fine-tuning and to introduce
+runtime / storage optimizations.
+
+Another note: we should bear in mind that a VM that boots for the first time usually does some special operations
+like defining ssh hostname, MAC address, etc. Since the GUI performs cloning already we can look on their implementation
+and learn from it.
 
 ## Functional Testing Approach
 Functional tests can:
@@ -138,4 +128,26 @@ Functional tests can:
 * Ensuring that cloned VM has same spec as original VM in terms of number of disks, volumes, etc.
 
 # Implementation Phases
-First implementation cycle, as stated above, should allow cloning offline and to the same namespace only.
+As laid out in [this comment](https://github.com/kubevirt/community/pull/159#pullrequestreview-880329021),
+the implementation phases are:
+
+1) **Extend snapshot functionality to restore to new VM**
+    * Focus entirely on making the SnapshotRestore object capable of restoring a snaptshot to a new VM. This would only
+    involve using the existing snapshot apis and extending that functionality.
+    * The end result here is someone could technically clone a VM by creating a snapshot and restoring to a new VM.
+
+2) **Introduce Clone API to coordinate the workflow of a snapshot/restore to new VM**
+    * The new Clone API would be a wrapper around the existing snapshot/restore logic and coordinate this workflow
+    in a declarative way. This would allow someone to declare they want to Clone a VM using a single object
+    (VirtualMachineClone) and the clone controller would coordinate creating a snapshot and restoring the snapshot
+    to the target VM name.
+    * The end result here is someone could post a VirtualMachineClone object targeting one source VM and get a new target VM.
+
+3) **Enhancements**
+    * Today, snapshot/restore requires storage provisioners that support volume snapshots. We could
+      technically support offline snapshots using PVC cloning in the event that a storage provider doesn't support
+      snapshot. By enhancing the snapshot/restore logic, the VirtualMachineClone logic would naturally get enhanced
+      as well since the clone logic is built on snapshot/restore.
+    * supporting Online Clones. Since we support online snapshots in some scenarios, we could extend Clone logic to
+      be able to create clones of VMs which are online.
+    * Introduce a `virtctl` cloning command
