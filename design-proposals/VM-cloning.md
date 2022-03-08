@@ -1,5 +1,5 @@
 # Overview
-VM Cloning is the action of creating a new VM from an existing one that has the exact same setting. This includes
+VM Cloning is the action of creating a new VM from an existing one that has the exact same settings. This includes
 VM disks, network definition, CPU topology and so on.
 
 ## Motivation
@@ -105,12 +105,12 @@ New API so should not affect updates / rollbacks.
 
 ## Implementation details / challenges (in short)
 Implementation utilizes VM Snapshots / VM Restores. As a start, a cloning operation would simply wrap snapshotting
-and restoring a VM. In other words, if a VirtualMachineClone object that asks to clone VM into VM`, the following 
+and restoring a VM. In other words, if a VirtualMachineClone object that asks to clone VM1 into VM2, the following 
 will happen under the hood:
 
-* A VirtualMachineSnapshot will be created for VM
-* VM' would be created (VM' doesn't need to start/boot)
-* A VirtualMachineRestore will be created, asking to restore VM's snapshot into VM'
+* A VirtualMachineSnapshot will be created for VM1
+* VM2 would be created (VM2 doesn't need to start/boot)
+* A VirtualMachineRestore will be created, asking to restore VM1's snapshot into VM2
 * The snapshot object would be deleted
 
 Many optimizations and tweaks can and should pop up in the future to both allow fine-tuning and to introduce
@@ -123,16 +123,16 @@ and learn from it.
 ## Functional Testing Approach
 Functional tests can:
 * Clone a VM and see it's successful
-* Ensuring that an illegal clone is not possible
+* Ensure that an illegal clone is not possible
   * Maybe check that MAC address is not the same as before? or does not exist in the cluster?
-* Ensuring that cloned VM has same spec as original VM in terms of number of disks, volumes, etc.
+* Ensure that cloned VM has same spec as original VM in terms of number of disks, volumes, etc.
 
 # Implementation Phases
 As laid out in [this comment](https://github.com/kubevirt/community/pull/159#pullrequestreview-880329021),
 the implementation phases are:
 
 1) **Extend snapshot functionality to restore to new VM**
-    * Focus entirely on making the SnapshotRestore object capable of restoring a snaptshot to a new VM. This would only
+    * Focus entirely on making the SnapshotRestore object capable of restoring a snapshot to a new VM. This would only
     involve using the existing snapshot apis and extending that functionality.
     * The end result here is someone could technically clone a VM by creating a snapshot and restoring to a new VM.
 
