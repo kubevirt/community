@@ -30,21 +30,22 @@ It will be possible to unbound the PVC and then do a memory dump to another PVC 
 #### trigger memory dump
 Run a virtctl command to get a memory dump. This new API will look as follows:
 
-`$ virtctl memoryDump my-vm --volume-name=memory-pvc`
+`$ virtctl memory-dump my-vm --volume-name=memory-pvc`
 
-In this case `memory-pvc` should already exist and be of a size big enough the contain the memory dump. A check will be made to make sure.
+In this case `memory-pvc` should already exist and be of a size big enough to contain the memory dump. A check will be made to make sure.
 It will be possible to ask for a PVC to be created with `--create` flag. In such case the required size will be calculated.
 
 ##### The process
 The trigger of memory dump will call a VM subresource that will add a memorydumpRequest to the VM status.
 The request will cause the binding of the PVC to the vm (if the pvc is not bounded yet) after that the pvc will be mounted to the virt-launcher that will trigger the guest memory dump `virDomainCoreDump` command with `VIR_DUMP_MEMORY_ONLY` flag to be executed by virt-launcher.
+(Check out [virDomainCoreDump](https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCoreDump) for reference)
 After the dump is complete it will unmount the pvc from virt-launcher.
 The PVC will remain bounded to the VM - will be kept in the VM volumes and have an updated status and timestamp in the VM status.
 
 #### remove memory dump from VM
 Run a virtctl command to remove a memory dump from a VM. This new API will look as follows:
 
-`$ virtctl removeMemoryDump my-vm`
+`$ virtctl remove-memory-dump my-vm`
 
 ##### The process
 The trigger of remove memory dump will call a VM subresource that will add a removeMemorydumpRequest to the VM status.
@@ -52,6 +53,8 @@ The request will unbound the PVC from the vm. The PVC will be deleted from the V
 
 ### Handle the memory dump
 After the memory dump is completed the user will be able to export this PVC and also if there is a snapshot supported storage class the PVC can be a part of the VM snapshot and then it can be unbounded and deleted.
+The output of the memory dump can be used for memory analysis with different tools for example [Volatility3](https://github.com/volatilityfoundation/volatility3) and maybe also [sleuthkit](https://www.sleuthkit.org/autopsy/)
+
 
 ## Update/Rollback Compatibility
 New API should not affect updates / rollbacks.
@@ -62,3 +65,4 @@ The implementation wil be split to several phases:
 * Add virtctl command to execute memory-dump with existing pvc
 * Extend the virtctl command to support on-demand creation of PVC
 * Add remove memory dump virtctl command
+* Support block pvc for the dump (?)
