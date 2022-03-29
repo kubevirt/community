@@ -73,6 +73,52 @@ After that the status of the memoryDump will be updated to `InProgress` which wi
 (Check out [virDomainCoreDump](https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainCoreDump) for reference)
 After the dump is complete the timestamp and status of the memory dump will be updated and it will unmount the pvc from virt-launcher.
 The PVC will remain bound to the VM - will be kept in the VM volumes and have the updated status and timestamp in the VM status as mentioned.
+It will look something like that: (In the VMI there will be no information)
+
+```yaml
+---
+apiVersion: v1
+items:
+- apiVersion: kubevirt.io/v1
+  kind: VirtualMachine
+  name: my-vm
+  ....
+  Snip
+  ....
+    template:
+      spec:
+        domain:
+          devices:
+            disks:
+            - disk:
+                bus: virtio
+              name: datavolumedisk
+            - disk:
+                bus: virtio
+              name: cloudinitdisk
+        volumes:
+        - dataVolume:
+            name: my-dv
+          name: datavolumedisk
+        - cloudInitNoCloud:
+            userData: |-
+              #cloud-config
+              password: fedora
+              chpasswd: { expire: False }
+          name: cloudinitdisk
+        - memoryDump:
+            persistentVolumeClaim:
+                claimName: memory-dump-pvc
+          name: memory-dump
+  status:
+    ....
+    Snip
+    ....
+    memoryDumpStatus:
+      volumeName: memory-dump
+      phase: Completed
+      timestamp: "2022-03-29T11:00:04Z"
+```
 
 
 #### remove memory dump from VM
