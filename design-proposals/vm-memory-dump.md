@@ -5,7 +5,7 @@ Proposal for taking VM memory dump for analysis purposes.
 One of the methods of troubleshooting guest virtual machines is getting a memory dump and analyzing it. As this is a standard capability in most VM management systems, it is also required for kubevirt’s VMs.
 
 ## Goals
-Have a mechanism to get a VM memory dump.
+Have a mechanism to get a VM memory dump to be inspected with [Volatility3](https://github.com/volatilityfoundation/volatility3).
 
 ## Non Goals
 Memory dump is not a restorable output and currently will not be a part of the VM snapshot.
@@ -43,11 +43,11 @@ The VM subresource endpoint will recieve a rest request containing the pvc name 
 It will patch the vm status with a memoryDumpStatus stating the volume-name and Phase `Binding`.
 The memoryDumpStatus will look something like this:
 
-`
+```golang
 // MemoryDumpStatus represent the memory dump request status and info
 type MemoryDumpStatus struct {
-	// VolumeName is the name of the pvc that will contain the memory dump
-	VolumeName string `json:"volumeName"`
+	// ClaimName is the name of the pvc that will contain the memory dump
+	ClaimeName string `json:"claimName"`
 	// Phase represents the memory dump phase
 	Phase MemoryDumpPhase `json:"phase,omitempty"`
 	// TimeStamp represents the time the memory dump was completed
@@ -66,7 +66,7 @@ const (
 	// The memorydump is being unbound
 	MemoryDumpUnBinding MemoryDumpPhase = "Unbinding"
 )
-`
+```
 
 In the virt controller once getting the update of the memoryDump in state of binding it will bind the pvc to the vm by updating the vm volumes with the memoryDump pvc.
 After that the status of the memoryDump will be updated to `InProgress` which will be cause the volume to be mounted to the virt-launcher, same as done in the hotplug process, other then the end of the process that instead of attaching the volume to the VMI it will trigger the guest memory dump `virDomainCoreDump` command with `VIR_DUMP_MEMORY_ONLY` flag to be executed by virt-launcher.
@@ -115,7 +115,7 @@ items:
     Snip
     ....
     memoryDumpStatus:
-      volumeName: memory-dump
+      claimName: memory-dump
       phase: Completed
       timestamp: "2022-03-29T11:00:04Z"
 ```
@@ -142,6 +142,5 @@ New API should not affect updates / rollbacks.
 The implementation wil be split to several phases:
 * Add memory dump command in virt launcher server
 * Add virtctl command to execute memory-dump with existing pvc
-* Extend the virtctl command to support on-demand creation of PVC
 * Add remove memory dump virtctl command
-* Support block pvc for the dump (?)
+* Extend the virtctl command to support on-demand creation of PVC
