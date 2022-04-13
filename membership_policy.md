@@ -38,7 +38,7 @@ Defined by: Member of the KubeVirt GitHub organization
     * Contributions according to GitHub and/or Kubernetes metrics in the past 90 days.
   * Sponsored by 2 org members. Note the following requirements for sponsors:
     * Sponsors must have close interactions with the prospective member
-    * Sponsors must be reviewers or approvers in the KubeVirt OWNERS file.
+    * Sponsors must be reviewers or approvers in any of the OWNERS files found in KubeVirt's repositories, for example, [this](https://github.com/kubevirt/kubevirt/blob/main/OWNERS_ALIASES) or [this one](https://github.com/kubevirt/project-infra/blob/main/OWNERS).
     * Sponsors should be from multiple member companies to demonstrate integration across community.
   * Open a PR against the [org members section](https://github.com/kubevirt/project-infra/blob/main/github/ci/prow-deploy/files/orgs.yaml#L22)
     * Ensure your sponsors are @mentioned on the issue
