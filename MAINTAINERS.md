@@ -10,7 +10,6 @@ The current Maintainers Group for the Kubevirt Project consists of:
 | [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | SUSE | |
 | [Ryan Hallisey](https://github.com/rthallisey) | Nvidia | |
 | [Andrew Burden](https://github.com/aburdenthehand) | Red Hat | Community Facilitator |
-| [Federico Gimenez](https://github.com/fgimenez) | Red Hat | CI and Project Infra |
 
 This list must be kept in sync with the [CNCF Project Maintainers list](https://github.com/cncf/foundation/blob/master/project-maintainers.csv).
 
