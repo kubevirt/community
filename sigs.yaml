@@ -4,61 +4,61 @@ sigs:
       subprojects:
         - name: kubevirt
           owners:
-            - https://raw.githubusercontent.com/kubevirt/community/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/community/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/libvirt/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/external-storage/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/ovs-cni/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/ovs-cni/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-ssp-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/must-gather/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
     - dir: sig-documentation
       name: documentation
       subprojects:
         - name: documentation
           owners:
-            - https://raw.githubusercontent.com/kubevirt/demo/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/user-guide/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/demo/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
     - dir: sig-storage
       name: storage
       subprojects:
         - name: containerized-data-importer
           owners:
-            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
     - dir: sig-testing
       name: testing
       subprojects:
         - name: kubevirtci
           owners:
-            - https://raw.githubusercontent.com/kubevirt/kubevirtci/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/project-infra/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
     - dir: sig-virtctl
       name: virtctl
       subprojects:
         - name: kubectl-virt-plugin
           owners:
-            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
     - dir: sig-virt
       name: virtblocks
       subprojects:
@@ -70,7 +70,7 @@ sigs:
       subprojects:
         - name: nmstate
           owners:
-            - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/master/OWNERS
+            - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/main/OWNERS
         - name: k8snetworkplumbingwg
           owners:
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
@@ -81,7 +81,7 @@ sigs:
       subprojects:
         - name: userinterface
           owners:
-            - https://raw.githubusercontent.com/kubevirt/web-ui/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/web-ui/main/OWNERS
     - dir: sig-scale
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
