@@ -16,8 +16,11 @@ The root cause is that the PCI information passed by the sriov-network-device-pl
 The outcome is a non-consistent association between the underlying VFs and the VM networks,
 leaving the VM in a state where the VFs are plugged into the domain wrongly.
 <br/>
-For example, when a SR-IOV interface is defined with a custom MAC address (e.g: 02:00:00:00:00), a custom guest PCI address of (e.g: 0000:01:01.1) and pointing to a NetworkAttachmentDefinition with VLAN configuration (e.g: 100).
-It is not guaranteed that the correct VF (with VLAN 100) will be plugged into the domain on the specified PCI address (0000:01:01.1).
+For example:
+<br/> 
+When a SR-IOV interface is defined with a custom MAC address (e.g: `02:00:00:00:00`), a custom guest PCI address of (e.g: `0000:01:01.1`) and pointing to a NetworkAttachmentDefinition with VLAN configuration (e.g: 100).
+<br/>
+It is not guaranteed that the correct VF (with VLAN 100) will be plugged into the domain on the specified PCI address (`0000:01:01.1`).
 
 This issue also manifests when the VM interface boot order is set, the VM may end up booting from the wrong interface.
 
@@ -34,16 +37,17 @@ Each VM SR-IOV interface should be associated with the correct VF.
 Fix/change third-party components (e.g: Multus, SR-IOV CNI, etc..)
 
 ## Existing Implementation Flow
-In order to discover and allocate VFs to Pods the [sriov-network-device-plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin) (from now on sriov-dp) and the [sriov-cni](https://github.com/k8snetworkplumbingwg/sriov-cni) are being used.
+In order to discover and allocate VFs to Pods the [sriov-network-device-plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin) (from now on sriov-dp) and [sriov-cni](https://github.com/k8snetworkplumbingwg/sriov-cni) are being used.
 <br/>
-The sriov-dp provides an [API to create resource pools](https://github.com/openshid/sriov-network-device-plugin#configurations) of VFs according to various properties,
+The sriov-dp provides an API to create resource pools of VFs according to various properties [[1]](https://github.com/openshid/sriov-network-device-plugin#configurations).
+<br/>
 Each resource pool is labeled with a resource name.
 
 In the VMI spec, secondary networks point to the desired SR-IOV NetworkAttachmentDefinition object.
 <br/>
 The NetworkAttachmentDefinition is set with the resource-name annotation:
 <br/>`k8s.v1.cni.cncf.io/resourceName=<resource name>`<br/>
-which later on passed down by Multus to the sriov-cni [[1]](https://github.com/k8snetworkplumbingwg/multus-cni/blob/a28f5cb56c79a582f5ea2b35a61b38f34b937930/examples/README.md#passing-down-device-information).
+which later on passed down by Multus to the sriov-cni [[2]](https://github.com/k8snetworkplumbingwg/multus-cni/blob/a28f5cb56c79a582f5ea2b35a61b38f34b937930/examples/README.md#passing-down-device-information).
 ```yaml
 kind: VirtualMachine
   ...
@@ -77,25 +81,29 @@ spec:
 
 As part of Pod creation flow, kubelet executes the required device plugins according to the Pod spec, in our case the sriov-dp.
 <br/>
-As part of sriov-dp operation it sets an environment variable inside the pod that indicates the allocated device PCI address and its resource pool.
-
+The sriov-dp sets the `PCIDEVICE` environment variable inside the pod which indicates the allocated device PCI address and its resource pool.
+<br/>
+For example:
+<br/>
 Given the resource name `kubevirt.io/sriov_net` the following environment variable is set:
+<br/>
 `PCIDEVICE_KUBEVIRT_IO_SRIOV_NET=<PCI address>`.
 
-As part of the VM create flow, virt-controller renders the given VMI spec and creates the corresponding virt-launcher Pod (review [renderLaunchManifest](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-controller/services/template.go#L443)).
+As part of the VM create flow, virt-controller renders the given VMI spec and creates the corresponding virt-launcher Pod [[3]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-controller/services/template.go#L443) (renderLaunchManifest).
 <br/>
 For each secondary network:
 - Realize the device `resourceName` by fetching the specified NetworkAttachmentDefinition.
-- Read the NAD `k8s.v1.cni.cncf.io/resourceName` annotation.
-- Add the following environment variable to the compute container (spec.Env): `KUBEVIRT_RESOURCE_NAME_<network name>=<resource name>`
+- Read the NetworkAttachmentDefinition `k8s.v1.cni.cncf.io/resourceName` annotation.
+- Add the following environment variable to the compute container (spec.Env):
+  `KUBEVIRT_RESOURCE_NAME_<network name>=<resource name>`
 
-Once virt-launcher Pod is ready, virt-handler will reconcile the VMI and eventually trigger the virt-launcher to synchronize with the new spec (i.e: virt-handler sends [SyncVMI](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L822) gRPC call to virt-launcher).
+Once virt-launcher Pod is ready, virt-handler process the VMI object and eventually trigger the virt-launcher to synchronize with the new spec (i.e: virt-handler sends gRPC call to virt-launcher [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L822)).
 <br/>
-virt-launcher renders the VMI spec and converts it to Libvirt Domain XML, and eventually passes it to Libvirt which in turn create the Domain.
+virt-launcher renders the VMI spec and converts it to Libvirt domain XML, and eventually passes it to Libvirt which in turn create the domain.
 
 As part of the VMI spec rendering, virt-launcher realizes the VFs PCI addresses that been allocated by loading `KUBEVIRT_RESOURCE_NAME` (formerly created by the virt-controller) and `PCIDEVICE` (created by the sriov-dp) environment variables.
 
-Each SR-IOV device is represented by the [Hostdev device type](https://wiki.libvirt.org/page/Networking#PCI_Passthrough_of_host_network_devices) in the Libvirt domain XML.
+Each SR-IOV device is represented by the Hostdev device type in the Libvirt domain XML [[5]](https://wiki.libvirt.org/page/Networking#PCI_Passthrough_of_host_network_devices).
 
 ### Example
 Given the following VMI spec:
@@ -118,8 +126,7 @@ spec:
   ...
 ```
 
-The following environment variables will be present in the pod:
-
+The following environment variables will be present in the Pod:
 ```bash
 # kubectl exec -it virt-launcher-sriovvmi1-jpk58 -- env
 ...
@@ -128,7 +135,7 @@ PCIDEVICE_KUBEVIRT_IO_SRIOV_NET=0000:04:0a.3
 KUBEVIRT_RESOURCE_NAME_sriovnet1=kubevirt.io/sriov_net
 ```
 
-sriovnet1 network is represented by Hostdev device type in the domain XML like so:
+`sriovnet1` network is represented by Hostdev device type in the domain XML like so:
 ```bash
 # kubectl exec -it virt-launcher-sriovvmi1-jpk58 -- virsh dumpxml 1
 ...
@@ -145,25 +152,26 @@ sriovnet1 network is represented by Hostdev device type in the domain XML like s
 ...
 
 ```
+
 ## The Problem
-The PCI address information that is passed by the SR-IOV device-plugin, by the `PCIDEVICE` environment variable, is not enough information to directly map the VFs with their secondary network.
-In the scenario where a VM has more then network that points to a NetworkAttachmentDefinition with the same resource, VFs might be assigned to the wrong network.
+The VFs PCI address information that being passed down to virt-launcher through `PCIDEVICE` (by sriov-device-plugin) and `KUBEVIRT_RESOURCE_NAME` (by Kubevirt) environment variables, is not enough to map the VFs with their secondary network.
+In the scenario where a VM has more than one network that points to a NetworkAttachmentDefinition with the same resource name, VFs might get assigned to the wrong network.
 
 For example:
 In the scenario described in https://github.com/kubevirt/kubevirt/issues/6351,
-there are two SriovNetworks - each configuring a different VLAN [[1]](https://github.com/kubevirt/kubevirt/issues/6351#issuecomment-918467186).
-The VM's networks point to the wrong VFs:
-VM network “sriov-vsrx-if30” points to “default/sriov-vsrx-if30” NAD, which is configured with VLAN 30, but the underlying VF is configured with a different VLAN (i.e. the wrong PCI address was chosen).
+there are two `SriovNetwork` objects - each configures a different VLAN [[1]](https://github.com/kubevirt/kubevirt/issues/6351#issuecomment-918467186).
+But the VM's networks point to the wrong VFs:
+VM network `sriov-vsrx-if30` points to `default/sriov-vsrx-if30` NetworkAttachmentDefinition, which is configured with VLAN 30, but the underlying VF is configured with a different VLAN (i.e. the wrong PCI address was chosen).
 
 The issue manifests on Kubevirt as follows:
-The SR-IOV network PCI address is determined on virt-launcher code that converts the VMI spec to Libvirt Domain.
-Libvirt Domain Hostdev is represented in Kubevirt code by the HostDevice object.
-For each SR-IOV network a corresponding HostDevice object is created,
-the PCI address assigned as follows:
-Create SR-IOV host devices [[2]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L798)  [[3]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/hostdev.go#L35)]  [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/hostdev.go#L38).
-Map between network-name to resource-name [[5]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L40-L44)]  [[6]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L49-L59).
-Map between resource-name and PCI addresses [[7]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L45)  [[8]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L61-L67)  [[9]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/addresspool.go#L35-L61).
-Allocate VF PCI address for each VM network host device [[10]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/hostdev.go#L64).
+<br/>
+The SR-IOV network PCI address is determined on virt-launcher code that converts the VMI spec to Libvirt domain.<br/>
+Libvirt domain Hostdev is represented in Kubevirt code by the HostDevice object.<br/>
+For each SR-IOV network a corresponding HostDevice object is created, the PCI address assigned as follows:
+- Create SR-IOV host devices [[2]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L798)  [[3]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/hostdev.go#L35)  [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/hostdev.go#L38).
+- Map between network-name to resource-name [[5]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L40-L44)  [[6]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L49-L59).
+- Map between resource-name and PCI addresses [[7]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L45)  [[8]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L61-L67)  [[9]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/addresspool.go#L35-L61).
+- Allocate VF PCI address for each VM network host device [[10]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/hostdev.go#L64).
 
 ### Example 1: Two different secondary networks pointing to different NetworkAttachmentDefinitions with the same resourceName
 1. VMI spec with two SR-IOV devices, each connected to different network:
@@ -236,8 +244,9 @@ spec:
       "ipam":{}
   }
 ```
+
 3. The following environment variables will be present in the pod:
-```yaml
+```bash
 # kubectl exec virt-launcher-sriovvmi2-wcszx -- env
 ...
 PCIDEVICE_KUBEVIRT_IO_SRIOV_NET=0000:04:02.4,0000:04:02.5
@@ -246,8 +255,8 @@ KUBEVIRT_RESOURCE_NAME_sriovnet-vlan100=kubevirt.io/sriov_net
 KUBEVIRT_RESOURCE_NAME_sriovnet-vlan200=kubevirt.io/sriov_net
 ```
 
-4. sriovnet-vlan100 and sriovnet-vlan200 networks will be represented by a Hostdev in the Domain XML:
-```yaml
+4. `sriovnet-vlan100` and `sriovnet-vlan200` networks will be represented by a Hostdev in the domain XML:
+```bash
 # kubectl exec -it virt-launcher-sriovvmi2-wcszx -- virsh dumpxml 1
 ...
   <hostdev mode='subsystem' type='pci' managed='no'>
@@ -270,21 +279,22 @@ KUBEVIRT_RESOURCE_NAME_sriovnet-vlan200=kubevirt.io/sriov_net
 ```
 
 #### Summary
-| SR-IOV VFs device pool name | kubevirt.io/sriov_net      |
-|:----------------------------|:---------------------------|
-| VM networks names           | sriovnet100, sriovnet200   |
-| Allocated VFs PCI addresses | 0000:04:03.6, 0000:04:03.7 |
+| SR-IOV VFs device pool name | `kubevirt.io/sriov_net`        |
+|:----------------------------|:-------------------------------|
+| VM networks names           | `sriovnet100`, `sriovnet200`   |
+| Allocated VFs PCI addresses | `0000:04:03.6`, `0000:04:03.7` |
 
-When HostDevice object is created its PCI address is picked as follows:
-`networkToResource["sriovnet100"]`  --------------------> `kubevirt.io/sriov_net`
+When `HostDevice` object is created, the PCI address is picked as follows:
+<br/>
+`networkToResource["sriovnet100"]`  ----------------------------> `kubevirt.io/sriov_net`
+<br/>
 `addressesByResource["kubevirt.io/sriov_net"]` ---------> `0000:04:03.6`
 
-There is no guarantee that "0000:04:03.6" is the correct PCI address for the network "sriovnet100"  and that the VF is configured with VLAN 100.
-
-This example shows that the current environment variable `PCIDEVICE` (given by sriov-network-device-plugin) is simply not enough to directly map between the VM’s networks and  the VFs PCI address.
+There is no guarantee that `0000:04:03.6` is the correct PCI address for the network `sriovnet100`  and that the VF is configured with VLAN 100.
+This example shows that the current environment variable `PCIDEVICE` (given by the sriov-dp) is simply not enough to directly map between the VM’s networks and  the VFs PCI address.
 
 ### Example 2: Two VM networks  connected to the same NetworkAttachmentDefinition
-VMI spec with two SR-IOV devices, each connected to different networks, that are attached to the NetworkAttachmentDefinition (different MACs):
+VMI spec with two SR-IOV devices, each connected to different networks, that are attached to the NetworkAttachmentDefinition (different MAC addresses):
 
 ```yaml
 kind: VirtualMachineInstance
@@ -304,10 +314,10 @@ spec:
       ...
   networks:
   - multus:
-        networkName: default/sriov-network-vlan100
+      networkName: default/sriov-network-vlan100
     name: sriovnet-vlan100-primary-mac
   - multus:
-        networkName: default/sriov-network-vlan100
+      networkName: default/sriov-network-vlan100
     name: sriovnet-vlan100-secondary-mac
   ...
 ```
@@ -318,10 +328,10 @@ Single NetworkAttachmentDefinition:
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
- name: sriov-network-vlan100
- namespace: default
- annotations:
-   k8s.v1.cni.cncf.io/resourceName: kubevirt.io/sriov_net
+  name: sriov-network-vlan100
+  namespace: default
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: kubevirt.io/sriov_net
 spec:
   config: |-
     {
@@ -410,18 +420,19 @@ k8s.v1.cni.cncf.io/networks-status: |-
 > Once a Pod reaches Running state, the CNI operation is finished successfully and the annotation will present on the Pod.
 
 ### Annotations Exposure Method
-A subset of the information in the networks-status annotation needs to be passed down to the virt-launcher for composing the right domain configuration.
+A subset of the information in the `networks-status` annotation needs to be passed down to the virt-launcher for composing the right domain configuration.
 
 There have been several methods explored, recorded in [Appendix 1: Alternative Annotations Exposure Methods](#alternative-solutions).
 
 In this section the chosen method is explained.
 
-#### Expose networks-status annotation to virt-launcher Pod
+#### Expose `networks-status` annotation to virt-launcher Pod
 The annotation content can be exposed to virt-launcher application using Kubernetes Downward API [[1]](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/):
 
 virt-controller creates an annotation that will hold the mapping between the (VMI) SR-IOV networks and PCI addresses, e.g: `kubevirt.io/network-to-pci-address`.
 
-1. Given the networks-status annotation, virt-controller process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information.<br/> Create `network-to-pci-address` annotation with the mapping information. <br/> For example:
+1. Given the `networks-status` annotation, virt-controller process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information.
+   Create `network-to-pci-address` annotation with the mapping information, for example:
     ```yaml
     kubevirt.io/network-to-pci-address: |-
       {
@@ -459,13 +470,13 @@ virt-controller creates an annotation that will hold the mapping between the (VM
     > **_Note_**: The annotation details will be populated at `/etc/podinfo/network-to-pci-address` file inside the pod.
     > Any change to the annotation will be reflected in the file.
 
-3. As part of virt-launcher VMI spec rendering, given the downward API file exists (e.g: `/etc/podinfo/network-to-pci-address`),<br/>
-access the network-to-pci-address data, lookup for the PCI address based on the network name and create each SR-IOV HostDevice accordingly.
+3. As part of virt-launcher VMI spec rendering, given the downward API file exists (e.g: `/etc/podinfo/network-to-pci-address`),
+   access the `network-to-pci-address` data, lookup for the PCI address based on the network name and create each SR-IOV HostDevice accordingly.
 
 4. If the file doesn't exist, fall back to the legacy mapping method (based on `PCIDEVICE` and `KUBEVIRT_RESOURCE_NAME` environment variables).
 
 ##### Backward compatibility
-- On post Kubevirt upgrade new virt-controller will treat new and old VMIs and their pod in the same manner - adding the network-to-pci-address annotation on the pods.
+- On post Kubevirt upgrade new virt-controller will treat new and old VMIs and their pod in the same manner - adding the `network-to-pci-address` annotation on the pods.
 
 - No disruption to already existing VMIs workloads, though the SR-IOV mapping may not be correct.
 
@@ -482,11 +493,12 @@ Currently, virt-launcher uses the information from the `PCIDEVICE` and `KUBEVIRT
 the proposal is to use the information from Multus `k8s.v1.cni.cncf.io/networks-status` annotation in order to map between the SR-IOV interfaces and the underlying VF PCI address.
 
 #### Mapping logic
-1. Map the `interface` field in networks-status annotation to VMI spec.networks:
+1. Map the `interface` field in `networks-status` annotation to VMI spec.networks:
 - On pod creation, a network request annotation (`k8s.v1.cni.cncf.io/networks`) is created on the virt-launcher pod [[1]](https://github.com/kubevirt/kubevirt/blob/c4b6ae63c5a7f642ab86b0755dabca3b814ecb39/pkg/virt-controller/services/template.go#L1692).
-  - The annotation creates a network request per each non-default multus network.<br/>For each CNI entry, each name is given an indexed name `net#` saved on is set in the `interface` field, acting as an identifier.
-  - The VMI spec.networks `interface` filed equal to `interface` field the networks-status annotation given by multus-cni.
-- Duplicating this logic gives us a 1:1 map between the `interface` field on the networks-status annotations (net1, net2, etc..) and the network name.
+  - The annotation creates a network request per each non-default multus network.<br/>
+    For each CNI entry, each name is given an indexed name `net#` saved on is set in the `interface` field, acting as an identifier.
+  - The VMI spec.networks `interface` filed equal to `interface` field the `networks-status` annotation given by multus-cni.
+- Duplicating this logic gives us a 1:1 map between the `interface` field on the `networks-status` annotations (net1, net2, etc..) and the network name.
 
 ##### Example
 The following VMI has 1 bridge and 2 SR-IOV secondary networks:
@@ -569,7 +581,7 @@ k8s.v1.cni.cncf.io/network-status: |-
       }]
 ```
 
-Since we’re only interested in the SR-IOV networks, the network-name-to-pci-address mapping will be:
+Since we’re only interested in the SR-IOV networks, the network-name to PCI address mapping will be:
 - `sriovnet-vlan100-secondary-mac` ⇒ `0000:65:00.2`
 - `sriovnet-vlan100-third-mac`     ⇒ `0000:65:00.3`
 
@@ -581,25 +593,22 @@ Since we’re only interested in the SR-IOV networks, the network-name-to-pci-ad
 
 ##### Backward compatibility:
 The mapping mentioned above could fail for several reasons, among them:
-- networks-status annotation is not present on the VMI.
-- networks-status annotation does not hold the PCI address information for all the SR-IOV interfaces.
-- Annotation is not valid.
-
-Such a case can happen if the networks-status annotation is breaking the API or Multus deployed on the cluster is older than [v3.7](https://github.com/k8snetworkplumbingwg/multus-cni/releases/tag/v3.7).
-In any case, in the event of a mapping failure, Kubevirt will fall back to the old mapping method, in order to not break old VMIs on old clusters.
+- `networks-status` annotation is not present on the VMI.
+- `networks-status` annotation does not hold the PCI address information for all the SR-IOV interfaces.
+- Annotation is not valid, such a case can happen if the `networks-status` annotation is breaking the API or Multus deployed on the cluster is older than [v3.7](https://github.com/k8snetworkplumbingwg/multus-cni/releases/tag/v3.7).<br/>In any case, in the event of a mapping failure, Kubevirt will fall back to the old mapping method, in order to not break old VMIs on old deployments.
 
 # Appendix 1: Alternative Annotations Exposure Methods <a id="alternative-solutions"></a>
-## 1. virt controller exposes network to pci mapping through the VMI annotations
+## 1. virt controller exposes network to pci mapping through the VMI annotations <a id="alternative-option-1"></a>
 1. virt-controller processes the VMI (virt-launcher) pod and adds it to the VMI annotations.
 
 2. As part of virt-launcher VMI spec rendering:
-- Given the networks-status annotation exists on the VMI object, extract the mapping between SR-IOV networks and the VFs PCI addresses and create each HostDevice accordingly.
-- In case networks-status annotation doesn't exist, fall back to the legacy mapping method (based on environment variables).
+- Given the `networks-status` annotation exists on the VMI object, extract the mapping between SR-IOV networks and the VFs PCI addresses and create each HostDevice accordingly.
+- In case `networks-status` annotation doesn't exist, fall back to the legacy mapping method (based on environment variables).
 
 ### Backward compatibility
 |                                                       | old virt-controller                                | new virt-controller                                                                                                                                                                                                              |
 |:------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Already existing VMs<br/>(old virt-launcher)          | 1. No regression <br/> VFs mapping might be wrong. | 2. No regression <br/><br/>VFs mapping might be wrong.<br/>virt-controller adds the pod networks-status annotations to VMI annotations,but virt-launcher wont perform the assignment according to it.                            |
+| Already existing VMs<br/>(old virt-launcher)          | 1. No regression <br/> VFs mapping might be wrong. | 2. No regression <br/><br/>VFs mapping might be wrong.<br/>virt-controller adds the pod `networks-status` annotations to VMI annotations,but virt-launcher wont perform the assignment according to it.                            |
 | VM creation/restart/migration<br/>(new virt-launcher) | -                                                  | 4. No regression<br/>Once the VM is restarted, VMI or Pod is re-created, the new SR-IOV interfaces assignment logic will apply.<br/>In case the VM is migrated, the VM on target will have SR-IOV interfaces assigned correctly. |
 
 #### Conclusion
@@ -614,12 +623,12 @@ In any case, in the event of a mapping failure, Kubevirt will fall back to the o
 1. virt-controller adds an annotation to the VMI.
 2. During migration, there is a need to choose the right pod data to be processed (source or target).
 
-## 2. virt-controller exposes network-to-pci mapping through two VMI annotations
-Following option 1 con (2), this solution mitigates it as follows:
-In order to ensure that the correct mapping information is passed down to virt-launcher, it is necessary to record each of the VMI virt-launcher pods networks-status annotation.
+## 2. virt-controller exposes network-to-pci mapping through two VMI annotations <a id="alternative-option-2"></a>
+Following [option 1](#alternative-option-1) con (2), this solution mitigates it as follows:
+In order to ensure that the correct mapping information is passed down to virt-launcher, it is necessary to record each of the VMI virt-launcher pods `networks-status` annotation.
 
 1. virt-controller processes all VMI (virt-launcher) pods and for each, creates a VMI annotation that has the network-to-pci mapping.<br/>During migration, a VMI has two pods (source and target).<br/>   The pod identifier is embedded into the annotation key (e.g: pod name, UID, etc..).
-    #### Example
+   #### Example
     ```yaml
     kind: VirtualMachineInstance
     ...
@@ -630,20 +639,20 @@ In order to ensure that the correct mapping information is passed down to virt-l
     ...
     ```
 
-2. virt-launcher picks the relevant annotation and perform the mapping accordingly. 
+2. virt-launcher picks the relevant annotation and perform the mapping accordingly.
 
 #### Pros
-1. No need to synchronize the networks-status annotation from the pods (source and target).  
- 
+1. No need to synchronize the `networks-status` annotation from the pods (source and target).
+
 #### Cons
 2. virt-controller need to maintain two annotations during migration and one on the regular flow.
 
-## 3. **virt-handler** exposes network-to-pci mapping through VMI annotations 
+## 3. **virt-handler** exposes network-to-pci mapping through VMI annotations
 As part of the virt-handler VM create/update flow, the VMI spec is processed and virt-launcher is triggered to synchronize with the new VMI spec [[1]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-handler/vm.go#L2639) (i.e: sends [SyncVMI](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L822) gRPC call to virt-launcher).
 
 1. Extend virt-handler to virt-launcher command options to include the mapping information.
 
-2. As part of virt-handler VMI update flow, fetch the corresponding virt-launcher pod and read its networks-status annotation.<br/>If the annotation exists, extract the network-to-pci mapping and send it to virt-launcher.
+2. As part of virt-handler VMI update flow, fetch the corresponding virt-launcher pod and read its `networks-status` annotation.<br/>If the annotation exists, extract the network-to-pci mapping and send it to virt-launcher.
 
 3. As part of virt-launcher VMI spec rendering:<br/> if the network-to-pci mapping information is valid, create each SR-IOV HostDevice accordingly. <br/> In case the information is invalid fall back to the legacy mapping method (based on environment variables).
 
@@ -655,25 +664,25 @@ As part of the virt-handler VM create/update flow, the VMI spec is processed and
 
 #### Conclusion
 - (2) and (3):<br/>
-There might be a disruption to VMs when they were created:
-  - After the virt-controller is updated (new virt-launcher), on a node with an old instance of virt-handler.
-  - Before the virt-controller is updated (old virt-launcher), on a node with a new instance of virt-handler.
-  <br/><br/>
-  Since the gRPC command server (virt-launcher) and client (virt-handler) runs with different API versions, virt-launcher may fail to synchronize with the new VMI state.
-  <br/><br/>
+  There might be a disruption to VMs when they were created:
+    - After the virt-controller is updated (new virt-launcher), on a node with an old instance of virt-handler.
+    - Before the virt-controller is updated (old virt-launcher), on a node with a new instance of virt-handler.
+      <br/><br/>
+      Since the gRPC command server (virt-launcher) and client (virt-handler) runs with different API versions, virt-launcher may fail to synchronize with the new VMI state.
+      <br/><br/>
 
 - (4) When both virt-handler and virt-controller are updated, new VMs will be created with the correct SR-IOV interfaces assignment.
 
 ### Pros
 1. No need to involve virt-controller.
-2. No need to create annotations on the pod or VMI. 
+2. No need to create annotations on the pod or VMI.
 
 ### Cons
 1. Requires API changes to virt-handler to virt-launcher commands API [[7]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/handler-launcher-com/cmd/v1/cmd.pb.go) [[8]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/handler-launcher-com/cmd/v1/cmd.pb.go#L334).
 2. virt-handler needs to fetch the pod object in order to get the mapping information.
 
 ## 4. Expose network-to-pci mapping through the VMI status
-This option uses the same basic ideas from [option 2](#2.virt-controller-exposes-network-to-pci-mapping-through-two-VMI-annotations) but instead of using VMI annotations it
+This option uses the same basic ideas from [option 2](#alternative-option-2) but instead of using VMI annotations it
 uses VMI Status additional fields to persist the mapping.
 
 1. Extend the VMI status API to reflect each SR-IOV interface underlying PCI address.
@@ -681,7 +690,7 @@ uses VMI Status additional fields to persist the mapping.
 2. The virt-controller updates the status fields with the mapping information.
 
 3. virt-launcher VMI extract the network-to-pci mapping from the VMI status and create each HostDevice accordingly.<br/>
-   In case there is not enough information in the VMI status (i.e: missing host PCI address) fall back to legacy mapping method. 
+   In case there is not enough information in the VMI status (i.e: missing host PCI address) fall back to legacy mapping method.
 
 #### Pros
 1. No need for annotations.
@@ -697,13 +706,13 @@ there will be a general propose annotation that enable passing any kind of infor
 
 In order to pass the information from the pod to the virt-launcher application, the following step are to be taken:
 - Create a generic annotation for passing information from the pod manifest to the application that runs in it. This annotation is using the downward api to make it available to the application.
-- Given the networks-status annotation, process the content and compose structure that contains a 1:1 mapping between a (VMI) network from it and the device PCI address. This data is added to the generic annotation from earlier.
+- Given the `networks-status` annotation, process the content and compose structure that contains a 1:1 mapping between a (VMI) network from it and the device PCI address. This data is added to the generic annotation from earlier.
 - Once the virt-launcher application requires this network-to-pci information, it can read the content.
 - In the context of SR-IOV, virt-launcher will use this data when creating the domain for the first time and when hotplug-ing the devices.
 
 1. virt-controller creates `virt-metadata` annotation that will hold generic information about the pod that we want to expose to the virt-launcher pod user.
 
-2. Given the networks-status annotation, process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information and add it to virt-metadata annotation.
+2. Given the `networks-status` annotation, process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information and add it to `virt-metadata` annotation.
    For example:
 ```yaml
 kubevirt.io/virt-metadata: |-
@@ -741,7 +750,7 @@ containers:
 ```
 
 4. As part of virt-launcher VMI spec rendering, given the downward API file exists (e.g: `/etc/podinfo/virt-metadata` file),
-   access the network-to-pci-address data, lookup for the PCI address based on the network name and create each SR-IOV HostDevice accordingly.
+   access the network to PCI address data, lookup for the PCI address based on the network name and create each SR-IOV HostDevice accordingly.
 
 5. If the file doesn't exist, fall back to the legacy mapping method (based on environment variables).
 
@@ -750,6 +759,3 @@ containers:
 
 #### Cons
 1. Introduce new communication channel between virt-handler to virt-launcher.
-
-
-proposed solution, use dedicated annotation for network-to-pci mapping
