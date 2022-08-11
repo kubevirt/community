@@ -1,5 +1,5 @@
 # Overview
-Accurately associate VMs SR-IOV interfaces with the underlying SR-IOV Virtual Functions (VF) devices (PCI) allocated by the sriov-network-device-plugin and sriov-cni.
+Accurately associate VMs SR-IOV interfaces with the underlying SR-IOV Virtual Functions (VF) devices (PCI) allocated by the [sriov-network-device-plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin) and [sriov-cni](https://github.com/k8snetworkplumbingwg/sriov-cni).
 
 The proposal fixes the current solution, where VFs from the same resource pool are not differentiated by KubeVirt and therefore potentially wrongly plugged to the domain.
 
@@ -11,7 +11,7 @@ Each VM SR-IOV device (i.e: VF) is associated with a VM secondary network.
 
 When a VM is defined with multiple SR-IOV devices from the same [resource pool](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#configurations)
 or connected to the same NetworkAttachmentDefinition, Kubevirt cannot differentiate which VF is associated with which requested device.
-The root cause is that the PCI information passed by the sriov-network-device-plugin though kubelet is not enough to directly map the VFs with their secondary networks.
+The root cause is that the PCI information passed by the sriov-network-device-plugin (through kubelet) is not enough to directly map the VFs with their secondary networks.
 
 The outcome is a non-consistent association between the underlying VFs and the VM networks,
 leaving the VM in a state where the VFs are plugged into the domain wrongly.
@@ -40,7 +40,8 @@ The sriov-dp provides an [API to create resource pools](https://github.com/opens
 Each resource pool is labeled with a resource name.
 
 In the VMI spec, secondary networks point to the desired SR-IOV NetworkAttachmentDefinition object.
-The NetworkAttachmentDefinition is set with the Multus networks-status annotation:
+<br/>
+The NetworkAttachmentDefinition is set with the resource-name annotation:
 <br/>`k8s.v1.cni.cncf.io/resourceName=<resource name>`<br/>
 which later on passed down by Multus to the sriov-cni [[1]](https://github.com/k8snetworkplumbingwg/multus-cni/blob/a28f5cb56c79a582f5ea2b35a61b38f34b937930/examples/README.md#passing-down-device-information).
 ```yaml
