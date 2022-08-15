@@ -94,8 +94,7 @@ As part of the VM create flow, virt-controller renders the given VMI spec and cr
 For each secondary network:
 - Realize the device `resourceName` by fetching the specified NetworkAttachmentDefinition.
 - Read the NetworkAttachmentDefinition `k8s.v1.cni.cncf.io/resourceName` annotation.
-- Add the following environment variable to the compute container (spec.Env):
-  `KUBEVIRT_RESOURCE_NAME_<network name>=<resource name>`
+- Add the following environment variable to the compute container (spec.Env):<br/>`KUBEVIRT_RESOURCE_NAME_<network name>=<resource name>`
 
 Once virt-launcher Pod is ready, virt-handler process the VMI object and eventually trigger the virt-launcher to synchronize with the new spec (i.e: virt-handler sends gRPC call to virt-launcher [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L822)).
 <br/>
@@ -373,7 +372,7 @@ In order to pass the VM network to VF PCI address mapping from the pod to the vi
 
 The following sections go into more details.
 
-## Utilizing “k8s.v1.cni.cncf.io/networks-status” annotation
+## Utilizing `k8s.v1.cni.cncf.io/networks-status` annotation
 This annotation includes the information required to do one-to-one mapping between a VM interface and VF PCI address:
 
 ### Example
@@ -415,8 +414,8 @@ k8s.v1.cni.cncf.io/networks-status: |-
     ]
 ```
 
-> **_Note_**: Multus provides PCI device information since version [v3.7](https://github.com/k8snetworkplumbingwg/multus-cni/releases/tag/v3.7).
-> In order to maintain backward compatibility, when the annotation is missing, virt-launcher will fall to the current mapping method based on environment variables.
+> **_Note_**: Multus provides PCI device information since version [v3.7](https://github.com/k8snetworkplumbingwg/multus-cni/releases/tag/v3.7).<br/>
+> In order to maintain backward compatibility, when the annotation is missing, virt-launcher will fall to the current mapping method based on environment variables.<br/>
 > Once a Pod reaches Running state, the CNI operation is finished successfully and the annotation will present on the Pod.
 
 ### Annotations Exposure Method
@@ -467,7 +466,7 @@ virt-controller creates an annotation that will hold the mapping between the (VM
           ...
     ```
 
-    > **_Note_**: The annotation details will be populated at `/etc/podinfo/network-to-pci-address` file inside the pod.
+    > **_Note_**: The annotation details will be populated at `/etc/podinfo/network-to-pci-address` file inside the pod.<br/>
     > Any change to the annotation will be reflected in the file.
 
 3. As part of virt-launcher VMI spec rendering, given the downward API file exists (e.g: `/etc/podinfo/network-to-pci-address`),
@@ -534,9 +533,9 @@ spec:
 ```
 
 The `interface` field is mapped to `network-name` as follows:
-- `bridge-primary-mac`             ⇒ `net1`
-- `sriovnet-vlan100-secondary-mac` ⇒ `net2`
-- `sriovnet-vlan100-third-mac`     ⇒ `net3`
+- `bridge-primary-mac` ------------------------> `net1`
+- `sriovnet-vlan100-secondary-mac` -----> `net2`
+- `sriovnet-vlan100-third-mac` -----------> `net3`
 
 With this mapping we can easily retrieve the PCI address, as the one with the corresponding `interface` name:
 ```yaml
@@ -582,8 +581,8 @@ k8s.v1.cni.cncf.io/network-status: |-
 ```
 
 Since we’re only interested in the SR-IOV networks, the network-name to PCI address mapping will be:
-- `sriovnet-vlan100-secondary-mac` ⇒ `0000:65:00.2`
-- `sriovnet-vlan100-third-mac`     ⇒ `0000:65:00.3`
+- `sriovnet-vlan100-secondary-mac ` ---> `0000:65:00.2`
+- `sriovnet-vlan100-third-mac` ----------> `0000:65:00.3`
 
 > **_Note_**:
 > We are relying on the fact that the `interface` naming convention in [[2]](https://github.com/kubevirt/kubevirt/blob/c4b6ae63c5a7f642ab86b0755dabca3b814ecb39/pkg/virt-controller/services/template.go#L1692) will remain the same.
@@ -608,11 +607,11 @@ The mapping mentioned above could fail for several reasons, among them:
 ### Backward compatibility
 |                                                       | old virt-controller                                | new virt-controller                                                                                                                                                                                                              |
 |:------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Already existing VMs<br/>(old virt-launcher)          | 1. No regression <br/> VFs mapping might be wrong. | 2. No regression <br/><br/>VFs mapping might be wrong.<br/>virt-controller adds the pod `networks-status` annotations to VMI annotations,but virt-launcher wont perform the assignment according to it.                            |
+| Already existing VMs<br/>(old virt-launcher)          | 1. No regression <br/> VFs mapping might be wrong. | 2. No regression <br/><br/>VFs mapping might be wrong.<br/>virt-controller adds the pod `networks-status` annotations to VMI annotations,but virt-launcher wont perform the assignment according to it.                          |
 | VM creation/restart/migration<br/>(new virt-launcher) | -                                                  | 4. No regression<br/>Once the VM is restarted, VMI or Pod is re-created, the new SR-IOV interfaces assignment logic will apply.<br/>In case the VM is migrated, the VM on target will have SR-IOV interfaces assigned correctly. |
 
 #### Conclusion
-- (2) virt-controller will add the network-status to the VMI, the guest will have no disruption and its VFs mapping will not change.
+- (2) virt-controller will add the `network-status` to the VMI, the guest will have no disruption and its VFs mapping will not change.
 - (4) When virt-controller pods are is upgraded, new VMs will be created with the correct SR-IOV interfaces assignment.
 
 ### Pros
@@ -657,10 +656,10 @@ As part of the virt-handler VM create/update flow, the VMI spec is processed and
 3. As part of virt-launcher VMI spec rendering:<br/> if the network-to-pci mapping information is valid, create each SR-IOV HostDevice accordingly. <br/> In case the information is invalid fall back to the legacy mapping method (based on environment variables).
 
 ### Backward compatibility
-|                                                       | old virt-handler                                                                                                                                                    | new virt-handler                                                                                                                                                                                                                                                        |
-|:------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Already existing VMs<br/>(old virt-launcher)          | 1. No regression<br/>VFs mapping might be wrong.                                                                                                                    | 2. Regression<br/>virt-handler fetches virt-launcher pod and annotates the VMI with the network-status annotation.<br/>Next, virt-handler sends the network-to-pci mapping information to virt-launcher trough gRPC. virt-launcher fall backs to legacy mapping method. |
-| VM creation/restart/migration<br/>(new virt-launcher) | 3. Regression<br/>Virt-handler sends the network-to-pci mapping information to virt-launcher through gRPC, virt-launcher should fall back to legacy mapping method. | 4. No regression                                                                                                                                                                                                                                                        |
+|                                                       | old virt-handler                                                                                                                                                    | new virt-handler                                                                                                                                                                                                                                                          |
+|:------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Already existing VMs<br/>(old virt-launcher)          | 1. No regression<br/>VFs mapping might be wrong.                                                                                                                    | 2. Regression<br/>virt-handler fetches virt-launcher pod and annotates the VMI with the `network-status` annotation.<br/>Next, virt-handler sends the network-to-pci mapping information to virt-launcher trough gRPC. virt-launcher fall backs to legacy mapping method. |
+| VM creation/restart/migration<br/>(new virt-launcher) | 3. Regression<br/>Virt-handler sends the network-to-pci mapping information to virt-launcher through gRPC, virt-launcher should fall back to legacy mapping method. | 4. No regression                                                                                                                                                                                                                                                          |
 
 #### Conclusion
 - (2) and (3):<br/>
