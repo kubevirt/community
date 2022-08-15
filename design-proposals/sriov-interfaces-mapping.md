@@ -366,18 +366,18 @@ In this example we can see that both NICs points the same NetworkAttachmentDefin
 The proposal is based on information multus-cni provides as an annotation on the virt-launcher pod. The objective is to pass down the relevant information to the virt-launcher application, so it in turn can consume it and create the correct domain configuration.
 
 In order to pass the VM network to VF PCI address mapping from the pod to the virt-launcher application, the following step are to be taken:
-- Process the `k8s.v1.cni.cncf.io/networks-status` annotation, and compose a structure that contains one-to-one mapping between a (VMI) network and the device PCI address.
+- Process the `k8s.v1.cni.cncf.io/network-status` annotation, and compose a structure that contains one-to-one mapping between a (VMI) network and the device PCI address.
 - Create an annotation with the mapping information (e.g: `kubevirt.io/network-to-pci-address`) on the virt-launcher pod. <br/> This annotation is using the downward API to make it available to the application.
 - Once the virt-launcher application requires the network-to-pci information, it can read the content. <br/>virt-launcher will use this data when creating the domain for the first time and when hotplug-ing the devices.
 
 The following sections go into more details.
 
-## Utilizing `k8s.v1.cni.cncf.io/networks-status` annotation
+## Utilizing `k8s.v1.cni.cncf.io/network-status` annotation
 This annotation includes the information required to do one-to-one mapping between a VM interface and VF PCI address:
 
 ### Example
 ```yaml
-k8s.v1.cni.cncf.io/networks-status: |-
+k8s.v1.cni.cncf.io/network-status: |-
     [
         {
             "name": "kindnet",
@@ -419,18 +419,18 @@ k8s.v1.cni.cncf.io/networks-status: |-
 > Once a Pod reaches Running state, the CNI operation is finished successfully and the annotation will present on the Pod.
 
 ### Annotations Exposure Method
-A subset of the information in the `networks-status` annotation needs to be passed down to the virt-launcher for composing the right domain configuration.
+A subset of the information in the `network-status` annotation needs to be passed down to the virt-launcher for composing the right domain configuration.
 
 There have been several methods explored, recorded in [Appendix 1: Alternative Annotations Exposure Methods](#alternative-solutions).
 
 In this section the chosen method is explained.
 
-#### Expose `networks-status` annotation to virt-launcher Pod
+#### Expose `network-status` annotation to virt-launcher Pod
 The annotation content can be exposed to virt-launcher application using Kubernetes Downward API [[1]](https://kubernetes.io/docs/tasks/inject-data-application/downward-api-volume-expose-pod-information/):
 
 virt-controller creates an annotation that will hold the mapping between the (VMI) SR-IOV networks and PCI addresses, e.g: `kubevirt.io/network-to-pci-address`.
 
-1. Given the `networks-status` annotation, virt-controller process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information.
+1. Given the `network-status` annotation, virt-controller process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information.
    Create `network-to-pci-address` annotation with the mapping information, for example:
     ```yaml
     kubevirt.io/network-to-pci-address: |-
@@ -489,15 +489,15 @@ virt-controller creates an annotation that will hold the mapping between the (VM
 
 ### New Mapping Algorithm
 Currently, virt-launcher uses the information from the `PCIDEVICE` and `KUBEVIRT_RESOURCE_NAME` environment variables,
-the proposal is to use the information from Multus `k8s.v1.cni.cncf.io/networks-status` annotation in order to map between the SR-IOV interfaces and the underlying VF PCI address.
+the proposal is to use the information from Multus `k8s.v1.cni.cncf.io/network-status` annotation in order to map between the SR-IOV interfaces and the underlying VF PCI address.
 
 #### Mapping logic
-1. Map the `interface` field in `networks-status` annotation to VMI spec.networks:
+1. Map the `interface` field in `network-status` annotation to VMI spec.networks:
 - On pod creation, a network request annotation (`k8s.v1.cni.cncf.io/networks`) is created on the virt-launcher pod [[1]](https://github.com/kubevirt/kubevirt/blob/c4b6ae63c5a7f642ab86b0755dabca3b814ecb39/pkg/virt-controller/services/template.go#L1692).
   - The annotation creates a network request per each non-default multus network.<br/>
     For each CNI entry, each name is given an indexed name `net#` saved on is set in the `interface` field, acting as an identifier.
-  - The VMI spec.networks `interface` filed equal to `interface` field the `networks-status` annotation given by multus-cni.
-- Duplicating this logic gives us a 1:1 map between the `interface` field on the `networks-status` annotations (net1, net2, etc..) and the network name.
+  - The VMI spec.networks `interface` filed equal to `interface` field the `network-status` annotation given by multus-cni.
+- Duplicating this logic gives us a 1:1 map between the `interface` field on the `network-status` annotations (net1, net2, etc..) and the network name.
 
 ##### Example
 The following VMI has 1 bridge and 2 SR-IOV secondary networks:
@@ -592,22 +592,22 @@ Since we’re only interested in the SR-IOV networks, the network-name to PCI ad
 
 ##### Backward compatibility:
 The mapping mentioned above could fail for several reasons, among them:
-- `networks-status` annotation is not present on the VMI.
-- `networks-status` annotation does not hold the PCI address information for all the SR-IOV interfaces.
-- Annotation is not valid, such a case can happen if the `networks-status` annotation is breaking the API or Multus deployed on the cluster is older than [v3.7](https://github.com/k8snetworkplumbingwg/multus-cni/releases/tag/v3.7).<br/>In any case, in the event of a mapping failure, Kubevirt will fall back to the old mapping method, in order to not break old VMIs on old deployments.
+- `network-status` annotation is not present on the VMI.
+- `network-status` annotation does not hold the PCI address information for all the SR-IOV interfaces.
+- Annotation is not valid, such a case can happen if the `network-status` annotation is breaking the API or Multus deployed on the cluster is older than [v3.7](https://github.com/k8snetworkplumbingwg/multus-cni/releases/tag/v3.7).<br/>In any case, in the event of a mapping failure, Kubevirt will fall back to the old mapping method, in order to not break old VMIs on old deployments.
 
 # Appendix 1: Alternative Annotations Exposure Methods <a id="alternative-solutions"></a>
 ## 1. virt controller exposes network to pci mapping through the VMI annotations <a id="alternative-option-1"></a>
 1. virt-controller processes the VMI (virt-launcher) pod and adds it to the VMI annotations.
 
 2. As part of virt-launcher VMI spec rendering:
-- Given the `networks-status` annotation exists on the VMI object, extract the mapping between SR-IOV networks and the VFs PCI addresses and create each HostDevice accordingly.
-- In case `networks-status` annotation doesn't exist, fall back to the legacy mapping method (based on environment variables).
+- Given the `network-status` annotation exists on the VMI object, extract the mapping between SR-IOV networks and the VFs PCI addresses and create each HostDevice accordingly.
+- In case `network-status` annotation doesn't exist, fall back to the legacy mapping method (based on environment variables).
 
 ### Backward compatibility
 |                                                       | old virt-controller                                | new virt-controller                                                                                                                                                                                                              |
 |:------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Already existing VMs<br/>(old virt-launcher)          | 1. No regression <br/> VFs mapping might be wrong. | 2. No regression <br/><br/>VFs mapping might be wrong.<br/>virt-controller adds the pod `networks-status` annotations to VMI annotations,but virt-launcher wont perform the assignment according to it.                          |
+| Already existing VMs<br/>(old virt-launcher)          | 1. No regression <br/> VFs mapping might be wrong. | 2. No regression <br/><br/>VFs mapping might be wrong.<br/>virt-controller adds the pod `network-status` annotations to VMI annotations,but virt-launcher wont perform the assignment according to it.                           |
 | VM creation/restart/migration<br/>(new virt-launcher) | -                                                  | 4. No regression<br/>Once the VM is restarted, VMI or Pod is re-created, the new SR-IOV interfaces assignment logic will apply.<br/>In case the VM is migrated, the VM on target will have SR-IOV interfaces assigned correctly. |
 
 #### Conclusion
@@ -624,7 +624,7 @@ The mapping mentioned above could fail for several reasons, among them:
 
 ## 2. virt-controller exposes network-to-pci mapping through two VMI annotations <a id="alternative-option-2"></a>
 Following [option 1](#alternative-option-1) con (2), this solution mitigates it as follows:
-In order to ensure that the correct mapping information is passed down to virt-launcher, it is necessary to record each of the VMI virt-launcher pods `networks-status` annotation.
+In order to ensure that the correct mapping information is passed down to virt-launcher, it is necessary to record each of the VMI virt-launcher pods `network-status` annotation.
 
 1. virt-controller processes all VMI (virt-launcher) pods and for each, creates a VMI annotation that has the network-to-pci mapping.<br/>During migration, a VMI has two pods (source and target).<br/>   The pod identifier is embedded into the annotation key (e.g: pod name, UID, etc..).
    #### Example
@@ -641,7 +641,7 @@ In order to ensure that the correct mapping information is passed down to virt-l
 2. virt-launcher picks the relevant annotation and perform the mapping accordingly.
 
 #### Pros
-1. No need to synchronize the `networks-status` annotation from the pods (source and target).
+1. No need to synchronize the `network-status` annotation from the pods (source and target).
 
 #### Cons
 2. virt-controller need to maintain two annotations during migration and one on the regular flow.
@@ -651,7 +651,7 @@ As part of the virt-handler VM create/update flow, the VMI spec is processed and
 
 1. Extend virt-handler to virt-launcher command options to include the mapping information.
 
-2. As part of virt-handler VMI update flow, fetch the corresponding virt-launcher pod and read its `networks-status` annotation.<br/>If the annotation exists, extract the network-to-pci mapping and send it to virt-launcher.
+2. As part of virt-handler VMI update flow, fetch the corresponding virt-launcher pod and read its `network-status` annotation.<br/>If the annotation exists, extract the network-to-pci mapping and send it to virt-launcher.
 
 3. As part of virt-launcher VMI spec rendering:<br/> if the network-to-pci mapping information is valid, create each SR-IOV HostDevice accordingly. <br/> In case the information is invalid fall back to the legacy mapping method (based on environment variables).
 
@@ -705,13 +705,13 @@ there will be a general propose annotation that enable passing any kind of infor
 
 In order to pass the information from the pod to the virt-launcher application, the following step are to be taken:
 - Create a generic annotation for passing information from the pod manifest to the application that runs in it. This annotation is using the downward api to make it available to the application.
-- Given the `networks-status` annotation, process the content and compose structure that contains a 1:1 mapping between a (VMI) network from it and the device PCI address. This data is added to the generic annotation from earlier.
+- Given the `network-status` annotation, process the content and compose structure that contains a 1:1 mapping between a (VMI) network from it and the device PCI address. This data is added to the generic annotation from earlier.
 - Once the virt-launcher application requires this network-to-pci information, it can read the content.
 - In the context of SR-IOV, virt-launcher will use this data when creating the domain for the first time and when hotplug-ing the devices.
 
 1. virt-controller creates `virt-metadata` annotation that will hold generic information about the pod that we want to expose to the virt-launcher pod user.
 
-2. Given the `networks-status` annotation, process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information and add it to `virt-metadata` annotation.
+2. Given the `network-status` annotation, process the content and compose 1:1 mapping between a (VMI) network from it and the device PCI address information and add it to `virt-metadata` annotation.
    For example:
 ```yaml
 kubevirt.io/virt-metadata: |-
