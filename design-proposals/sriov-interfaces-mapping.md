@@ -370,6 +370,13 @@ In order to pass the VM network to VF PCI address mapping from the pod to the vi
 - Create an annotation with the mapping information (e.g: `kubevirt.io/network-to-pci-address`) on the virt-launcher pod. <br/> This annotation is using the downward API to make it available to the application.
 - Once the virt-launcher application requires the network-to-pci information, it can read the content. <br/>virt-launcher will use this data when creating the domain for the first time and when hotplug-ing the devices.
 
+> **_Note_**:
+This approach diverges from the standard data communication methodology of passing down information to the virt-launcher
+via virt-handler with gRPC client. </br>
+> However, as this is also true for all current host-devices implementation (i.e. vGPU, Generic host-device etc..).
+> </br>
+This kind of change is in some ways preferable but should be made as part of an overall refactoring design change of how host-devices information is passed down to the virt-launcher, and not as part of this remapping fix scope.
+
 The following sections go into more details.
 
 ## Utilizing `k8s.v1.cni.cncf.io/network-status` annotation
@@ -485,6 +492,7 @@ virt-controller creates an annotation that will hold the mapping between the (VM
 3. Flexibility, no API change to VM or VMI objects.
 
 ##### Cons
+1. Passing down the mapping info to virt-launcher via Downward API is bypassing the standard communication channel.
 2. Depends on Downward API feature and volume mount on the Pod.
 
 ### New Mapping Algorithm
