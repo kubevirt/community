@@ -10,7 +10,7 @@ by passing its PCI device ID from the node, through the virt-launcher pod, and t
 Each VM SR-IOV device (i.e: VF) is associated with a VM secondary network.
 
 When a VM is defined with multiple SR-IOV devices from the same [resource pool](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#configurations)
-or connected to the same NetworkAttachmentDefinition, Kubevirt cannot differentiate which VF is associated with which requested device.
+or connected to the same `NetworkAttachmentDefinition`, Kubevirt cannot differentiate which VF is associated with which requested device.
 The root cause is that the PCI information passed by the sriov-network-device-plugin (through kubelet) is not enough to directly map the VFs with their secondary networks.
 
 The outcome is a non-consistent association between the underlying VFs and the VM networks,
@@ -18,7 +18,7 @@ leaving the VM in a state where the VFs are plugged into the domain wrongly.
 <br/>
 For example:
 <br/> 
-When a SR-IOV interface is defined with a custom MAC address (e.g: `02:00:00:00:00`), a custom guest PCI address of (e.g: `0000:01:01.1`) and pointing to a NetworkAttachmentDefinition with VLAN configuration (e.g: 100).
+When a SR-IOV interface is defined with a custom MAC address (e.g: `02:00:00:00:00`), a custom guest PCI address of (e.g: `0000:01:01.1`) and pointing to a `NetworkAttachmentDefinition` with VLAN configuration (e.g: 100).
 <br/>
 It is not guaranteed that the correct VF (with VLAN 100) will be plugged into the domain on the specified PCI address (`0000:01:01.1`).
 
@@ -40,15 +40,13 @@ Fix/change third-party components (e.g: Multus, SR-IOV CNI, etc..)
 ## Existing Implementation Flow
 In order to discover and allocate VFs to Pods the [sriov-network-device-plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin) (from now on sriov-dp) and [sriov-cni](https://github.com/k8snetworkplumbingwg/sriov-cni) are being used.
 <br/>
-The sriov-dp provides an API to create resource pools of VFs according to various properties [[1]](https://github.com/openshid/sriov-network-device-plugin#configurations).
-<br/>
-Each resource pool is labeled with a resource name.
+The sriov-dp provides an API to create resource pools of VFs according to various properties [[1]](https://github.com/openshid/sriov-network-device-plugin#configurations), and each resource pool is labeled with a resource name.
 
-In the VMI spec, secondary networks point to the desired SR-IOV NetworkAttachmentDefinition object.
+In the VMI spec, secondary networks point to the desired SR-IOV `NetworkAttachmentDefinition` object.
 <br/>
-The NetworkAttachmentDefinition is set with the resource-name annotation:
+The `NetworkAttachmentDefinition` is set with the resource-name annotation:
 <br/>`k8s.v1.cni.cncf.io/resourceName=<resource name>`<br/>
-which later on passed down by Multus to the sriov-cni [[2]](https://github.com/k8snetworkplumbingwg/multus-cni/blob/a28f5cb56c79a582f5ea2b35a61b38f34b937930/examples/README.md#passing-down-device-information).
+which later on [passed down by Multus](https://github.com/k8snetworkplumbingwg/multus-cni/blob/a28f5cb56c79a582f5ea2b35a61b38f34b937930/examples/README.md#passing-down-device-information) to the sriov-cni.
 ```yaml
 kind: VirtualMachine
   ...
@@ -93,12 +91,12 @@ Given the resource name `kubevirt.io/sriov_net` the following environment variab
 As part of the VM create flow, virt-controller renders the given VMI spec and creates the corresponding virt-launcher Pod [[3]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-controller/services/template.go#L443) (renderLaunchManifest).
 <br/>
 For each secondary network:
-- Realize the device `resourceName` by fetching the specified NetworkAttachmentDefinition.
+- Realize the device `resourceName` by fetching the specified `NetworkAttachmentDefinition`.
 - Add the following environment variable to the compute container (spec.Env):<br/>`KUBEVIRT_RESOURCE_NAME_<network name>=<resource name>`
 
 Once virt-launcher Pod is ready, virt-handler process the VMI object and eventually trigger the virt-launcher to synchronize with the new spec (i.e: virt-handler sends gRPC call to virt-launcher [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L822)).
 <br/>
-virt-launcher renders the VMI spec and converts it to Libvirt domain XML, and eventually passes it to Libvirt which in turn create the domain.
+virt-launcher renders the VMI spec, converts it to Libvirt domain XML and eventually passes it to Libvirt, which in turn creates the domain.
 
 As part of the VMI spec rendering, virt-launcher realizes the VFs PCI addresses that been allocated by loading `KUBEVIRT_RESOURCE_NAME` (formerly created by the virt-controller) and `PCIDEVICE` (created by the sriov-dp) environment variables.
 
@@ -154,7 +152,7 @@ KUBEVIRT_RESOURCE_NAME_sriovnet1=kubevirt.io/sriov_net
 
 ## The Problem
 The VFs PCI address information that being passed down to virt-launcher through `PCIDEVICE` (by sriov-device-plugin) and `KUBEVIRT_RESOURCE_NAME` (by Kubevirt) environment variables, is not enough to map the VFs with their secondary network.
-In the scenario where a VM has more than one network that points to a NetworkAttachmentDefinition with the same resource name, VFs might get assigned to the wrong network.
+In the scenario where a VM has more than one network that points to a `NetworkAttachmentDefinition` with the same resource name, VFs might get assigned to the wrong network.
 
 For example:
 In the scenario described in https://github.com/kubevirt/kubevirt/issues/6351,
@@ -198,7 +196,7 @@ networks:
   ...
 ```
 
-2. Two NetworkAttachmentDefinition objects pointing to the same resource:
+2. Two `NetworkAttachmentDefinition` objects pointing to the same resource:
 ```yaml
 ---
 apiVersion: k8s.cni.cncf.io/v1
@@ -292,8 +290,8 @@ When `HostDevice` object is created, the PCI address is picked as follows:
 There is no guarantee that `0000:04:03.6` is the correct PCI address for the network `sriovnet100`  and that the VF is configured with VLAN 100.
 This example shows that the current environment variable `PCIDEVICE` (given by the sriov-dp) is simply not enough to directly map between the VM’s networks and  the VFs PCI address.
 
-### Example 2: Two VM networks  connected to the same NetworkAttachmentDefinition
-VMI spec with two SR-IOV devices, each connected to different networks, that are attached to the NetworkAttachmentDefinition (different MAC addresses):
+### Example 2: Two VM networks  connected to the same `NetworkAttachmentDefinition`
+VMI spec with two SR-IOV devices, each connected to different networks, that are attached to the `NetworkAttachmentDefinition` (different MAC addresses):
 
 ```yaml
 kind: VirtualMachineInstance
@@ -321,7 +319,7 @@ spec:
   ...
 ```
 
-Single NetworkAttachmentDefinition:
+Single `NetworkAttachmentDefinition`:
 ```yaml
 ---
 apiVersion: k8s.cni.cncf.io/v1
@@ -356,7 +354,7 @@ KUBEVIRT_RESOURCE_NAME_sriovnet-vlan100=kubevirt.io/sriov_net
 ```
 
 #### Summary
-In this example we can see that both NICs points the same NetworkAttachmentDefinition, but since they have different MAC addresses, there is no way to know which PCI address holds which MAC address.
+In this example we can see that both NICs points the same `NetworkAttachmentDefinition`, but since they have different MAC addresses, there is no way to know which PCI address holds which MAC address.
 
 > **_Note_**: In order to pass-trough SR-IOV VF to a VM, the VF should be configured to use the vfio-pci driver [[1]](https://kubevirt.io/user-guide/virtual_machines/interfaces_and_networks/#sriov).
 > The vfio-pci driver is an userspace driver, when a VF is bound to it, the VF is no longer recognized by the kernel and therefore will not be presented by iplink (‘ip a’ command).
