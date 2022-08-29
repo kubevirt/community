@@ -1,7 +1,7 @@
 # Overview
-Accurately associate VMs SR-IOV interfaces with the underlying SR-IOV Virtual Functions (VF) devices (PCI) allocated by the [sriov-network-device-plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin) and [sriov-cni](https://github.com/k8snetworkplumbingwg/sriov-cni).
-
-The proposal fixes the current solution, where VFs from the same resource pool are not differentiated by KubeVirt and therefore potentially wrongly plugged to the domain.
+When creating a VM with SRI-IOV interfaces, the VFs from the same resource pool are not differentiated by KubeVirt and therefore potentially wrongly plugged to the domain. 
+</br>
+This design proposes to fix the current mapping algorithm, using information from multus annotations.
 
 ## Motivation
 [KubeVirt’s SR-IOV support](https://kubevirt.io/user-guide/virtual_machines/interfaces_and_networks/#sriov) enables wiring up SR-IOV Virtual Functions (VF) to VMs
@@ -22,16 +22,17 @@ When a SR-IOV interface is defined with a custom MAC address (e.g: `02:00:00:00:
 <br/>
 It is not guaranteed that the correct VF (with VLAN 100) will be plugged into the domain on the specified PCI address (`0000:01:01.1`).
 
+To clarify, in case there is only one SR-IOV interface it will be mapped correctly as there is a 1:1 correlation, but the more interfaces there are it is more likely that the mapping will be wrong.
+
 This issue also manifests when the VM interface boot order is set, the VM may end up booting from the wrong interface.
 
-A side effect of this issue is the VM status that may confuse its consumers, with its false advertisement, make them act incorrectly, and introduce other issues.
-<br/>
-For example, the cluster admin may mistakenly think that other network appliances are not configured correctly (e.g: router).
+Moreover, from the user's side, this issue will also have the unfortunate side of effect of reflecting the wrong network-attachment-definition used in the VM status. <br/>
+
 Kubevirt should plug the correct VF with the correct properties into the domain,
 and the user inside the guest should be able to predict and assume a consistent SR-IOV NIC setup.
 
 ## Goal
-Each VM SR-IOV interface should be associated with the correct VF.
+Accurately associate VM's SR-IOV interfaces with the underlying SR-IOV Virtual Functions (VF) devices (PCI) allocated by the [sriov-network-device-plugin](https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin) and [sriov-cni](https://github.com/k8snetworkplumbingwg/sriov-cni).
 
 ## Non-Goals
 Fix/change third-party components (e.g: Multus, SR-IOV CNI, etc..)
@@ -93,7 +94,6 @@ As part of the VM create flow, virt-controller renders the given VMI spec and cr
 <br/>
 For each secondary network:
 - Realize the device `resourceName` by fetching the specified NetworkAttachmentDefinition.
-- Read the NetworkAttachmentDefinition `k8s.v1.cni.cncf.io/resourceName` annotation.
 - Add the following environment variable to the compute container (spec.Env):<br/>`KUBEVIRT_RESOURCE_NAME_<network name>=<resource name>`
 
 Once virt-launcher Pod is ready, virt-handler process the VMI object and eventually trigger the virt-launcher to synchronize with the new spec (i.e: virt-handler sends gRPC call to virt-launcher [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L822)).
@@ -166,7 +166,7 @@ The issue manifests on Kubevirt as follows:
 <br/>
 The SR-IOV network PCI address is determined on virt-launcher code that converts the VMI spec to Libvirt domain.<br/>
 Libvirt domain Hostdev is represented in Kubevirt code by the HostDevice object.<br/>
-For each SR-IOV network a corresponding HostDevice object is created, the PCI address assigned as follows:
+For each SR-IOV network a corresponding HostDevice object is created, the PCI address is assigned as follows:
 - Create SR-IOV host devices [[2]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/manager.go#L798)  [[3]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/hostdev.go#L35)  [[4]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/hostdev.go#L38).
 - Map between network-name to resource-name [[5]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L40-L44)  [[6]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L49-L59).
 - Map between resource-name and PCI addresses [[7]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L45)  [[8]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/sriov/pcipool.go#L61-L67)  [[9]](https://github.com/kubevirt/kubevirt/blob/1a8f08103e48c5f2bb2f5826d118507ce7ec1f0c/pkg/virt-launcher/virtwrap/device/hostdevice/addresspool.go#L35-L61).
