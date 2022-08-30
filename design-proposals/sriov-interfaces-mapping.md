@@ -1,5 +1,5 @@
 # Overview
-When creating a VM with SRI-IOV interfaces, the VFs from the same resource pool are not differentiated by KubeVirt and therefore potentially wrongly plugged to the domain. 
+When creating a VM with SR-IOV interfaces, the VFs from the same resource pool are not differentiated by KubeVirt and therefore potentially wrongly plugged to the domain. 
 </br>
 This design proposes to fix the current mapping algorithm, using information from multus annotations.
 
