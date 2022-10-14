@@ -70,6 +70,10 @@ This follows exactly the same architecture as vnc/console. `GET /virtualmachinei
 
 By default none of our aggregated cluster-roles will get RBAC access to this endpoint.
 
+Creating a websocket connection via this REST-API means that all traffic goes
+through the kubernetes apiserver. Therefore the same scale considerations apply
+like for `exec`, `port-forward`, `vnc` and so forth.
+
 ### Security
 
 Note: The `dev/vhost-vsock` device is **NOT NEEDED** to connect or bind to a `vsock` port. This means that it is slightly more challenging to secure it.
