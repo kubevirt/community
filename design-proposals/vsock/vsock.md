@@ -82,11 +82,11 @@ The following measure will therefore be put in place:
 
 *   The whole `vsock` features will live behind a feature gate
 *   By default the first 1024 ports of a vsock device are privileged. Services trying  to connect to those require `CAP_NET_BIND_SERVICE`.
-*   We aim to block the `AF_VSOCK` `socket` syscall in containerd (https://github.com/containerd/containerd/issues/7442), however if that will happen is not sure. It is therefore right now the responsibility of the vendor to apply the required seccomp change to all unprivileged ports, or to verify that the `CAP_NET_BIND_SERVICE` privilege is handed out carefully enough
+*   The proposal writers ensured that the `AF_VSOCK` `socket` syscall gets blocked in containerd 1.7+ (https://github.com/containerd/containerd/issues/7442). A similar change can be done on other popular CRI implementations. It is right now the responsibility of the vendor to ensure that the used CRI selects a default seccomp policy which blocks `socket` calls in a similar way like it was done for containerd.
 *   RBAC access to vsock devices will not be added to any of the default roles.
 *   virt-launcher will not auto-assign CIDs to ensure that virt-handler has an easy way of tracking the identity without races. While this still allows virt-launcher to fake-use an assigned CID, it eliminates possible assignment races which attackers could make use-of to redirect vsock calls.
 
 ### Possible next steps
 
-*   Allow running `qemu-guest-agent` over virtio-vsock too
-*   Introduce a general purpose mechanism via gRPC in virt-handler which allows efficient and scalable collection of version and readiness of registered third-party agents without having to alter virt-handler, or having to run additional node-local services. Also move the `qemu-guest-agent` polling behind this mechanism.
+*   Allow running `qemu-guest-agent` over virtio-vsock too. This proposal is preparing the ground for such a possible switch but is not making the actual changes for the `qemu-guest-agent`.
+*   Introduce a general purpose mechanism via gRPC in virt-handler which allows efficient and scalable collection of version and readiness of registered third-party agents and `qemu-guest-agent` without having to alter virt-handler, or having to run additional node-local services.
