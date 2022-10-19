@@ -1,4 +1,9 @@
 CAPK demo
+
+This is the transcript for the demo found at: www.github.com/kubevirt/community/demos/CAPK/May-CAPK.mp4
+
+You can also see this demo presented as part of the KubeVirt Maintainer Talk at KubeCon EU 2022: https://youtu.be/L9H0pz5PpKo?t=879
+
 <Intro>
 In this demo, we are showing the Kubernetes Cluster API Provider KubeVirt, also known as CAPK, which is a defined way of creating and managing a Kubernetes cluster in a KubeVirt cluster... and by KubeVirt cluster I mean a Kubernetes cluster that has KubeVirt installed on it, which I want to differentiate from the VM cluster we will create within this cluster. 
 
@@ -6,7 +11,7 @@ In this demo, we are showing the Kubernetes Cluster API Provider KubeVirt, also 
 To begin, let's have a look at our KubeVirt cluster:
 We have two  nodes - one control plane and one worker node
 KubeVirt is already installed. 
-We can check the status of that and we see that it is deployed.
+We can check the status of the KubeVirt CR and we see that it is deployed.
 
 <0:18>
 And we can check the various kubevirt infrastructure pods:
@@ -65,7 +70,7 @@ This looks identical to the control plane template but you can custom and assign
 <2:40>
 So, now that we know that the VMs are up and running, we want to access the cluster. 
 With the cluster creation we also have a bunch of secrets that have been created but we are interested in only 2 of them.
-The first is the SSH key so that we can SSH into the nodes.
+The first is the SSH key so that we can log in to the nodes.
 
 The kvcluster-ssh-keys secret here has a private key that has been injected in every VM.
 To use this, we extract the secret and put it into a file so that we can use it to access the VM.
@@ -84,7 +89,7 @@ Using virtctl ssh we can specify the ssh-key in our file to access the control-p
 <4:44>
 And we are now inside the control plane.
 
-Let's inspect the containers that are running on it. And we can check what's in out home directory. 
+Let's inspect the containers that are running on it. And we can check what's in our home directory. 
 Note there's no .kube and we're missing the kubeconfig. 
 We'll need to copy that across.
 
@@ -101,7 +106,7 @@ Everything is running as expected.
 <5:52>
 Now let's scale this cluster.
 Back to the KubeVirt cluster, and we'll look at the machine deployments. Another one of the CRDs that we created in the original cluster template. 
-The machine deployment controls the number of workers in the cluster. It's a bit like replicaset in kubernetes.
+The machine deployment controls the number of workers in the cluster; similar to replicasets in Kubernetes.
 
 <6:18>
 So we started with 3 worker nodes - 3 replicas. We can edit the machinedeployment and modify the nmber of replicas from 3 to 4.
@@ -117,8 +122,7 @@ But don't take my word for it:Let's return to our control plane node and have a 
 Well.. where's my fourth worker node? 
 The answer is: coming. 
 While the disk is quick to create, we still need the VM to boot up and for the cluster to recognise the node.
-Our time travel trick again and there's our node .
+Our time travel trick again and there's our node.
 And it looks like it took around a minute between scaling the nodes and that fourth worker VM joining the cluster.
-
 
 
