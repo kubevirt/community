@@ -1,0 +1,49 @@
+HOTPLUG
+This is the transcript for the hotplug demo found at: www.github.com/kubevirt/community/demos/CAPK/May-Hotlpug.mp4
+
+You can also see this demo presented as part of the KubeVirt Maintainer Talk at KubeCon EU 2022: https://youtu.be/L9H0pz5PpKo?t=1468
+
+<Intro>
+In this demo we will be hotplugging a storage disk to a VM.
+This demo is a continuation of the CAPK demo (also part of the video linked above) and so the VM we are hotplugging is part of the VM Kubernetes cluster, but this workflow is the same for any running VM in your KubeVirt cluster. 
+
+<Start>
+We begin by creating a new block-based PVC.
+And there it is, and it's bound. 
+
+<0:15>
+Now, we log into our control plane.
+
+<0:24>
+Before we add the new disk, let's have a look at the current disks on this control plane node: We have two: vda and vdb.
+
+Now we leave the control plane node and return to our KubeVirt cluster. 
+
+<0:35>
+Virtctl has a command called "add-volume" that allows us to hotplug resources:
+So we use that command, specify the node name, specify the volume claim name, and there we go. 
+Successfully submitted.
+
+<1:01>
+Now we see a new volume pod is being created. 
+Why a new pod? 
+We store our PVC in this pod because hotplugging volumes is not transparent to Kubernetes. 
+So, to prevent this disk being inadvertently deleted by Kubernetes, for example, we protect it with this pod.
+
+When the pod is created, the volume has been added to our VM.
+
+<1:20>
+Logging in to our VM and checking the disks we can see we now have a new 'sda' disk added.
+But now that it is added we realise that 10Gb is not what we want. 
+Let's look at increasing that disk size.
+
+<1:26>
+We do this outside the VM, so let's return to our KubeVirt cluster.
+
+Edit the PVC, and we can double the size. 
+As they say, 20Gb ought to be enough for anyone. Save, and then check the size of the disk to ensure the PVC has been updated.
+
+<1:52>
+Okay, back to the VM to check the disk there.
+And our sda disk is now 20Gb as expected.
+
