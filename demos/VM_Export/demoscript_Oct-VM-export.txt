@@ -1,0 +1,81 @@
+VM Export
+<Intro>
+In this demo we will be exporting a VM disk, and having a quick look at the behaviour of the process. 
+
+Why? We might use VM Export so that it can be imported into another cluster, platform, or system. 
+
+<Start>
+We start with a KubeVirt cluster. 
+This cluster has the virtctl client which includes additional commands to interact with VMs. 
+And we have a stopped Fedora 36 VM that we want to export.
+On the left we have our command pane. 
+On the top-right we are watching the VM export objects to see their phases.
+And on the lower-right we are watching the pods. 
+
+<0:15>
+To export the VM disk, we use virtctl with the 'vmexport create' option, and specify the name of the VM.
+And we see the VM export has been created and is pending as the pod is created.
+When the pod is running, we can see that the VM export is now ready.
+
+What does this mean?
+
+All PVCs, data volumes, and memorydump volumes on the VM will be exported.
+(No other volume types will be exported)
+Also, when you create a VM export, a dedicated export proxy server is created which can then be exposed to the outside world with an Ingress/Route or NodePort.
+The dedicated export server is created so that this data transfer does not involve and potentially overload the Kubernetes API server: the proxy connects to the export server and the user connects to the proxy. 
+This server has its own certificates, which we will see later in the VM export object.
+
+<0:38> 
+Now what we're going to do is to start the VM. 
+Because you cannot export a running VM - because the disk is in use - the VM export will pause until the VM is stopped again. 
+And on the pod level we see that the vm export pod terminates in favour of the virt-launcher pod. 
+
+<1:05>
+Our VM is running and we will log in to it in order to create some special data. 
+
+<1:55>
+We drop a super important message into a text file. 
+And there is the text in the file.
+ 
+ <2:15>
+Let's drop out of the VM again and have a look at the VM export object. 
+Because the VM is still running, and the export is paused, there won't be any of the link information or certificates in the export. 
+
+Here we see that it is not ready, and we already know the reason why: the disk is in use because the VM is currently running. 
+
+<2:50>
+So let's stop the VM.
+On the pod side, virt-launcher is terminated and the export pod is created.
+Once the pod is running our export is ready again.
+
+<3:28>
+Now when we investigate the VM export we will see the full picture.
+We now see that the export is ready, and we can see the source VM form that this export is taken from.
+And we have our link information. 
+
+<3:56>
+First, the external link, with the associated certificate so that we can pull the export from outside the cluster.
+And there's the external url we can use to pull it.
+And below it we have our internal link with the associated certificate. 
+
+Fun fact: These certificates are rotated after seven days, when the export server pod is terminated and recreated, after which the vm export is updated with the new certificates. 
+The same is true if the export server is terminated for whatever reason.
+
+<4:20>
+Now we will download the export image using virtctl and the 'vmexport download' option.
+Note that if we ran this command and we hadn't already created the VM export, then KubeVirt would go ahead and create the VM export and then download it. 
+
+<4:42>
+Also note that when we run 'vmexport download', KubeVirt deletes the VM export, under the presumption that we have the disk now and we don't need it anymore. 
+If we wanted to keep the VM export, then we would use a '--keep-vme' flag.
+
+But we didn't, and you can see that the pod is terminated, and our VM export is no longer found. 
+
+<5:05>
+To close out this demo, we want to ensure that our super important data is present on the disk that we exported and downloaded.
+So we extract the disk... and we use guestfish to quickly inspect the disk.
+
+<5:35>
+And we see that the data is present on this imported disk. 
+
+You can find more information about this feature in the KubeVirt user guide: https://kubevirt.io/user-guide/operations/export_api/
