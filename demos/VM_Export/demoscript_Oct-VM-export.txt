@@ -21,8 +21,9 @@ What does this mean?
 
 All PVCs, data volumes, and memorydump volumes on the VM will be exported.
 (No other volume types will be exported)
-Also, when you create a VM export, a dedicated export proxy server is created which can then be exposed to the outside world with an Ingress/Route or NodePort.
-The dedicated export server is created so that this data transfer does not involve and potentially overload the Kubernetes API server: the proxy connects to the export server and the user connects to the proxy. 
+Also, when you create a VM export, a dedicated export server is created. 
+The export server interacts with a proxy, which is created when you first enable the VM export feature gate, and the proxy interacts with an Ingress/Route or NodePort.
+This eliminates the Kubernetes API from the process.
 This server has its own certificates, which we will see later in the VM export object.
 
 <0:38> 
