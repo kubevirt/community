@@ -120,7 +120,7 @@ spec:
   certificateRotateStrategy: {}
   configuration:
     developerConfiguration:
-      featurettes: ["MultiArchitecture"]
+      featureGates: ["MultiArchitecture"]
     archConfiguration:
       arm64:
         emulatedMachines: ["virt"]
