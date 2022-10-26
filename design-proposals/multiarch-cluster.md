@@ -88,8 +88,6 @@ spec:
   running: true
   template:
     spec:
-      nodeSelector:
-        kubernetes.io/arch: arm64
       architecture: arm64
       domain:
         devices:
