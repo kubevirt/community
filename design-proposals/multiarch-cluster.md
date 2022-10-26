@@ -144,4 +144,7 @@ Currently, the only area of this proposal that still requires clarity is what di
 
 # Implementation Phases
 
-There is no expectation to need to break this into several implementation phases
+Proposed Implementation Rollout involves 2 stages:
+
+1. Merge code changes. This will allow us to still test that pods are created in the e2e test for the expected architecture, despite not being able to start up.
+2. Followup PR involving the pushing of multi-arch images as part of the release process
