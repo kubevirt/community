@@ -41,7 +41,7 @@ As a user, I want to be able to create and start one or more VM/VMIs which allow
 **Kubevirt API Spec**
 
 - Addition of an Architecture field to the VirtualMachineInstanceSpec will allow the user to indicate the architecture of the workload being deployed. If not specified, the default from the cluster config will be applied.
-- Addition of DefaultVMIArchitecture and ArchConfiguration fields to the KubevirtConfiguration. The DefaultVMIArchitecture will be applied to a VMI in the event that the user has not specified it explicitly. The ArchConfiguration allows for setting defaults for the existing arch-specific config items. These items are OVMFPath, EmulatedMachines, and MachineType
+- Addition of DefaultVMIArchitecture and ArchConfiguration fields to the KubevirtConfiguration. The DefaultVMIArchitecture will be applied to a VMI in the event that the user has not specified it explicitly. The ArchConfiguration allows for setting defaults for the existing arch-specific config items. These items are `OVMFPath`, `EmulatedMachines`, and `MachineType`
 
 **Virt-api**
 
@@ -124,6 +124,10 @@ spec:
     archConfiguration:
       arm64:
         emulatedMachines: ["virt"]
+        ovmfPath: "/usr/share/AAVMF"
+      amd64:
+        emulatedMachines: ["pc-*"]
+        machineType: "q35"
     defaultVMIArchitecture: "amd64"
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
