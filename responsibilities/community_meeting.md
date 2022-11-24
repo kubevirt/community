@@ -8,7 +8,7 @@ At KubeVirt's present scale the community opts to host a weekly meetings for all
   * Link to join is [here](https://zoom.us/j/92221936273)
   * Community organizers will use CNCF/KubeVirt account to host meeting
 
-* When: Every Wednesday @ 16:00 CET/CEST (10:00 EST/EDT) calendar event.  See comm cal [here](https://calendar.google.com/calendar/u/0/embed?src=18pc0jur01k8f2cccvn5j04j1g@group.calendar.google.com&ctz=Etc/GMT)
+* When: Every Wednesday @ 16:00 CET/CEST (10:00 EST/EDT) calendar event. See the community calendar [here](https://calendar.google.com/calendar/u/0/embed?src=kubevirt@cncf.io)
   * Community organizers will start meeting approx 10 mins before start time
   * Community organizers will start recording and begin session at 03 mins past the hour
   * Community organizers will lead the community through the agenda
