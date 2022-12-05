@@ -23,20 +23,24 @@ so users can have ease of access too.
 #### Use-cases
 * As a user, I want to be able to run commands inside a guest and view the output in stout
 * As a user, I want to be able to view cloud-init logs with 1 command
+* As a user, I want to be able to get guest OS information
+* As a user, I want to be able to list users
+* As a user, I want to be able to able to run filesystem commands
+* As a user, I want to be able to interact with my custom guest agent
 
 ### Design
 KubeVirt already has the necessary functions in place to run the guest-agent exec
 command in the virt-hander and the virt-launcher, but those functions need to be
 exposed through the virt-api and virtctl in order to implement this feature.
 
-1. Create a ga-exec subresource
+1. Create a guest-agent subresource
 2. Create a rest call in virt-handler
-3. Wire up the rest call to `Exec` client call (equivalent to `guest-exec` https://qemu.readthedocs.io/en/latest/interop/qemu-ga-ref.html#qapidoc-205)
-4. Create an abstraction that runs an `Exec` call to return the output from the first call (equivalent to `guest-exec-status` with the pid from 3. https://qemu.readthedocs.io/en/latest/interop/qemu-ga-ref.html#qapidoc-198)
-5. Create `virtctl ga-exec <command>`
+3. Wire up the rest call to the guest-agent client
+4. Create an abstraction run a command, then return the output in human readable format (if the guest-agent returns a pid, run a second command to get the commad's result)
+5. Create `virtctl guest-agent <agent> <command>`
 
 Example:
-Before adding `virtctl ga-exec`:
+Before adding `virtctl guest-agent qemu exec`:
 ```bash
 $ kubectl exec -it pod virt-launcher-123 - /bin/bash
 $ virsh qemu-agent-command 1 '{"execute": "guest-exec", "arguments":{"capture-output": true, "path":"powershell.exe", "arg": ["type", "\\user\\logs\\cloudinit\\cloudinit.log"]}}'`
@@ -45,12 +49,22 @@ $ virsh qemu-agent-command 1 '{"execute": "guest-exec-status", "arguments":{"pid
 {result:somebase64string}
 ```
 
-With `virtctl ga-exec`:
+With `virtctl guest-agent qemu exec`:
 ```bash
-$ virtctl ga-exec powershell.exe \user\logs\cloudinit\cloudinit.log
+$ virtctl guest-agent qemu exec powershell.exe \user\logs\cloudinit\cloudinit.log
 {result:somebase64string}
 ```
 
+#### Agent
+The VMI can support multiple types of agents.  So having an
+agent param instead of assuming `qemu` will allow room for expansion.
+This proposal is only to add the qemu agent support.
+
+#### Command
+|-----|-----|
+| Command | Description |
+| exec | Execute a command in the guest |
+
 #### API changes
-Adds the `ga-exec` subresource.
+Adds the `guest-agent` subresource.
 Subresources are always added to V1 so this will be added to the V1 API.
