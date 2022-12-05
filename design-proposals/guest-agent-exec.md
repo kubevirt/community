@@ -27,6 +27,7 @@ so users can have ease of access too.
 * As a user, I want to be able to list users
 * As a user, I want to be able to able to run filesystem commands
 * As a user, I want to be able to interact with my custom guest agent
+* As a user, I want my command to be cleaned up after execution
 
 ### Design
 KubeVirt already has the necessary functions in place to run the guest-agent exec
@@ -64,6 +65,7 @@ This proposal is only to add the qemu agent support.
 |-----|-----|
 | Command | Description |
 | exec | Execute a command in the guest |
+| timeout | How long the 'exec' has to complete |
 
 #### API changes
 Adds the `guest-agent` subresource.
