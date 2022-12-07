@@ -190,13 +190,34 @@ To hot-plug a new NIC into a running VMI, the user would execute the following
 command:
 ```bash
 $ virtctl addinterface <vmi-name> \
-    --name <kubevirt-spec-iface-name> \
-    --net <nad-name> \
-    --iface-name <desired-pod-interface-name> \
+    --network-name <nad-name> \
+    --iface-name <kubevirt-spec-iface-name> \
     --persist
 ```
 
 For hot-unplugging, use the `removeinterface` command instead.
+
+**NOTE**: the pod interface name will be derived from the
+`kubevirt-spec-iface-name`; we'll simply compute an Hash of the interface name
+(which is guaranteed to be unique within each VMI), and ensure all generated
+names for the pod's networking infrastructure are accepted by the kernel. Refer
+to the following list for examples of names on pod networking infra:
+
+- VM interface name: iface1
+- pod interface name: net7e0055a6
+- in-pod bridge name: k6t-net7e0055a6
+- dummy pod nic name: net7e0055a6-nic
+
+The proposed algorithm is SHA256; here's a minimal implementation:
+```golang
+func PodInterfaceName(vmiSpecInterfaceName string) string {
+    const MaxIfaceNameLen = 11 // allows the dummy pod sufix (`-nic`) to fit the
+                               // kernel limitation of 15 chars.
+	hash := sha256.New()
+	_, _ = io.WriteString(hash, vmiSpecInterfaceName)
+	return fmt.Sprintf("net%x", hash.Sum(nil))[:MaxIfaceNameLen]
+}
+```
 
 ### virt-api
 The `virt-api` subresource handlers will then proceed to patch the VM status
@@ -218,30 +239,30 @@ type VirtualMachineStatus struct {
     InterfaceRequests []VirtualMachineInterfaceRequest `json:"interfaceRequests,omitempty" optional:"true"`
 }
 
-// VirtualMachineInterfaceRequest encapsulates all dynamic network operations on
-// a VMI.
 type VirtualMachineInterfaceRequest struct {
-    // AddInterfaceOptions when set indicates an interface should be added.
-    AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
+	// AddInterfaceOptions when set indicates an interface should be added.
+	AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
 
-    // RemoveInterfaceOptions when set indicates an interface  should be removed.
-    RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
+	// RemoveInterfaceOptions when set indicates an interface should be removed.
+	RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
 }
 
-// AddInterfaceOptions are used when hot plugging network interfaces
+// AddInterfaceOptions is provided when dynamically hot plugging a network interface
 type AddInterfaceOptions struct {
-    // Name is the name of the interface in the KubeVirt VMI spec
-    Name string `json:”name”`
+	// NetworkName indicates the name of the multus network - i.e. the network-attachment-definition name
+	NetworkName string `json:"networkName"`
 
-    // NetworkName is the name of the multus network
-    NetworkName string `json:”networkName”`
+	// InterfaceName indicates the name of the network / interface in the KubeVirt VMI spec
+	InterfaceName string `json:"interfaceName"`
 }
 
-// RemoveInterfaceOptions are used when hot unplugging network interfaces
+// RemoveInterfaceOptions is provided when dynamically hot unplugging a network interface
 type RemoveInterfaceOptions struct {
-    // Name is the name of the interface in the KubeVirt VMI spec. Must match
-    // the name of the network defined in the VMI spec.
-    Name string `json:"name"`
+	// NetworkName indicates the name of the multus network - i.e. the network-attachment-definition name
+	NetworkName string `json:"networkName"`
+
+	// InterfaceName indicates the name of the network / interface in the KubeVirt VMI spec
+	InterfaceName string `json:"interfaceName"`
 }
 ```
 
@@ -250,29 +271,27 @@ multus-cni. It will be computed from the VMI spec interface name, to allow
 multiple connections to the same multus provided network.
 
 ### VMIS
+The following snippets elaborate the VMI status API changes:
 ```golang
 type VirtualMachineInstanceNetworkInterface struct {
 ...
-    // If the interface is hotplugged, this will contain its status
-    HotplugStatus *InterfaceHotplugStatus `json:"hotplugStatus,omitempty"`
+    // Ready reflects the readiness of the pod interface
+    Ready bool `json:"ready,omitempty"`
 }
 
-type InterfaceHotplugStatus struct {
-    // Phase are specific phases for the hotplug volume.
-    Phase InterfaceHotplugPhase `json:"phase,omitempty"`
-
-    // DetailedMessage has more information in case of failed operations.
-    DetailedMessage string `json:"DetailedMessage,omitempty"`
-}
-
-type InterfaceHotplugPhase string
-
-const InterfaceHotplugPhasePending    InterfaceHotplugPhase = "Pending"    # network configuration did not start yet
-const InterfaceHotplugPhaseInfraReady InterfaceHotplugPhase = "InfraReady" # network configuration phase1 completed (networking infra created and configured)
-const InterfaceHotplugPhaseReady      InterfaceHotplugPhase = "Ready"      # network configuration phase1 and phase2 completed (all is OK from the networking perspective)
-const InterfaceHotplugPhaseFailed     InterfaceHotplugPhase = "Failed"     # plugging the new interface failed. More details on `DetailedMessage`.
 ```
 
+The proposed `VirtualMachineInstanceNetworkInterface` status change is required
+to block the the `virt-handler` component until it realizes the multus dynamic
+networks controller has already finished configuring the pod interface
+accordingly - there would otherwise be a race between the CNI plugin and
+`virt-handler` (virt-handler could see the pod interface created but **missing**
+the IP addresses - or some other configuration) if its reconcile cycle kicked
+in while CNI IPAM was still configuring the link.
+
+`Virt-controller` will set an interface's status as `Ready` once it sees the
+corresponding entry on the pod's network-status (which indicates CNI has
+finished configuring the pod interface).
 
 ### Hotplug for pods
 Assuming the following two `network-attachment-definition`s:
@@ -383,14 +402,13 @@ scenarios:
 
 # Implementation Phases
 1. **M** Refactor multus as a thick cni plugin.
-2. **M** Refactor multus to allow adding / removing only new networks
-3. **C** Consume this updated multus functionality via CNAO
-4. **K** Add the hot-plug / hot-unplug functionality to KubeVirt
-5. **M** Take into account the existing interfaces when multus implicitly generates
-   new interface names
-6. **M** update the default route on the pod whenever the NIC holding the
-   default route is hot-unplugged. It should now point to the cluster's default
-   network - managed by Kubernetes.
+2. **M** Expose an extra endpoint in multus to allow adding / removing specific
+   attachments
+3. Add a controller monitoring pod attachment updates
+4. **C** Consume this dynamic networks functionality via CNAO
+5. **K** Add the hot-plug functionality to KubeVirt for L2 and L3 networks
+     (with IPAM enabled on the pod interface)
+6. **K** Add the hot-unplug functionality to KubeVirt for L2 and L3 networks
 
 **Notes:**
 * the action items listed above have either `M`, `K`, or `C` to
