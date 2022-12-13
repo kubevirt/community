@@ -66,69 +66,37 @@ is created, but also on-demand - i.e. whenever the pod's
 `k8s.v1.cni.cncf.io/networks` are updated.
 
 To do that, a controller residing on a long lived process must be introduced.
-An important detail to take into account is this controller **must** be
-executed on the host's PID, network, and mount namespaces, in order to access
-whatever resources the delegate CNI requires which are available in the host
-file system (e.g. log files, sockets, etc). The alternative would be for the
-multus configuration to somehow know which resources to bind mount into the pod,
-which, in my opinion is not reasonable without major changes in multus - we'd
-need some discovery mechanism between multus & the CNI plugins.
+An important detail to take into account is this controller will end up being a
+CNI client; as a result, it needs to instruct CNI with parameters such as
+container id, and container netns path (which are CNI inputs). For this, this
+controller needs to query container runtime directly (use CRI API).
 
-There are multiple alternatives to run the controller process, each of which
-with advantages / disadvantages:
-1. the controller simply listens for pod network annotation updates, and spawns
-   a new process (the "thin" CNI plugin) that runs on the host's PID, net, and
-   mount namespaces.
+The solution finally accepted by the multus maintainers was:
+1. re-architect multus-cni as a thick-plugin. It shares the host-PID namespace.
+   Multus-cni also has an endpoint to add a particular (singular) attachment to
+   a running pod.
+2. a separate controller reconciles the pod's desired state (network selection
+   elements, i.e. the `k8s.v1.cni.cncf.io/networks` annotation) against the
+   pod's current state (i.e. the `k8s.v1.cni.cncf.io/network-status` annotation).
+   Once this pod identifies a network must be added (present in the desired
+   state, but missing in the current state), it will invoke multus via a
+   dedicated endpoint. Once it gets the multus CNI result, it will translate it
+   to network-status, and update the pod's annotations.
 
-   This alternative **requires** multus to share the PID namespace of the host,
-   but only shares the host's mount namespace on the CNI process running the CNI
-   binary - the controller part runs in its own mount namespace.
-2. multus is re-architected as a thick plugin. This could achieved - for
-   instance - by bind mounting the host's filesystem as a volume in the multus
-   pod.
+### Controller
+The solution relies on an external control loop - which is implemented in
+[this repo](https://github.com/k8snetworkplumbingwg/multus-dynamic-networks-controller) -
+to listen to pod updates, and react when the `k8s.v1.cni.cncf.io/networks`
+have changed. It will then query the container runtime (containerd / CRI-O) for
+runtime info (container ID and net namespace path), and finally use the multus
+`/delegate` endpoint to issue ADD operations for each new network, and DELETE
+operations for networks that were removed.
 
-   While this solution does **not** require the pod to share the host's PID
-   namespace, it does grant the controller side access to the host's
-   filesystem.
+Refer to the sequence diagram below for more information:
 
-   This solution requires each delegate CNI's configuration to be updated,
-   pointing at the mounted path, rather than the path on the host - something
-   that is dependent of each individual plugin's implementation.
+![Kubernetes native solution](controller-based-approach.png)
 
-   This solution also implies a larger attack surface on multus, since it is a
-   privileged container with access to the host's filesystem.
-
-### Simple controller
-This controller would just start a new process on the host's mount namespace.
-
-To achieve it, the following code snippet could be explored:
-
-```golang
-hostMountNamespace := "/proc/1/ns/mnt"
-fd, err := os.Open(hostMountNamespace)
-if err != nil {
-    return fmt.Errorf("failed to open mount namespace: %v", err)
-}
-defer fd.Close()
-
-if err = unix.Unshare(unix.CLONE_NEWNS); err != nil {
-    return fmt.Errorf("failed to detach from parent mount namespace: %v", err)
-}
-if err := unix.Setns(int(fd.Fd()), unix.CLONE_NEWNS); err != nil {
-    return fmt.Errorf("failed to join the mount namespace: %v", err)
-}
-
-const cniBinDir = "/opt/cni/bin/"
-
-netCont := ...
-runtimeConfig := ...
-
-cniDriver := libcni.NewCNIConfig([]string{cniBinDir}, nil)
-cniDriver.AddNetwork(context.Background(), netConf, runtimeConfig)
-...
-```
-
-### Thickening multus
+### Multus-cni re-architected as a thick plugin
 A "thin CNI plugin" runs as a one-shot process, typically as a binary on disk
 executed on a Kubernetes host machine.
 
@@ -149,74 +117,17 @@ commands to the server side of multus via the unix domain socket previously
 mentioned. The multus daemon would also contact the shim whenever a new network
 is to be added - or removed.
 
-As previously mentioned in the [multus section](#multus), this approach
-requires the full host's filesystem to be bind mounted into the multus pod,
-and each of the delate CNI plugins to use these bind mounted paths instead of
-whatever their defaults are. This could be inconvenient - at best - or, break
-under plugins having an hard-coded path.
-
-The upside of this approach, is that it seems to not require to share the
-host's PID namespace.
-
 Refer to the sequence diagram below for more information:
 
 ![Create pod flow for thick plugin](create-pod-flow.png)
 
-### Further multus requirements
-Multus must also be updated to act only on specific networks (the ones being
-added or removed) rather than the full annotation list.
+The functionality described above is exposed via the `/cni` [endpoint](https://github.com/k8snetworkplumbingwg/multus-cni/blob/a9ace511d8f5337406a01e8febbdf9f415b37441/pkg/server/api/api.go#L29).
 
-Another conflicting behavior of multus is its interface naming scheme; it
-iterates all networks in the `k8s.v1.cni.cncf.io/networks` annotation, and for
-each creates an interface in the pod named `netX`, where `X=<net index> + 1`.
-The simplest way to work-around this limitation is to explicitly define the
-interface names being plugged into the pod, as documented in the
-[multus documentation](https://github.com/k8snetworkplumbingwg/multus-cni/blob/master/docs/how-to-use.md#launch-pod-with-text-annotation-with-interface-name).
-
-At a later stage, multus will be patched to take into account the existing
-interfaces when hot-plugging new ones. The existing interfaces can be derived
-from the `k8s.v1.cni.cncf.io/network-status` annotation on the pod.
-
-Finally, and to also account for the multus users who run it under severe
-memory and CPU contraints, the "thin" plugin architecture must also be
-preserved, and the user should be able to choose the type of plugin via
-configuration. This means the multus maintainers will actively maintain the
-two different alternatives.
-
-To implement the aforementioned requirement, we plan on:
-- build two **different** binaries: one for the `thin` plugin architecture,
-  another for the `thick` plugin architecture.
-- provide two different multus daemonset specs - one whose entrypoint is the
-  multus daemon, which be use to provide the `thick` plugin alternative,
-  another whose entrypoint is the bash script currently used - which'll be
-  used on the `thin` plugin.
-- both binaries will be shipped in the multus images.
-
-#### Annotation driven - controller reacting to pod updates
-This implementation relies on a control loop added to the multus server part.
-It will listen to pod updates, and react when the `k8s.v1.cni.cncf.io/networks`
-have changed. It will then issue ADD operations for each new network, and DELETE
-operations for networks that were removed, to the responsible routine, within
-the same process.
-
-Refer to the sequence diagram below for more information:
-
-![Kubernetes native solution](controller-based-approach.png)
-
-This alternative seems to be better aligned to Kubernetes patterns, requires
-less code, is aligned with
-[Kaloom's multus fork](https://github.com/kaloom/kubernetes-kactus-cni-plugin/#how-the-podagent-communicate-the-additiondeletion-of-a-network-attachment-into-a-running-pod), and finally, also follows
-[KubeVirt's razor](https://github.com/kubevirt/kubevirt/blob/main/docs/architecture.md#the-razor),
-since this solution also allows adding and removing network interfaces to/from
-pods.
-
-In order to help troubleshooting when things go wrong, we should introduce two
-annotations to the `k8s.v1.cni.cncf.io` namespace: one for tracking the
-revision number of the `networks` annotation, another to track the revision
-number of the `network-status` annotation.
-
-These will be helpful to figure out if the resources are out of sync - e.g. the
-desired state and the current state have not converged yet.
+Multus-cni additionally provides the following endpoints:
+- `/delegate`: endpoint used when a 3rd party wants to add/remove an interface
+  to a running pod
+- `/healthz`: endpoint used for a 3rd party to know if the multus server is
+  currently alive
 
 ## KubeVirt
 In order to mimic the disk hotplug feature, the proposed API also follows the
@@ -279,13 +190,34 @@ To hot-plug a new NIC into a running VMI, the user would execute the following
 command:
 ```bash
 $ virtctl addinterface <vmi-name> \
-    --name <kubevirt-spec-iface-name> \
-    --net <nad-name> \
-    --iface-name <desired-pod-interface-name> \
+    --network-name <nad-name> \
+    --iface-name <kubevirt-spec-iface-name> \
     --persist
 ```
 
 For hot-unplugging, use the `removeinterface` command instead.
+
+**NOTE**: the pod interface name will be derived from the
+`kubevirt-spec-iface-name`; we'll simply compute an Hash of the interface name
+(which is guaranteed to be unique within each VMI), and ensure all generated
+names for the pod's networking infrastructure are accepted by the kernel. Refer
+to the following list for examples of names on pod networking infra:
+
+- VM interface name: iface1
+- pod interface name: net7e0055a6
+- in-pod bridge name: k6t-net7e0055a6
+- dummy pod nic name: net7e0055a6-nic
+
+The proposed algorithm is SHA256; here's a minimal implementation:
+```golang
+func PodInterfaceName(vmiSpecInterfaceName string) string {
+    const MaxIfaceNameLen = 11 // allows the dummy pod sufix (`-nic`) to fit the
+                               // kernel limitation of 15 chars.
+	hash := sha256.New()
+	_, _ = io.WriteString(hash, vmiSpecInterfaceName)
+	return fmt.Sprintf("net%x", hash.Sum(nil))[:MaxIfaceNameLen]
+}
+```
 
 ### virt-api
 The `virt-api` subresource handlers will then proceed to patch the VM status
@@ -307,30 +239,30 @@ type VirtualMachineStatus struct {
     InterfaceRequests []VirtualMachineInterfaceRequest `json:"interfaceRequests,omitempty" optional:"true"`
 }
 
-// VirtualMachineInterfaceRequest encapsulates all dynamic network operations on
-// a VMI.
 type VirtualMachineInterfaceRequest struct {
-    // AddInterfaceOptions when set indicates an interface should be added.
-    AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
+	// AddInterfaceOptions when set indicates an interface should be added.
+	AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
 
-    // RemoveInterfaceOptions when set indicates an interface  should be removed.
-    RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
+	// RemoveInterfaceOptions when set indicates an interface should be removed.
+	RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
 }
 
-// AddInterfaceOptions are used when hot plugging network interfaces
+// AddInterfaceOptions is provided when dynamically hot plugging a network interface
 type AddInterfaceOptions struct {
-    // Name is the name of the interface in the KubeVirt VMI spec
-    Name string `json:”name”`
+	// NetworkName indicates the name of the multus network - i.e. the network-attachment-definition name
+	NetworkName string `json:"networkName"`
 
-    // NetworkName is the name of the multus network
-    NetworkName string `json:”networkName”`
+	// InterfaceName indicates the name of the network / interface in the KubeVirt VMI spec
+	InterfaceName string `json:"interfaceName"`
 }
 
-// RemoveInterfaceOptions are used when hot unplugging network interfaces
+// RemoveInterfaceOptions is provided when dynamically hot unplugging a network interface
 type RemoveInterfaceOptions struct {
-    // Name is the name of the interface in the KubeVirt VMI spec. Must match
-    // the name of the network defined in the VMI spec.
-    Name string `json:"name"`
+	// NetworkName indicates the name of the multus network - i.e. the network-attachment-definition name
+	NetworkName string `json:"networkName"`
+
+	// InterfaceName indicates the name of the network / interface in the KubeVirt VMI spec
+	InterfaceName string `json:"interfaceName"`
 }
 ```
 
@@ -339,29 +271,27 @@ multus-cni. It will be computed from the VMI spec interface name, to allow
 multiple connections to the same multus provided network.
 
 ### VMIS
+The following snippets elaborate the VMI status API changes:
 ```golang
 type VirtualMachineInstanceNetworkInterface struct {
 ...
-    // If the interface is hotplugged, this will contain its status
-    HotplugStatus *InterfaceHotplugStatus `json:"hotplugStatus,omitempty"`
+    // Ready reflects the readiness of the pod interface
+    Ready bool `json:"ready,omitempty"`
 }
 
-type InterfaceHotplugStatus struct {
-    // Phase are specific phases for the hotplug volume.
-    Phase InterfaceHotplugPhase `json:"phase,omitempty"`
-
-    // DetailedMessage has more information in case of failed operations.
-    DetailedMessage string `json:"DetailedMessage,omitempty"`
-}
-
-type InterfaceHotplugPhase string
-
-const InterfaceHotplugPhasePending    InterfaceHotplugPhase = "Pending"    # network configuration did not start yet
-const InterfaceHotplugPhaseInfraReady InterfaceHotplugPhase = "InfraReady" # network configuration phase1 completed (networking infra created and configured)
-const InterfaceHotplugPhaseReady      InterfaceHotplugPhase = "Ready"      # network configuration phase1 and phase2 completed (all is OK from the networking perspective)
-const InterfaceHotplugPhaseFailed     InterfaceHotplugPhase = "Failed"     # plugging the new interface failed. More details on `DetailedMessage`.
 ```
 
+The proposed `VirtualMachineInstanceNetworkInterface` status change is required
+to block the the `virt-handler` component until it realizes the multus dynamic
+networks controller has already finished configuring the pod interface
+accordingly - there would otherwise be a race between the CNI plugin and
+`virt-handler` (virt-handler could see the pod interface created but **missing**
+the IP addresses - or some other configuration) if its reconcile cycle kicked
+in while CNI IPAM was still configuring the link.
+
+`Virt-controller` will set an interface's status as `Ready` once it sees the
+corresponding entry on the pod's network-status (which indicates CNI has
+finished configuring the pod interface).
 
 ### Hotplug for pods
 Assuming the following two `network-attachment-definition`s:
@@ -472,14 +402,13 @@ scenarios:
 
 # Implementation Phases
 1. **M** Refactor multus as a thick cni plugin.
-2. **M** Refactor multus to allow adding / removing only new networks
-3. **C** Consume this updated multus functionality via CNAO
-4. **K** Add the hot-plug / hot-unplug functionality to KubeVirt
-5. **M** Take into account the existing interfaces when multus implicitly generates
-   new interface names
-6. **M** update the default route on the pod whenever the NIC holding the
-   default route is hot-unplugged. It should now point to the cluster's default
-   network - managed by Kubernetes.
+2. **M** Expose an extra endpoint in multus to allow adding / removing specific
+   attachments
+3. Add a controller monitoring pod attachment updates
+4. **C** Consume this dynamic networks functionality via CNAO
+5. **K** Add the hot-plug functionality to KubeVirt for L2 and L3 networks
+     (with IPAM enabled on the pod interface)
+6. **K** Add the hot-unplug functionality to KubeVirt for L2 and L3 networks
 
 **Notes:**
 * the action items listed above have either `M`, `K`, or `C` to
