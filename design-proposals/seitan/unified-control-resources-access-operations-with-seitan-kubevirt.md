@@ -22,8 +22,8 @@ performs appropriate actions as a result.
 
 See also, in more detail:
 
-* [Implementation Details](./seitan-tree.md)
-* [Security Aspects](./security-aspect-seitan.md)
+* [Implementation Details](./seitan-implementation.md)
+* [Security Aspects](./security-aspects-seitan.md)
 
 ### Motivation
 
