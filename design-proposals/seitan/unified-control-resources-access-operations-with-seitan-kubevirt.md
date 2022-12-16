@@ -2,6 +2,32 @@
 
 Authors: Alice Frosi, Stefano Brivio
 
+  * [Overview](#overview)
+    + [Motivation](#motivation)
+      - [Disk access](#disk-access)
+      - [Tap device creation](#tap-device-creation)
+      - [Connecting QEMU to privileged daemons](#connecting-qemu-to-privileged-daemons)
+      - [Reduction of capabilities granted to virt-launcher](#reduction-of-capabilities-granted-to-virt-launcher)
+    + [Goals](#goals)
+    + [Non Goals](#non-goals)
+    + [Definition of Users](#definition-of-users)
+    + [Repositories](#repositories)
+  * [Design](#design)
+    + [Introduction](#introduction)
+    + [Integration with KubeVirt](#integration-with-kubevirt)
+    + [seitan recipe examples](#seitan-recipe-examples)
+      - [Container disks](#container-disks)
+      - [SCSI persistent reservation](#scsi-persistent-reservation)
+      - [Tap device:](#tap-device-)
+    + [Generation of seitan recipes](#generation-of-seitan-recipes)
+    + [Advantages](#advantages)
+    + [Why a second seccomp filter?](#why-a-second-seccomp-filter-)
+    + [Scalability](#scalability)
+    + [Update/Rollback Compatibility](#update-rollback-compatibility)
+    + [Functional Testing Approach](#functional-testing-approach)
+  * [Implementation Phases](#implementation-phases)
+  * [Useful links](#useful-links)
+
 ## Overview
 
 Processes running in a KubeVirt unprivileged context routinely need to perform
