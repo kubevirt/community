@@ -46,7 +46,7 @@ the virt-launcher pod.
 
 #### Tap device creation
 
-_Virt-handler_ executes the _ioctl_ syscall running a privileged process inside
+_virt-handler_ executes the _ioctl_ syscall running a privileged process inside
 the network namespace of _virt-launcher_.
 
 
@@ -105,7 +105,7 @@ the final users.
 ### Repositories
 
 * [Kubevirt](https://github.com/kubevirt/kubevirt)
-* [Seitan](https://seitan.rocks/seitan/about/)
+* [seitan](https://seitan.rocks/seitan/about/)
 
 
 ## Design
@@ -119,14 +119,14 @@ Interpreter, Transformer and Notifier_).
 
 The seitan project comes with 3 components:
 
-* _Seitan_ is the seccomp monitor running on the privileged side. It is
+* _seitan_ is the seccomp monitor running on the privileged side. It is
   responsible for
     1. evaluating the arguments of the filtered syscalls
     2. executing the corresponding action
     3. returning the result
-* _Seitan-eater_ is the installer of the seccomp filters in the unprivileged
+* _seitan-eater_ is the installer of the seccomp filters in the unprivileged
   context (_virt-launcher_)
-* _Seitan-cooker_ generates the inputs for _seitan_ and _seitan-eater_ based on
+* _seitan-cooker_ generates the inputs for _seitan_ and _seitan-eater_ based on
   the _seitan recipe_. The _seitan recipe_ is a JSON input file that lists the
 filtered syscalls, their arguments, and the corresponding action for a specific
 VMI.
@@ -142,7 +142,7 @@ QEMU.
 *Figure 1. General flow of a filtered syscall*`
 
 
-### Seitan recipe examples
+### seitan recipe examples
 
 The following examples show the corresponding seitan recipe based on the feature
 requested by the VMI.
@@ -158,7 +158,7 @@ VMI:
     name: containerdisk
 ```
 
-Seitan recipe:
+seitan recipe:
 
 ```json
 [
@@ -202,7 +202,7 @@ VMI:
           reservation: true
 ```
 
-Seitan recipe:
+seitan recipe:
 
 ```json
 [
@@ -249,7 +249,7 @@ VMI:
 
 
 
-Seitan recipe:
+seitan recipe:
 
 ```json
 [
@@ -322,7 +322,7 @@ _virt-launcher_, and it is easily extensible.
 3. **Security improvements.** The seccomp notifier receives the arguments of the
    syscall QEMU wants to execute. In this way, the notifier can check the
 validity of the arguments, execute the action, return the result of the action,
-and, optionally, let the syscall complete. _Virt-handler_ can simply execute the
+and, optionally, let the syscall complete. _virt-handler_ can simply execute the
 syscall in its context and pass the result of the operation back to
 _virt-handler_ without executing privileged processes inside the _virt-launcher_
 namespace.
@@ -369,7 +369,7 @@ blocked by all the processes inside the container.
 The seccomp filters introduce some latency for every syscall execution since it
 needs to check if it is one of the filtered syscalls. However, the filter is
 built in a way that minimizes the search time for every syscall (more details in
-[seitan filter generation](./seitan-tree.md)).
+[seitan filter generation](./seitan-implementation.md)).
 
 The BPF filter implements a binary search tree and the worst case is _O(log(n))_
 where _n_ is the number of the filtered syscalls.  Using the input JSON files
