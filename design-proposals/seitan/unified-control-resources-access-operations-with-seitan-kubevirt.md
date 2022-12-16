@@ -394,9 +394,9 @@ filters doesn’t break any existing functionality.
 
 ## Implementation Phases
 
-* First version of seitan available in Centos Stream
+* First version of seitan available in CentOS Stream
 * Integrating seitan for new features like SCSI persistent reservation
-* Gradually,  integrating other features that can benefit of seitan
+* Gradually, integrating other features that can benefit of seitan
 
 ## Useful links:
 
