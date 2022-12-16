@@ -105,7 +105,7 @@ the final users.
 ### Repositories
 
 * [Kubevirt](https://github.com/kubevirt/kubevirt)
-* [seitan](https://seitan.rocks/seitan/about/)
+* [seitan](https://seitan.rocks/)
 
 
 ## Design
@@ -114,8 +114,12 @@ the final users.
 ### Introduction
 
 The generation, monitoring, and installation of the seccomp filters is performed
-by [seitan](https://seitan.rocks/seitan/about/) (_Syscall Expressive
-Interpreter, Transformer and Notifier_).
+by [seitan](https://seitan.rocks/) (_Syscall Expressive Interpreter, Transformer
+and Notifier_).
+
+**Note: the code currently published, as of December 16th, 2022, doesn't
+implement the design described here, yet. It's rather a quick-and-dirty proof of
+concept, based on a rudimentary, initial working hypothesis.**
 
 The seitan project comes with 3 components:
 
