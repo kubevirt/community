@@ -400,7 +400,7 @@ filters doesn’t break any existing functionality.
 
 * First version of seitan available in CentOS Stream
 * Integrating seitan for new features like SCSI persistent reservation
-* Gradually, integrating other features that can benefit of seitan
+* Gradually, integrating other features that can benefit from seitan
 
 ## Useful links:
 
