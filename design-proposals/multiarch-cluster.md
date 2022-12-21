@@ -27,7 +27,7 @@ Regardless of this fact, it was identified that the framework already has accomp
 
 ## User Stories
 
-As a user, I want to be able to create and start one or more VM/VMIs which allow me to explicitly specify the architecture of the workload
+As a user, I want to be able to run an ARM compute-plane with an x86 control-plane and vice versa.
 
 ## Repos
  - https://github.com/kubevirt/kubevirt
@@ -41,7 +41,8 @@ As a user, I want to be able to create and start one or more VM/VMIs which allow
 **Kubevirt API Spec**
 
 - Addition of an Architecture field to the VirtualMachineInstanceSpec will allow the user to indicate the architecture of the workload being deployed. If not specified, the default from the cluster config will be applied.
-- Addition of DefaultVMIArchitecture and ArchConfiguration fields to the KubevirtConfiguration. The DefaultVMIArchitecture will be applied to a VMI in the event that the user has not specified it explicitly. The ArchConfiguration allows for setting defaults for the existing arch-specific config items. These items are `OVMFPath`, `EmulatedMachines`, and `MachineType`
+- Addition of ArchitectureConfiguration field to the KubevirtConfiguration. The ArchitectureConfiguration allows for setting defaults for the existing arch-specific config items. These items are `OVMFPath`, `EmulatedMachines`, and `MachineType`. Additionally, user can specify the `DefaultVMIArchitecture` to be applied. Currently if you do not set the DefaultVMIArchitecture, it will default to runtime.GOARCH. The same goes for all the arch specific defaults (OVMF,Emulated Machines, etc), they will default to the hardcoded X86,ARM defaults that already existed  as consts
+  
 
 **Virt-api**
 
@@ -121,14 +122,14 @@ spec:
   configuration:
     developerConfiguration:
       featureGates: ["MultiArchitecture"]
-    archConfiguration:
+    architectureConfiguration:
       arm64:
         emulatedMachines: ["virt"]
         ovmfPath: "/usr/share/AAVMF"
       amd64:
         emulatedMachines: ["pc-*"]
         machineType: "q35"
-    defaultVMIArchitecture: "amd64"
+      defaultVMIArchitecture: "amd64"
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
 ```
@@ -151,4 +152,5 @@ Currently, the only area of this proposal that still requires clarity is what di
 Proposed Implementation Rollout involves 2 stages:
 
 1. Merge code changes. This will allow us to still test that pods are created in the e2e test for the expected architecture, despite not being able to start up.
-2. Followup PR involving the pushing of multi-arch images as part of the release process
+2. Update the https://github.com/kubevirt/user-guide 
+3. Followup PR involving the pushing of multi-arch images as part of the release process
