@@ -41,7 +41,7 @@ As a user, I want to be able to run an ARM compute-plane with an x86 control-pla
 **Kubevirt API Spec**
 
 - Addition of an Architecture field to the VirtualMachineInstanceSpec will allow the user to indicate the architecture of the workload being deployed. If not specified, the default from the cluster config will be applied.
-- Addition of ArchitectureConfiguration field to the KubevirtConfiguration. The ArchitectureConfiguration allows for setting defaults for the existing arch-specific config items. These items are `OVMFPath`, `EmulatedMachines`, and `MachineType`. Additionally, user can specify the `DefaultVMIArchitecture` to be applied. Currently if you do not set the DefaultVMIArchitecture, it will default to runtime.GOARCH. The same goes for all the arch specific defaults (OVMF,Emulated Machines, etc), they will default to the hardcoded X86,ARM defaults that already existed  as consts
+- Addition of ArchitectureConfiguration field to the KubevirtConfiguration. The ArchitectureConfiguration allows for setting defaults for the existing arch-specific config items. These items are `OVMFPath`, `EmulatedMachines`, and `MachineType`. Additionally, user can specify the `defaultArchitecture` to be applied. Currently if you do not set the defaultArchitecture, it will default to runtime.GOARCH. The same goes for all the arch specific defaults (OVMF,Emulated Machines, etc), they will default to the hardcoded X86,ARM defaults that already existed  as consts
   
 
 **Virt-api**
@@ -129,7 +129,7 @@ spec:
       amd64:
         emulatedMachines: ["pc-*"]
         machineType: "q35"
-      defaultVMIArchitecture: "amd64"
+      defaultArchitecture: "amd64"
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
 ```
