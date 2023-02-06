@@ -21,6 +21,8 @@ See the [Google Summer of Code timeline](https://developers.google.com/open-sour
 KubeVirt is proposing the following project ideas as starting points for GSoC contributors to develop their own project applications.
 
 ### Create KubeVirt seccomp Profiles
+**Github issue**: https://github.com/kubevirt/community/issues/205
+
 **Description**: [Seccomp](https://man7.org/linux/man-pages/man2/seccomp.2.html) is a security facility from the Linux Kernel that prevents processes to execute unauthorized syscalls.  By limiting the number of permitted syscalls, seccomp is being utilized in conjunction with [Kubernetes](https://kubernetes.io/docs/tutorials/security/seccomp/) to reduce the attack surface of the containers.
 Container engines offer their own default profile. However, we cannot assume that one size fits all. Therefore, the default profile may either permit syscalls that are in fact not required by the workload or prohibit legitimate syscalls.
 
@@ -43,6 +45,8 @@ As an optional addition, the intern could look into if various seccomp profiles 
 
 
 ### POC Virtual Machine Runtime Interface
+**Github issue**: https://github.com/kubevirt/community/issues/206
+
 **Description**: Kubevirt is a Kubernetes extension to run virtual machines on Kubernetes clusters leveraging Libvirt + Qemu&KVM stack. It does this by exposing a custom resource called VirtualMachine which is then translated into a Pod (called virt-launcher). This Pod is treated as any other application pod, and includes a monitoring process, virt-launcher, that manages the Libvirt+Qemu processes.
 Libvirt needs to run in the same context as QEMU, therefore is launched in each virt-launcher pod together with the monitorning process “virt-launcher”. 
 
