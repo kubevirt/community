@@ -43,12 +43,12 @@ As an optional addition, the intern could look into if various seccomp profiles 
 
 
 ### POC Virtual Machine Runtime Interface
-**Description**: Kubevirt is a Kubernetes extension to run Virtual machines on Kubernetes clusters leveraging Libvirt + Qemu&KVM stack. It does this by exposing a custom resource called VirtualMachine which is then translated into a Pod (called virt-launcher). This pod is treated as any other application pods, and includes a monitoring process, virt-launcher, that manages the Libvirt+Qemu processes.
+**Description**: Kubevirt is a Kubernetes extension to run virtual machines on Kubernetes clusters leveraging Libvirt + Qemu&KVM stack. It does this by exposing a custom resource called VirtualMachine which is then translated into a Pod (called virt-launcher). This Pod is treated as any other application pod, and includes a monitoring process, virt-launcher, that manages the Libvirt+Qemu processes.
 Libvirt needs to run in the same context as QEMU, therefore is launched in each virt-launcher pod together with the monitorning process “virt-launcher”. 
 
-Unfortunately, one of the drawbacks of this additional component is the increment of the required memory per pod or additional CPUs to run on. This differs from traditional Virtual Machine platforms as they usually can use one Libivrt instance per node and therefore isolate the CPU and memory consumption. Kubevirt is tightly integrated with Libvirt which makes it hard to integrate with other VMM (this is similar to how Kubernetes can leverage containerd/crio or others). The stretch goal of this project is to design interface that would allow Kubevirt to interact with any VMM withoud need for Libvirt.
+Unfortunately, one of the drawbacks of this additional component is the increment of the required memory per pod or additional CPUs to run on. This differs from traditional virtual machine platforms as they usually can use one Libvirt instance per node and therefore isolate the CPU and memory consumption. Kubevirt is tightly integrated with Libvirt which makes it hard to integrate with another VMM (this is similar to how Kubernetes can leverage containerd/crio or others). The stretch goal of this project is to design an interface that would allow Kubevirt to interact with any VMM without need for Libvirt.
 
-**Expected outcomes**: The main goal of this project is to create a proof of concept to refactor the current virt-launcher code into a node level component (running one instance per node vs per Pod). This would reduce the memory overhead of each VM and demonstrate that abstraction of communication with Pod would be possible.
+**Expected outcomes**: The main goal of this project is to create a proof of concept to refactor the current virt-launcher code into a node level component (running one instance per node vs per Pod). This would reduce the memory overhead of each VM and demonstrate that abstraction of communication with Pods would be possible.
 
 **Links**: <br />
 https://github.com/kubevirt/kubevirt/blob/main/docs/README.md <br />
