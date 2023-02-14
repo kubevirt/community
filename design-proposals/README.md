@@ -1,5 +1,5 @@
 This repo contains design proposals for features impacting repos across the
-KubeVirt github organization.
+KubeVirt Github organization.
 
 # Purpose of Design Proposals
 
@@ -8,7 +8,6 @@ on their designs from the repo approvers before the community member commits to
 executing on the design. By going through the design process, developers gain a
 have a high level of confidence that their designs are viable and will be
 accepted.
-
 
 NOTE: This is process is not mandatory. Anyone can execute on their own design
 without going through this process and submit code to the respective repos.
@@ -21,7 +20,7 @@ accept.
 # How to create Design Proposals
 
 To create a design proposal, it is recommended to use the `proposal-template.md`
-file an outline. The structure of this template is meant to provide a starting
+file as an outline. The structure of this template is meant to provide a starting
 point for people. Feel free to edit and modify your outline to best fit your
 needs when creating a proposal.
 
