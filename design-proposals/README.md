@@ -1,5 +1,5 @@
 This repo contains design proposals for features impacting repos across the
-KubeVirt Github organization.
+KubeVirt GitHub organization.
 
 # Purpose of Design Proposals
 
