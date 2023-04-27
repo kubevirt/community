@@ -143,6 +143,74 @@ The proposed API changes for VM objects can be seen in
 [the VM API examples section](#vms), while the proposed API changes for the VMI
 object can be seen in [the VMI API examples section](#vmis).
 
+### Pod interface naming
+The VMs’ pod interfaces names are ordinal based (`net1`, `net2`, …, `netX`),
+derived from their order in the VMI spec.
+They are requested from Multus by specifying then in virt-launcher pod 
+`k8s.v1.cni.cncf.io/networks` annotation (which is created by virt-controller).
+
+Given a VM with three secondary interfaces:
+```yaml
+spec:
+  networks:
+  - name: blue-network
+    multus: ...
+  - name: red-network
+    multus: ...
+  - name: green-network
+    multus: ...
+```
+
+The pod's Multus networks annotation will look like so:
+```json
+"k8s.v1.cni.cncf.io/networks": [
+  {"interface": "net1", ...},
+  {"interface": "net2",  ...},  
+  {"interface": "net3",  ...}
+]
+```
+
+In the scenario where "red-network" interface is unplugged, the annotation will change  as follows:
+```json
+"k8s.v1.cni.cncf.io/networks": [
+  {"interface": "net1", ...},
+  {"interface": "net3",  ...}
+]
+```
+Now it's impossible to associate between all VMI spec and pod interfaces.
+
+Thus, the name of the `virt-launcher` pod network interfaces must be generated 
+without relying on the interface order in the spec, allowing the unplug feature.
+
+The pod interface name will be derived from the `kubevirt-spec-iface-name`; 
+we'll simply compute an Hash of the interface name
+(which is guaranteed to be unique within each VMI), and ensure all generated
+names for the pod's networking infrastructure are accepted by the kernel.
+Refer to the following list for examples of names on pod networking infra:
+- VM interface name: `iface1`
+- pod interface name: `pod7e0055a6880`
+- in-pod bridge name: `k6t-7e0055a6880`
+- dummy pod nic name: `7e0055a6880-nic`
+
+>**Note:**  The kernel limitation for max interface name length is 15 characters.
+
+>**Note:**
+> Since the bridge and dummy interfaces used internally they can be changed in the future to have 3 chacter digits and align with the new formatting:
+> - in-pod bridge name: `bri7e0055a6880`
+> - dummy pod nic name: `dum7e0055a6880`
+
+
+The proposed algorithm is SHA256; here's a minimal implementation:
+```golang
+func PodInterfaceName(vmiSpecInterfaceName string) string {
+    // allows the dummy pod suffix (`-nic`) to fit the kernel limitation of 15 chars.
+    const MaxIfaceNameLen = 11
+    hash := sha256.New()
+    _, _ = io.WriteString(hash, vmiSpecInterfaceName)
+    return fmt.Sprintf("%x", hash.Sum(nil))[:MaxIfaceNameLen]
+}
+```
+
 ## VMI flows
 
 ### virtctl
@@ -166,8 +234,7 @@ A VMI update will be trigered in virt-controller, during which we must patch
 the `k8s.v1.cni.cncf.io/networks` annotation on the pod holding the VM, which
 in turn causes multus to hotplug an interface into the pod.
 
-The request to plug this newly created pod interface into the VM will then be
-forwarded to the correct `virt-handler`.
+The request to plug/unplug will then be forwarded to the correct `virt-handler`.
 
 ### virt-handler
 Finally, `KubeVirt`s agent in the node will create - and configure - any
@@ -196,28 +263,6 @@ $ virtctl addinterface <vmi-name> \
 ```
 
 For hot-unplugging, use the `removeinterface` command instead.
-
-**NOTE**: the pod interface name will be derived from the
-`kubevirt-spec-iface-name`; we'll simply compute an Hash of the interface name
-(which is guaranteed to be unique within each VMI), and ensure all generated
-names for the pod's networking infrastructure are accepted by the kernel. Refer
-to the following list for examples of names on pod networking infra:
-
-- VM interface name: iface1
-- pod interface name: net7e0055a6
-- in-pod bridge name: k6t-net7e0055a6
-- dummy pod nic name: net7e0055a6-nic
-
-The proposed algorithm is SHA256; here's a minimal implementation:
-```golang
-func PodInterfaceName(vmiSpecInterfaceName string) string {
-    const MaxIfaceNameLen = 11 // allows the dummy pod sufix (`-nic`) to fit the
-                               // kernel limitation of 15 chars.
-	hash := sha256.New()
-	_, _ = io.WriteString(hash, vmiSpecInterfaceName)
-	return fmt.Sprintf("net%x", hash.Sum(nil))[:MaxIfaceNameLen]
-}
-```
 
 ### virt-api
 The `virt-api` subresource handlers will then proceed to patch the VM status
@@ -377,6 +422,119 @@ spec:
 The aforementioned update will trigger multus to start the CNI ADD flow for the
 network named `macvlan-conf-2`.
 
+### Unplug for pods
+Following [hotplug for pods example](#hotplug-for-pods), to unplug an interface, update the pod to:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-case-03
+  annotations:
+    k8s.v1.cni.cncf.io/networks: macvlan-conf-2
+spec:
+  containers:
+  - name: pod-case-03
+    image: docker.io/centos/tools:latest
+    command:
+    - /sbin/init
+```
+
+The aforementioned update will trigger multus to start the CNI DEL flow for the
+network named `macvlan-conf-1`.
+
+## Backward Compatibility
+### Legacy VM's virt-launcher pods interface naming
+*Legacy VM - running VMs prior to KubeVirt version that introduce
+the pod interface naming change.
+These VMs run in an old virt-launcher pod*
+
+Changing the virt-launcher pod interface name scheme breaks backward compatibility 
+in a way that legacy VMs won't be able to migrate, See the diagram below:
+![](upgrades-and-pod-iface-nameing-issue.png)
+
+1. The VM originally runs on top of virt-launcher pod from version v0.59.0
+2. Kubevirt upgrades to v0.60.0.
+3. The VM is migrated.
+4. The migration target pod is created from the new image (v0.60.0) with interface names in form of the new name-scheme - `7e0055a6880`.
+But the interface name in the migration domain XML is in form of the old name scheme - `tap1`.
+
+The proposed solution is having virt-controller to create the migration target pod with  
+`k8s.v1.cni.cncf.io/networks` annotation with same pod interface names as the migration 
+source pod annotation.
+
+The migration target pod interfaces names will then match the names in the 
+incoming migration domain XML and the migration process will start.
+
+In case the user migrates the VM again, same as before, the migration target 
+`pods k8s.v1.cni.cncf.io/networks` annotation value will have the same interface 
+names as in the migration source annotation.
+
+### Unplug interface of a legacy VM
+#### Story 1
+Running legacy VM with secondary networks, with the following networks in the spec:
+```yaml
+spec:
+networks:
+- name: blue-network
+  multus:
+    networkName: blue-net-br
+- name: red-network
+  multus:
+    networkName: red-net-br
+```
+>**Note**: `blue-net-br` and `red-net-br` are the `NetworkAttachmentDefinition` name.
+
+The VM pod network-status annotation will look as follows:
+```json
+"k8s.v1.cni.cncf.io/networks-status": [
+  { "interface": "net1", "name": "blue-net-br", ...},
+  { "interface": "net2", "name": "red-net-br",  ...},
+]
+```
+
+Unplugging `net1` and `net2` should be blocked because it makes mapping between 
+the VMI networks names and the pod interfaces names impossible.
+
+#### Story 2
+Running legacy VM that was migrated following Kubevirt upgrade, and has new interfaces that were hot-plugged into it.
+The VM pod will have interfaces with names in the form of the old name scheme, and some in the form of the new name scheme.
+
+The VMI networks spec will be like so:
+```yaml
+spec:
+networks:
+- name: blue-network
+  multus:
+    networkName: blue-net-br
+- name: red-network
+  multus:
+    networkName: red-net-br
+- name: green-network
+  multus:
+    networkName: green-net-br
+- name: yellow-network
+  multus:
+    networkName: yellow-net-br
+```
+The VM pod network-status annotation will look as follows:
+```json
+"k8s.v1.cni.cncf.io/networks-status": [
+  { "interface": "net1", "name": "blue-net-br", ...},
+  { "interface": "net2", "name": "red-net-br", ...},
+  { "interface": "netXYZ123", "name": "green-net-br", ...},
+  { "interface": "netABC456", "name": "yellow-net-br", ...},
+]
+```
+Similar to the [story 1](#story-1), unplugging `net1` or `net2` will make it impossible to map 
+between the VMI networks and the pod interfaces names.
+
+The proposed solution is to block unplug for VMs' interfaces whose pod network 
+interface name is in form of the ordinal naming scheme (i.e `net1`, `net2`, ...).
+
+1. virt-controller shall check VM's pod `k8s.v1.cni.cncf.io/network-status` 
+annotation, for interfaces named using the ordinal naming scheme.
+2. if any are found, reject the request and raise warning an event.
+
 ## Functional Testing Approach
 Functional testing will use the network sig KubeVirt lanes -
 `k8s-<x.y>-sig-network`. These lanes must be used since this feature is network
@@ -391,6 +549,14 @@ performed:
 
 All these tests have as pre-requirements that the `HotplugInterfaces` feature
 gate is enabled, **and** a secondary network provisioned.
+
+The pod network interfaces naming tests shall cover:
+* Running VMs prior to Kubevirt version that introduce the naming change, 
+can be migrated following KubeVirt upgrade (when workload-strategy is set to Migrate), and after 
+Kubevirt upgrade following user request.
+
+It should cover changes around virt-launcher pod interface name change and in general cover 
+backward compatibility for changes related to the networking code.
 
 ### Multus functional tests
 In multus, new functional tests must be added that cover the following
@@ -407,10 +573,20 @@ scenarios:
 3. Add a controller monitoring pod attachment updates
 4. **C** Consume this dynamic networks functionality via CNAO
 5. **K** Add the hot-plug functionality to KubeVirt for L2 and L3 networks
-     (with IPAM enabled on the pod interface)
-6. **K** Add the hot-unplug functionality to KubeVirt for L2 and L3 networks
+     (with IPAM enabled on the pod interface)`
+6. **K** Change virt-launcher pod network interfaces name scheme
+7. **K** Add a remove-interface command at `virtctl` and correspond endpoints at `virt-api`, **support VMI objects only**
+8. **K** Detach the requested interface from the guest through Libvirt API, **support VMI objects only**.
+9. **K** Extend the `InterfaceRequests` API to support remove-interface requests.
+10. **K** Extend the remove-interface `virtctl`'s command and `virt-api`'s endpoints to support `VirtualMachine`.
+11. **K** Implement `virt-controller` pod annotation patching for unplug requests.
+12. **K** Cleanup the unplugged interface's bridge and tap-device from virt-launcher pods.
+13. **K** Shut down the unplugged interface IPAM DHCP server instance.
 
 **Notes:**
 * the action items listed above have either `M`, `K`, or `C` to
 indicate in which project should it be implemented.
 * the MVP version would be composed of steps 1 through 4, inclusive.
+* the MVP for unplug functionality would be composed of steps 6 through 8, inclusive.
+* Until step 12 and 13 are implemented, the unplugged interface's bridge, tap device 
+and DHCP server will remain in the launcher pod, until the VM is migrated.
