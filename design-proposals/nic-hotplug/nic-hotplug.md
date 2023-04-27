@@ -4,7 +4,7 @@ and removing - network interfaces from running Virtual Machines, without
 requiring a restart.
 
 ## Motivation
-Hot-plug / hot-unplug (add / remove) nics to running VMs is an industry
+Hot-plug / hot-unplug (add / remove) NICs to running VMs is an industry
 standard available in multiple platforms, allowing the dynamic attachment of L2
 networks. This is useful when the workload (VM) cannot tolerate a restart when
 attaching / removing networks, of for scenarios where, for instance, the
@@ -56,7 +56,7 @@ administrator to provision it for them.
 ## Multus
 Multus - a CNI plugin - only handles the ADD / REMOVE verb, and is triggered
 by kubelet only when the pod's sandbox is created - or removed. Given its
-simplicity, it assumes no networks exist whenever it is executed, and procceeds
+simplicity, it assumes no networks exist whenever it is executed, and proceeds
 to call the ADD / DEL for **all** networks listed in its
 `k8s.v1.cni.cncf.io/networks` annotation.
 
@@ -65,7 +65,7 @@ must be refactored to enable it to be triggered not only when the pod's sandbox
 is created, but also on-demand - i.e. whenever the pod's
 `k8s.v1.cni.cncf.io/networks` are updated.
 
-To do that, a controller residing on a long lived process must be introduced.
+To do that, a controller residing on a long-lived process must be introduced.
 An important detail to take into account is this controller will end up being a
 CNI client; as a result, it needs to instruct CNI with parameters such as
 container id, and container netns path (which are CNI inputs). For this, this
@@ -101,13 +101,13 @@ A "thin CNI plugin" runs as a one-shot process, typically as a binary on disk
 executed on a Kubernetes host machine.
 
 A "thick CNI Plugin", on the other hand, is a CNI component composed of two (or
-more) parts, usually composed of "shim", and a long lived process (daemon)
+more) parts, usually composed of "shim", and a long-lived process (daemon)
 resident in memory. The "shim" is a lightweight "thin CNI plugin" component that
 simply passes CNI parameters (such as JSON configuration, and environment
 variables) to the daemon component, which then processes the CNI request.
 
-To transform multus into a thick plugin, it is needed to instantiate a long
-lived process - which will be the multus pod entrypoint - listening to a unix
+To transform multus into a thick plugin, it is needed to instantiate a long-lived 
+process - which will be the multus pod entrypoint - listening to a unix
 domain socket - this socket must be available both in the multus pod and the
 hosts's mount namespaces; as such, a bind mount to host this socket must be
 provided for the multus pod.
@@ -183,7 +183,7 @@ Thus, the name of the `virt-launcher` pod network interfaces must be generated
 without relying on the interface order in the spec, allowing the unplug feature.
 
 The pod interface name will be derived from the `kubevirt-spec-iface-name`; 
-we'll simply compute an Hash of the interface name
+we'll simply compute a Hash of the interface name
 (which is guaranteed to be unique within each VMI), and ensure all generated
 names for the pod's networking infrastructure are accepted by the kernel.
 Refer to the following list for examples of names on pod networking infra:
@@ -230,7 +230,7 @@ The `virt-api` subresource handlers will then proceed to patch the VMI spec
 `spec.domain.devices.interfaces`, and `spec.networks`.
 
 ### virt-controller
-A VMI update will be trigered in virt-controller, during which we must patch
+A VMI update will be triggered in virt-controller, during which we must patch
 the `k8s.v1.cni.cncf.io/networks` annotation on the pod holding the VM, which
 in turn causes multus to hotplug an interface into the pod.
 
@@ -250,7 +250,7 @@ hot-plug an interface into a VM. This means that some extra initial steps are
 required to update the corresponding VMI networks and interfaces specs, but
 afterwards, the flows are common.
 
-As with VMIs, it starts with issueing a `virtctl` command.
+As with VMIs, it starts with issuing a `virtctl` command.
 
 ### virtctl
 To hot-plug a new NIC into a running VMI, the user would execute the following
@@ -327,7 +327,7 @@ type VirtualMachineInstanceNetworkInterface struct {
 ```
 
 The proposed `VirtualMachineInstanceNetworkInterface` status change is required
-to block the the `virt-handler` component until it realizes the multus dynamic
+to block the `virt-handler` component until it realizes the multus dynamic
 networks controller has already finished configuring the pod interface
 accordingly - there would otherwise be a race between the CNI plugin and
 `virt-handler` (virt-handler could see the pod interface created but **missing**
@@ -545,7 +545,7 @@ performed:
 * plug a new NIC into a running VM
 * unplug a NIC from a running VM (can be performed in the previous test
   teardown)
-* migrate a VM having an hot-plugged interface
+* migrate a VM having a hot-plugged interface
 
 All these tests have as pre-requirements that the `HotplugNICs` feature
 gate is enabled, **and** a secondary network provisioned.
