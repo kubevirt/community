@@ -91,24 +91,23 @@ spec:
 
 ### Status API
 
-The VMI status must indicate the current number of CPU sockets. The value needs to be propagated back to the VM status to allows the user to have an indication of when their changes applied to the running VMI.
+The VMI status must indicate whether CPU hotplug is taking place. As the hotplug process begins the current state of `spec.domain.cpu` needs to be propagated back to the VM/VMI `status.currentCPUTopology` to allow the user to have an indication of the hotplug processing.
 
-The user should be able to inspect the VM.Status value below to determine the state of their changes. This is similar in concept to someone inspecting a Deployments status to determine the the number of pods that are available.
+During the hotplug process, the current CPU topology state will be reflected in VM/VMI `Status.currentCPUTopology` while the desired CPU topology state will be in `spec.Domain.CPU`. When the hotplug process completes the `Status.currentCPUTopology` will be cleared.
 
 ```
-// The number of sockets the vm has currently active.
-vmi.Status.Resources.Sockets.Ready
-vm.Status.Resources.Sockets.Ready
+	// CPU allow specified the detailed CPU topology inside the vmi.
+		CurrentCPUTopology *CPU `json:"currentCPUTopology,omitempty"`
 ```
 
 Conditions on the VM and VMI should indicate the status of the pending CPU hotplug actions. When errors occur, the conditions should propagate the errors to the VM.Status.Conditions field so users can receive feedback into the status of their declared state.
 
 ```
-// VirtualMachineCPUReady indicates that the desired amount of cpu is active on the vmi
-VirtualMachineCPUReady VirtualMachineConditionType = "CPUReady"
+	// Indicates that the VMI is in progress of Hot vCPU Plug/UnPlug
+	VirtualMachineInstanceVCPUChange VirtualMachineInstanceConditionType = "HotVCPUChange"
 ```
 
-When the desired state is equal to the ready state, then these conditions will have `Status=True`, otherwise `Status=False` with a human readable reason and message indicating whether the hotplug change is pending or encountering errors.
+Upon succesful hotplug action the condition will be removed. Otherwise, a human readable reason and message indicating whether the hotplug change is pending or encountering errors.
 
 ## Extensibility
 We will be able to use the new `liveUpdateFeatures` section to manage things like memory hotplug in the future.
