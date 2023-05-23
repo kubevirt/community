@@ -242,7 +242,7 @@ required networking infrastructure, and finally tap into the correct
 `virt-launcher`s namespaces to execute the commands required to hot plug / hot
 unplug the network interfaces.
 
-**NOTE:**  The feature is protected by the `HotplugInterfaces` feature gate.
+**NOTE:**  The feature is protected by the `HotplugNICs` feature gate.
 
 ## VM flows
 The flows to patch up the VMI object are a subset of the steps required to
@@ -547,7 +547,7 @@ performed:
   teardown)
 * migrate a VM having an hot-plugged interface
 
-All these tests have as pre-requirements that the `HotplugInterfaces` feature
+All these tests have as pre-requirements that the `HotplugNICs` feature
 gate is enabled, **and** a secondary network provisioned.
 
 The pod network interfaces naming tests shall cover:
