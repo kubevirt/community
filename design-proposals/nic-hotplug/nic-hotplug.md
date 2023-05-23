@@ -285,29 +285,29 @@ type VirtualMachineStatus struct {
 }
 
 type VirtualMachineInterfaceRequest struct {
-	// AddInterfaceOptions when set indicates an interface should be added.
-	AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
-
-	// RemoveInterfaceOptions when set indicates an interface should be removed.
-	RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
+    // AddInterfaceOptions when set indicates a network interface should be added.
+    // The details within this field specify how to add the interface
+    AddInterfaceOptions *AddInterfaceOptions `json:"addInterfaceOptions,omitempty" optional:"true"`
+    // RemoveInterfaceOptions when set indicates a network interface should be removed.
+    // The details within this field specify how to remove the interface
+    RemoveInterfaceOptions *RemoveInterfaceOptions `json:"removeInterfaceOptions,omitempty" optional:"true"`
 }
+
 
 // AddInterfaceOptions is provided when dynamically hot plugging a network interface
 type AddInterfaceOptions struct {
-	// NetworkName indicates the name of the multus network - i.e. the network-attachment-definition name
-	NetworkName string `json:"networkName"`
-
-	// InterfaceName indicates the name of the network / interface in the KubeVirt VMI spec
-	InterfaceName string `json:"interfaceName"`
+    // NetworkAttachmentDefinitionName references a NetworkAttachmentDefinition CRD object. Format:
+    // <networkAttachmentDefinitionName>, <namespace>/<networkAttachmentDefinitionName>. If namespace is not
+    // specified, VMI namespace is assumed.
+    NetworkAttachmentDefinitionName string `json:"networkAttachmentDefinitionName"`
+    // Name indicates the logical name of the interface.
+    Name string `json:"name"`
 }
 
 // RemoveInterfaceOptions is provided when dynamically hot unplugging a network interface
 type RemoveInterfaceOptions struct {
-	// NetworkName indicates the name of the multus network - i.e. the network-attachment-definition name
-	NetworkName string `json:"networkName"`
-
-	// InterfaceName indicates the name of the network / interface in the KubeVirt VMI spec
-	InterfaceName string `json:"interfaceName"`
+    // Name indicates the logical name of the interface.
+    Name string `json:"name"`
 }
 ```
 
