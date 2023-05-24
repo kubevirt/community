@@ -27,15 +27,21 @@ kubevirt/kubevirt
 
 # Design
 In VM objects, the existing CPU `sockets` field will now be dynamic, provided that it has been declared as such.
-Declaring the field as dynamic will be done by adding a `cpu` entry to a new section under the VM spec, called `liveUpdateFeatures`.
+Declaring the field as dynamic will be done by adding a `cpu` entry to a new section under the VM spec, called `liveUpdateFeatures`. Please note that prior to defining this field the hotplug action would not take place i.e. changing the number of sockets will be staged until further reboot.
 Under the `cpu` entry, it will be possible to define a maximum number of sockets. That number is needed by LibVirt and will default to 4 times the initial number of sockets if not set. That default value will be configurable in the KubeVirt CR.
 On VM startup, that value will translate to a new `maxSockets` entry under `spec.domain.cpu` in the VMI object. However, all VMI CPU fields will stay immutable, and CPU sockets will only be adjustable on the VM object.
+Once the hoplug action begins, subsequent changes to the number of sockets would be rejected until the hotplug process completes.
+During the hotplug action a notifitcation will be created upon successful update of the CPU resources on the pod level. It will indicate that now it safe to proceed to the hotplug
+action on the Libvirt/QEMU level. 
 
-Increasing the number of CPU sockets will not only add CPUs to the guest but also increase the CPU resources available to the virt-launcher pod, via a migration (more on that in the Implementation section).
+Increasing the number of CPU sockets will not only add CPUs to the guest but also increase the CPU resources available to the virt-launcher pod, via a migration (more on that in the Implementation section). CPU Resource update on the pod level must occur before the actual hotplug action on the Libvirt level. 
+Therefore, a notifitcation will be created upon successful update of the CPU resources on the pod level. It will indicate that its safe to proceed with updating the libvirt domain with the new topology.
+
 The way LibVirt handles CPU hotplug is by exposing the maximum number of CPUs to the guest and turning off the unused CPUs. In this document, when we refer to "adding" CPUs to the guest, we're really just turning them on. This is why we need to define a maximum number of sockets in advance.
 
 ## Drawbacks / Limitations
 - Since CPU hot-(un)plug involves a live migration, VMs will have to be `LiveMigratable` to enable CPU hotplug
+- Workload update method should be defined explicitly as `LiveMigrate` under the Kubevirt configuration.
 - Each disabled vCPU, so `(maxSockets - sockets) * cores * thread`, consumes 8MiB of overhead memory
 - This feature will be incompatible with CPU requests/limits, at least initially, since those values need to dynamically scale according to the current number of enabled CPUs
 
@@ -113,7 +119,8 @@ Upon succesful hotplug action the condition will be removed. Otherwise, a human 
 We will be able to use the new `liveUpdateFeatures` section to manage things like memory hotplug in the future.
 
 ## Update/Rollback Compatibility
-This is an entirely new feature, so updates from older versions will not be a problem.
+The feautre doesn't intorduce any breaking changes so existing functionality of versions prior to this feature should not be impacted upon update/rollback.
+However if existing workloads would like to opt-in for this feature after an update, the VMI should be re-created since the addition of new fields to the VMI API.
 
 ## Functional Testing Approach
 Functional tests will simply:
@@ -121,6 +128,7 @@ Functional tests will simply:
 - Modify the number of CPU sockets for the VM
 - Ensure the guest sees the changed number of CPUs
 - Ensure the CPU resources on the virt-launcher pod were adjusted accordingly
+- Ensure interoperability with non-hotplug related  live-migration occasions (workload-update, evacuation, user-triggered)
 
 # Implementation Phases
 
@@ -136,10 +144,13 @@ The VMI [workload update controller](https://github.com/kubevirt/kubevirt/blob/c
 Sequence of events:
 - User updates CPU sockets on a vm.spec.template.spec.domain.cpu
 - VM controller determines the request/limits required and writes the necessary changes to the active vmi.Spec
+- VM controller writes the required request/limits in the vmi.Status
 - VMI workload update controller detects the mismatch between the resource request/limits on the pod vs vmi.Spec and live migrates the VMI to satisfy vmi.spec
 - Migration controller constructs a new target pod with the desired CPU request/limits
-- VMI live migrates
-- virt-handler triggers the hotplug/hot-unplug LibVirt action after the live migration completes
+- Migration controller identfies a match between the required request/limits on the vmi.Status and those of the VMI target pod
+- Migration controller marks the VMI as safe to hotplug.
+- VMI live migrates.
+- virt-handler identifies the mark and triggers the hotplug/hot-unplug LibVirt action after the live migration completes
 - VM status is updated to reflect that the pending hotplug/hot-unplug actions have completed
 
 ## Phase 3 (future): Using the [Kubernetes vertical scaling API](https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/1287-in-place-update-pod-resources ) once it reaches a more mature state
@@ -149,10 +160,13 @@ The inplace vertical pod feature allows us to dynamically change the VMI pods re
 Sequence of events
 - User updates CPU sockets on a vm.spec.template.spec.domain.cpu
 - VM controller writes these change to the active vmi.Spec
-- VMI controller updates the active pod spec to reflect the request/limit changes
-- Pod changes are applied
-- virt-handler triggers the hotplug/hot-unplug action after the inplace update completes.
-- VM status is updated to reflect that the pending hotplug/hot-unplug actions have completed
+- VM controller writes the required request/limits in the vmi.Status
+- VMI controller updates the active pod spec to reflect the request/limit changes.
+- Pod changes are applied.
+- VMI controller identfies a match between the required request/limits on the vmi.Status and those of the VMI pod
+- VMI controller marks the VMI as safe to hotplug.
+- virt-handler identifies the mark and triggers the hotplug/hot-unplug action.
+- VM status is updated to reflect that the pending hotplug/hot-unplug actions have completed.
 
 # References
 
