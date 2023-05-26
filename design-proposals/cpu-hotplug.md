@@ -30,12 +30,10 @@ In VM objects, the existing CPU `sockets` field will now be dynamic, provided th
 Declaring the field as dynamic will be done by adding a `cpu` entry to a new section under the VM spec, called `liveUpdateFeatures`. Please note that prior to defining this field the hotplug action would not take place i.e. changing the number of sockets will be staged until further reboot.
 Under the `cpu` entry, it will be possible to define a maximum number of sockets. That number is needed by LibVirt and will default to 4 times the initial number of sockets if not set. That default value will be configurable in the KubeVirt CR.
 On VM startup, that value will translate to a new `maxSockets` entry under `spec.domain.cpu` in the VMI object. However, all VMI CPU fields will stay immutable, and CPU sockets will only be adjustable on the VM object.
-Once the hoplug action begins, subsequent changes to the number of sockets would be rejected until the hotplug process completes.
-During the hotplug action a notifitcation will be created upon successful update of the CPU resources on the pod level. It will indicate that now it safe to proceed to the hotplug
+Once the hoplug action begins, subsequent changes to the number of sockets would be rejected until the hotplug process completes. CPU Resource update on the pod level must occur before the actual hotplug action on the Libvirt level, hence, during the hotplug action a notifitcation will be created upon successful update of the CPU resources on the pod level. It will indicate that now it safe to proceed to the hotplug
 action on the Libvirt/QEMU level. 
 
-Increasing the number of CPU sockets will not only add CPUs to the guest but also increase the CPU resources available to the virt-launcher pod, via a migration (more on that in the Implementation section). CPU Resource update on the pod level must occur before the actual hotplug action on the Libvirt level. 
-Therefore, a notifitcation will be created upon successful update of the CPU resources on the pod level. It will indicate that its safe to proceed with updating the libvirt domain with the new topology.
+Increasing the number of CPU sockets will not only add CPUs to the guest but also increase the CPU resources available to the virt-launcher pod, via a migration (more on that in the Implementation section).
 
 The way LibVirt handles CPU hotplug is by exposing the maximum number of CPUs to the guest and turning off the unused CPUs. In this document, when we refer to "adding" CPUs to the guest, we're really just turning them on. This is why we need to define a maximum number of sockets in advance.
 
