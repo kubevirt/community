@@ -5,7 +5,7 @@ interact with our software. By implementing an API review process, the aim is to
 development experience, encourage collaboration, and foster community engagement.
 
 Kubernetes core APIs have been very successful in maintaining strong backward compatibility along with good usability
-over the years. This proposal uses the Kubernetes api review process as a guide for implementing a similar process for
+over the years. This proposal uses the Kubernetes API review process as a guide for implementing a similar process for
 KubeVirt.
 
 
@@ -19,7 +19,7 @@ changes in KubeVirt.
 
 ## Goals
 
-- Establish a process for api reviews such that:
+- Establish a process for API reviews such that:
   - contributors have a clear idea about how to implement an API facing change
   - reviews have a guideline about the necessary checks required for a successful API facing change
   - community has a guideline about how to handle API breakages upon upgrade
@@ -48,7 +48,7 @@ changes in KubeVirt.
 In order to achieve the stability, quality and consistency of APIs like the core Kubernetes APIs this document proposes
 the following changes:
 
-- For api reviewers: There should be a one or more engineers that review api breaking changes on a regular basis.
+- For API reviewers: There should be a one or more engineers that review api breaking changes on a regular basis.
 - For contributors: There should be a guide explaining how to merge and api change
 - Tools and tests: Tools and automation that can be helpful to reduce human burden and errors to carry-out api changes
 
@@ -93,8 +93,8 @@ contributing api-facing changes.
 ### How to achieve this?
 
 - Have a document to describe the right process for contributors with the following details:
-  - Any api-facing change with design doc can be reviewed by the sig-api-reviewers for initial feedback.
-  - Any api-facing change PR can be brought up for the discussion in sig-api-reviewers call
+  - Any API-facing change with design doc can be reviewed by the sig-api-reviewers for initial feedback.
+  - Any API-facing change PR can be brought up for the discussion in sig-api-reviewers call
   - Link to a conventions document for good practices and guidance
 
 ## Tools for reviewers
