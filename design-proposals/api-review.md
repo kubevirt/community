@@ -33,11 +33,11 @@ changes in KubeVirt.
 - Contributors
 
 ## User Stories
-- As a user of KubeVirt project, I want to feel confident that KubeVirt maintains an intuitive, stable and API that can 
+- As a user of KubeVirt project, I want KubeVirt to maintain an intuitive, stable and simple API, that can 
    be used as a foundational block to build products and projects
 - As a contributor, I need guidance on the right way to approach API facing change. Ideally this guidance should include
     all the steps design docs, contributing the change and post contribution steps
-- As a reviewer, I need to have a compressive list of checks needed for approving an API facing change
+- As a reviewer, I need to have a comprehensive list of checks needed for approving an API facing change
 - As a reviewer, ideally, I need to be able to leverage automation wherever possible to make reviewing easier
 
 ## Repos
@@ -53,7 +53,9 @@ the following changes:
 - Tools and tests: Tools and automation that can be helpful to reduce human burden and errors to carry-out api changes
 
 More details on each of the aforementioned items is highlighted below in separate sections.
-
+## Contributors responsibilities
+* Contributors must explain why the API change is needed, which functionality it adds and who requested it. They should include links to github issues, email threads or any other public document where users request this functionality.
+* Contributors should contact the users who requested the functionality via the channel they have used, to give them the opportunity to review the API. We do not want to define an API that the user finds inconvenient.
 ## Process for api reviewers
 Recent changes to reviewer guidelines recommend forming small groups in specific areas of expertise. sig-api-reviews is 
 one such group. This group will be responsible for:
