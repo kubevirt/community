@@ -1,8 +1,30 @@
 ﻿# Overview
-This proposal discusses a method to automate updating the machine type of VMs to the latest machine type version, if the VM has a machine type that is no longer compatible. Currently we can support manually changing the machine type of individual VMs, but we need an automated process that will be able to change the machine types of multiple (e.g. thousands of) VMs, limiting workload interruptions and preventing the user from having to manually update the machine type of every VM with a machine type version that is no longer supported. Centos 9 will maintain compatibility with all `pc-q35-rhel8.x.x` machine types throughout its lifecycle. However, with the transition to Centos 10, compatibility with machine types prior to `pc-q35-rhel9.0.0` will not be maintained. This means each workload must be updated to use a `pc-q35-rhel9.x.x` machine type.
-
+This proposal discusses a method to automate updating the machine type of VMs to the latest machine type version, if the VM has a machine type that is no longer compatible. Currently we can support manually changing the machine type of individual VMs, but we need an automated process that will be able to change the machine types of multiple (e.g. thousands of) VMs, limiting workload interruptions and preventing the user from having to manually update the machine type of every VM with a machine type version that is no longer supported. CentOS Stream 9 will maintain compatibility with all `pc-q35-rhel8.x.x` machine types throughout its lifecycle. However, with the transition to CentOS Stream 10, compatibility with machine types prior to `pc-q35-rhel9.0.0` will not be maintained: 
+````
+$ cat /etc/centos-release 
+CentOS Stream release 9
+$ rpm -qa | grep qemu-kvm-core
+qemu-kvm-core-8.0.0-5.el9.x86_64
+$ /usr/libexec/qemu-kvm -machine ?
+Supported machines are:
+pc                   RHEL 7.6.0 PC (i440FX + PIIX, 1996) (alias of pc-i440fx-rhel7.6.0)
+pc-i440fx-rhel7.6.0  RHEL 7.6.0 PC (i440FX + PIIX, 1996) (default) (deprecated)
+q35                  RHEL-9.2.0 PC (Q35 + ICH9, 2009) (alias of pc-q35-rhel9.2.0)
+pc-q35-rhel9.2.0     RHEL-9.2.0 PC (Q35 + ICH9, 2009)
+pc-q35-rhel9.0.0     RHEL-9.0.0 PC (Q35 + ICH9, 2009)
+pc-q35-rhel8.6.0     RHEL-8.6.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel8.5.0     RHEL-8.5.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel8.4.0     RHEL-8.4.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel8.3.0     RHEL-8.3.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel8.2.0     RHEL-8.2.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel8.1.0     RHEL-8.1.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel8.0.0     RHEL-8.0.0 PC (Q35 + ICH9, 2009) (deprecated)
+pc-q35-rhel7.6.0     RHEL-7.6.0 PC (Q35 + ICH9, 2009) (deprecated)
+none                 empty machine
+This means each workload must be updated to use a `pc-q35-rhel9.x.x` machine type.
+````
 ## Goals
-* Creating an automated method for mass converting machine types of VMs
+* Create an opt-in workflow that automates mass converting machine types of VMs
 	* if currently running, update VM machine type and add a label to alert the user the VM must be restarted for the change to take effect
 	* if currently running, take VM offline immediately and update machine type
 	* if not currently running, update machine type immediately
@@ -16,7 +38,7 @@ While these additions could be beneficial to cluster-admins who wish to use the 
 Also not covered in this design proposal is the method in which users/cluster admins will be informed that they have VMs with unsupported machine types.
 
 ## User Stories
-As a cluster-admin, I want an automated way to update the machine type of all VMs to be compatible with RHEL 10 without interrupting my workflow.
+As a cluster-admin, I want an automated way to update the machine type of all VMs to be compatible with CentOS Stream 10 without interrupting my workflow.
 As a cluster-admin, I want to be able to include only certain VMs to be updated (e.g. by namespace).
 As a cluster-admin, I want to be in control of the behavior of running VMs being updated; I can determine whether I want to manually restart running VMs being updated or let the automation restart all of them for me. 
 
@@ -24,7 +46,7 @@ As a cluster-admin, I want to be in control of the behavior of running VMs being
 [kubevirt/kubevirt](https://github.com/kubevirt/kubevirt)
 
 # Design
-Create a new virtctl command that will allow the user to automatically update the machine type of any VMs with a machine type that is no longer supported. This command invokes a k8s `Job` that iterates through all VMs within a specified namespace (or all namespaces if none is specified), determines if the machine type is no longer supported, and updates it to the latest supported version. 
+Create a new virtctl command that will allow the user to automatically update the machine type of any VMs with a machine type that is no longer supported. This command invokes a k8s `Job` that iterates through all VMs within a specified namespace (or all namespaces if none is specified), determines if the machine type is no longer supported, and updates it to the latest supported version. Both the minimum supported machine type and the target machine type are constants that can be updated as future versions are released and more machine types are deprecated upon these releases. 
 
 If the VM is running, the update will not take effect until it is restarted, so the label `restart-vm-required` will be applied to the VM until the VMI is removed (indicating the VM has been stopped), upon which the label will be cleared. The job will only terminate once all `restart-vm-required` labels have been cleared. By default, the user must handle stopping/restarting the labelled VMs manually. This is to allow the user to safely update the machine types of their VMs at a time they choose without worrying about workload interruptions. However, the user also has the option to allow the job to automatically restart every running VM that is being updated and apply the changes immediately.
 
