@@ -208,6 +208,27 @@ Unfortunately, I'm still very new to KubeVirt so feedback in this section would 
 
 I'm not familiar with CDI's current manifest creation flow yet, but I *believe* it is similar.
 
+## Helm repository
+
+Chart repository is a location where packaged charts can be stored and shared.
+
+We need to configure one and publish KubeVirt and CDI charts there.
+
+There are multiple options to achieve this. The ones worth considering are:
+
+- GitHub pages
+
+This is the most popular way of setting up repositories for GitHub based projects.
+GitHub can be configured to serve static content using simple configuration.
+[Example guide](https://helm.sh/docs/topics/chart_repository/#github-pages-example).
+
+- OCI registry
+
+The more interesting option is to use OCI registry as Helm repository.
+[This feature](https://helm.sh/docs/topics/registries/#using-an-oci-based-registry) has graduated to GA since Helm v3.8.0.
+We should be able to use Quay OCI considering all other artefacts are already stored there.
+[Example guide](https://cloud.redhat.com/blog/quay-oci-artifact-support-for-helm-charts)
+
 ## API Examples
 
 Working with Helm charts is fairly straightforward. Users should be able to manage the applications by:
@@ -245,5 +266,5 @@ The same tests should be performed for CDI.
 # Implementation Phases
 
 - Create a KubeVirt Helm chart
-- Configure a Helm repository (using GitHub pages is probably the best option)
+- Configure a Helm repository
 - Create a CDI Helm chart and add it to the same Helm repository
