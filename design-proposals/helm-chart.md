@@ -235,8 +235,8 @@ Helm charts will, however, be a viable way of updating & rolling back future rel
 
 - Deploy KubeVirt from Helm chart
 - Ensure all components are created and work as expected
-- Slightly modify the configuration of the CRD, CR and operator's Deployment and upgrade KubeVirt
-- Ensure all components are working as expected and the configurations have been properly updated
+- Update KubeVirt from N-1 to N release using Helm charts
+- Ensure all components are upgraded and working as expected
 - Uninstall KubeVirt chart
 - Ensure all components have been removed
 
