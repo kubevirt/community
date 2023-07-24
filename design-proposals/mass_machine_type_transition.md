@@ -1,7 +1,7 @@
 ﻿# Overview
 This proposal discusses a method to automate updating the machine type of VMs
 to the latest machine type version, if the VM has a machine type that is no
-longer compatible.Currently we can support manually changing the machine type of
+longer compatible. Currently we can support manually changing the machine type of
 individual VMs, but we need an automated process that will be able to change the
 machine types of multiple (e.g. thousands of) VMs, limiting workload interruptions
 and preventing the user from having to manually update the machine type of every
@@ -44,7 +44,6 @@ This means each workload must be updated to use a `pc-q35-rhel9.x.x` machine typ
 While these additions are beneficial to cluster-admins who wish to use the
 mass machine type transition (MMTT), these will not be included in the initial implementation:
 * Allowing user to filter VMs by running state: a cluster admin may want to only update VMs that are offline.
-* Allowing user to filter VMs in ways other than by namespace; e.g. with label-selector
 * Subcommands that allow the user to monitor and manage the status of the MMTT job and affected VMs
 
 These will eventually be implemented in follow ups once the initial design is implemented.
@@ -54,8 +53,8 @@ will be informed that they have VMs with unsupported machine types.
 
 ## User Stories
 As a cluster-admin, I want an automated way to update the machine type of all
-VMs to be compatible with CentOS Stream X without interrupting my workflow.
-As a cluster-admin, I want to be able to include only certain VMs to be updated (e.g. by namespace).
+VMs with unsupported machine types without interrupting my workflow.
+As a cluster-admin, I want to be able to include only certain VMs to be updated (e.g. by namespace, label-selector).
 As a cluster-admin, I want to be in control of the behavior of running VMs being
 updated; I can determine whether I want to manually restart running VMs being
 updated or let the automation restart all of them for me. 
@@ -64,7 +63,7 @@ updated or let the automation restart all of them for me.
 [kubevirt/kubevirt](https://github.com/kubevirt/kubevirt)
 
 # Design
-Create a new virtctl command `virtctl convert-machine-types` that will allow
+Create a new virtctl command `virtctl update machine-types` that will allow
 the user to automatically update the machine type of any VMs with a machine type
 that is no longer supported. This command invokes a k8s `Job` that iterates
 through all VMs within a specified namespace (or all namespaces if none is
@@ -278,13 +277,23 @@ need to manually maintain these values.
 
 # Implementation Phases
 ## Initial Phase
-This will be a bare-bones design that will be functional for the user, but with limited features that focus on the specific use case of upgrading the machine types of VMs with outdated or deprecated machine types to the latest supported machine type. The user will have the ability to use the command with the flags to specify by namespace, label-selector,  or to restart any running VMs immediately. In this stage, the minimum supported machine type and the latest machine type will be determined and stored internally; the user will not be able to configure what machine types they would like to use at this time. Additionally, to monitor and manage/delete the job, the user can utilize the `kubectl` commands. In future phases, we will add subcommands that allow the user to monitor and manage the specific machine type transition job directly.
+This will be a bare-bones design that will be functional for the user, but with
+limited features that focus on the specific use case of upgrading the machine
+types of VMs with outdated or deprecated machine types to the latest supported
+machine type. The user will have the ability to use the command with the flags
+to specify by namespace, label-selector,  or to restart any running VMs immediately.
+In this stage, the minimum supported machine type and the latest machine type will
+be determined and stored internally; the user will not be able to configure what
+machine types they would like to use at this time. Additionally, to monitor and
+manage/delete the job, the user can utilize the `kubectl` commands. In future phases,
+we will add subcommands that allow the user to monitor and manage the specific machine
+type transition job directly.
  - [ ] Create mass machine type transition package that k8s job will use as an image, and build the image.
  - [ ] Add `virtctl` subcommand that will create the k8s job and run it, with flags for specifying by namespace, label-selector, and immediately restarting running VMs that have been affected.
  - [ ] Add unit and functional tests.
 ## Future Phases
 As follow-ups, we will implement the following features:
  - Dynamically retrieving the supported and deprecated QEMU machine types and allowing the user to select a specific machine type to migrate to. Some more discussion and planning will be required to flesh out exactly how to implement this; namely how the user will know what machine types are supported and any restrictions we want to place on the user when selecting a machine type to convert to.
- - Subcommands that the user can use to monitor and manage the jobs. These could include `virtctl convert-machine-types delete` which will safely terminate and clean up the job and delete it, and `virtctl convert-machine-types list` which will allow the user to see the status of the VMs being updated by the job.
+ - Subcommands that the user can use to monitor and manage the jobs. These could include `virtctl update machine-types delete` which will safely terminate and clean up the job and delete it, and `virtctl update machine-types list` which will allow the user to see the status of the VMs being updated by the job.
  - Other flags that the user can specify VMs to be affected by. For example, if the user wants to only convert a single specific VM, we might want to implement a flag to allow the user to specify the VM by name.
  - When using the `restart-now` flag, allow the user to configure how many VMs they want to restart at once; depending on the number of running VMs, it may be very intensive to trigger the restart of possibly thousands of VMs at once.
