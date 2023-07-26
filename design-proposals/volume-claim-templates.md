@@ -74,6 +74,10 @@ spec:
         name: cirros-disk
 ```
 
+#### Open question:
+With datavolumestemplate one of the downsides was that we couldn't use generateName of the datavolume name.
+It will be cool if we could use it for the PVC name. Issue: we need to mention the PVC name in the vm.spec.template.volumes part when writing the VM spec. Any idea how to go past that? update the PVC name there after the PVC is created sounds like not the best solution. WDYT?
+
 ### Virtctl create-pvc command
 
 Example for virtctl command uses:
