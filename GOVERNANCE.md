@@ -50,6 +50,26 @@ A candidate must be proposed by an existing maintainer by filing an PR in the
 A simple majority vote of +1s from existing Maintainers approves the application. 
 Approved maintainers will be added to the [private maintainer mailing list](mailto:cncf-kubevirt-maintainers@lists.cncf.io).
 
+## SIGs
+
+The following is largely copied from the [Kubernetes project implementation of SIGs](https://github.com/kubernetes/community/blob/master/governance.md#sigs).
+
+The KubeVirt project is organized primarily into Special Interest Groups, or SIGs. Each SIG is comprised of members from multiple companies and organizations, with a common purpose of advancing the project with respect to a specific topic, such as Networking or Documentation. Our goal is to enable a distributed decision structure and code ownership, as well as providing focused forums for getting work done, making decisions, and onboarding new contributors. Most identifiable subpart of the project (e.g., github org, repository, subdirectory, API, test, issue, PR) are intended to be owned by some SIG.
+
+Areas covered by SIGs may be vertically focused on particular components or functions, cross-cutting/horizontal, spanning many/all functional areas of the project, or in support of the project itself. Examples:
+
+* Vertical: Compute, Network, Storage
+* Horizontal: Scalability, Architecture
+* Project: Testing, Release, Docs
+
+SIGs must have at least one and ideally two SIG chairs at any given time. SIG chairs are intended to be organizers and facilitators, responsible for the operation of the SIG and for communication and coordination with the other SIGs, the Steering Committee, and the broader community.
+
+Each SIG must have a charter that specifies its scope (topics, subsystems, code repos and directories), responsibilities, areas of authority, how members and roles of authority/leadership are selected/granted, how decisions are made, and how conflicts are resolved. See the SIG charter process for details on how charters are managed. SIGs should be relatively free to customize or change how they operate, within some broad guidelines and constraints imposed by cross-SIG processes (e.g., the PR approval and release process) and assets (e.g., the KubeVirt repo).
+
+A primary reason that SIGs exist is as forums for collaboration. Most of the work in a SIG should stay local within that SIG. However, SIGs must communicate in the open; ensure other SIGs and community members can find notes of meetings, discussions, designs, and decisions; and periodically communicate a high-level summary of the SIG's work to the community.
+
+SIGs may also need to collaborate on PRs that make changes to areas owned by multiple SIGs. Where possible each SIG should provide approval before the overall PR is merged in this situation with approval by a single maintainer avoided if possible.
+
 ## Meetings
 
 Time zones permitting, Maintainers are expected to participate in the weekly public
