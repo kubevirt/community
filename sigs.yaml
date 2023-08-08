@@ -1,4 +1,11 @@
 sigs:
+    - dir: sig-release
+      name: release
+      label: sig/release
+      subprojects:
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/sig-release/main/OWNERS
     - dir: sig-compute
       name: compute
       subprojects:
