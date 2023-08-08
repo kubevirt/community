@@ -54,12 +54,6 @@ sigs:
           owners:
             - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
-    - dir: sig-virt
-      name: virtblocks
-      subprojects:
-        - name: virtblocks
-          owners:
-            - https://raw.githubusercontent.com/virtblocks/kubevirt/master/OWNERS
     - dir: sig-network
       name: network
       subprojects:
