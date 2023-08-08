@@ -4,33 +4,33 @@ sigs:
       subprojects:
         - name: kubevirt
           owners:
-            - https://raw.githubusercontent.com/kubevirt/community/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+        - name: hyperconverged-cluster-operator
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
+        - name: ssp-operator
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/common-instancetypes/master/OWNERS
+        - name: misc
+          owners:
             - https://raw.githubusercontent.com/kubevirt/libvirt/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/external-storage/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/ovs-cni/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-ssp-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS            
             - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
     - dir: sig-documentation
       name: documentation
       subprojects:
@@ -46,6 +46,7 @@ sigs:
         - name: containerized-data-importer
           owners:
             - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
     - dir: sig-testing
       name: testing
       subprojects:
@@ -68,6 +69,11 @@ sigs:
     - dir: sig-network
       name: network
       subprojects:
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/ovs-cni/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
         - name: nmstate
           owners:
             - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/main/OWNERS
