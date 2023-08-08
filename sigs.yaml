@@ -84,9 +84,9 @@ sigs:
       label: kubevirt-community
       leadership:
         chairs:
-          - github: rthallisey
-            name: "Ryan T. Hallisey"
-            company: Nvidia
+            - github: rthallisey
+              name: Ryan T. Hallisey
+              company: Nvidia
       meetings:
         - description: KubeVirt Perf and Scale SIG Meeting
           day: Thursday
