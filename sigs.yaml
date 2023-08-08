@@ -8,6 +8,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/sig-release/main/OWNERS
     - dir: sig-compute
       name: compute
+      label: sig/compute
       subprojects:
         - name: kubevirt
           owners:
@@ -40,6 +41,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
     - dir: sig-documentation
       name: documentation
+      label: sig/documentation
       subprojects:
         - name: documentation
           owners:
@@ -49,6 +51,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
     - dir: sig-storage
       name: storage
+      label: sig/storage
       subprojects:
         - name: containerized-data-importer
           owners:
@@ -56,6 +59,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
     - dir: sig-testing
       name: testing
+      label: sig/testing
       subprojects:
         - name: kubevirtci
           owners:
@@ -63,6 +67,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
     - dir: sig-network
       name: network
+      label: sig/network
       subprojects:
         - name: kubevirt
           owners:
@@ -81,7 +86,7 @@ sigs:
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
         Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
-      label: kubevirt-community
+      label: sig/scale
       leadership:
         chairs:
             - github: rthallisey
