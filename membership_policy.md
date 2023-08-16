@@ -48,7 +48,7 @@ Defined by: Member of the KubeVirt GitHub organization
   * Once your sponsors have responded, your request will be reviewed by KubeVirt project approvers. Any missing information will be requested.
 
 > [!IMPORTANT]
-> After the pull request against the org members section has been merged (see above), the automation will trigger sending an invitation to the KubeVirt GitHub organization to the new member. The new member needs to accept the invitation to receive member status.
+> After the pull request against the org members section has been merged (see above), an invitation to the KubeVirt GitHub organization will be automatically sent to the new member. The new member needs to accept the invitation to receive member status.
 
 ## Responsibilities and privileges
 
