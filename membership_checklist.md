@@ -28,3 +28,6 @@ e.g. (at)example_user
 -
 -
 -
+
+> [!IMPORTANT]
+> After this pull request has been merged, an invitation to the KubeVirt GitHub organization will be automatically sent to the new member. The new member needs to accept the invitation to receive member status.
