@@ -26,7 +26,7 @@ When the need arises, a [new SIG can be created](sig-wg-lifecycle.md)
 | Name | Label | Chairs | Contact | Meetings |
 |------|-------|--------|---------|----------|
 {{- range .Sigs}}
-|[{{.Name}}]({{.Dir}}/README.md)|[{{.Label}}](https://github.com/kubernetes/kubernetes/labels/sig%2F{{.Label}})|{{range .Leadership.Chairs}}* [{{.Name}}](https://github.com/{{.GitHub}}){{if .Company}}, {{.Company}}{{end}}<br>{{end}}|* [Slack](https://kubernetes.slack.com/messages/{{.Contact.Slack}})<br>* [Mailing List]({{.Contact.MailingList}})|{{- range .Meetings -}}
+|[{{.Name}}]({{.Dir}}/README.md)|[{{.Label}}](https://github.com/kubevirt/kubevirt/labels/sig%2F{{.Label}})|{{range .Leadership.Chairs}}* [{{.Name}}](https://github.com/{{.GitHub}}){{if .Company}}, {{.Company}}{{end}}<br>{{end}}|* [Slack](https://kubernetes.slack.com/messages/{{.Contact.Slack}})<br>* [Mailing List]({{.Contact.MailingList}})|{{- range .Meetings -}}
   * {{.Description}}: [{{.Day}}s at {{.Time}} {{.TZ}} ({{.Frequency}})]({{.URL}})<br>
 {{- end -}}
 {{- range .Subprojects -}}
@@ -42,7 +42,7 @@ When the need arises, a [new SIG can be created](sig-wg-lifecycle.md)
 | Name | Label | Stakeholder SIGs |Organizers | Contact | Meetings |
 |------|-------|------------------|-----------|---------|----------|
 {{- range .WorkingGroups}}
-|[{{.Name}}]({{.Dir}}/README.md)|[{{.Label}}](https://github.com/kubernetes/kubernetes/labels/wg%2F{{.Label}})|{{range .StakeholderSIGs}}* {{.}}<br>{{end }}|{{range .Leadership.Chairs}}* [{{.Name}}](https://github.com/{{.GitHub}}){{if .Company}}, {{.Company}}{{end}}<br>{{end}}|* [Slack](https://kubernetes.slack.com/messages/{{.Contact.Slack}})<br>* [Mailing List]({{.Contact.MailingList}})|{{range .Meetings}}* {{.Description}}: [{{.Day}}s at {{.Time}} {{.TZ}} ({{.Frequency}})]({{.URL}})<br>{{end}}
+|[{{.Name}}]({{.Dir}}/README.md)|[{{.Label}}](https://github.com/kubevirt/kubevirt/labels/wg%2F{{.Label}})|{{range .StakeholderSIGs}}* {{.}}<br>{{end }}|{{range .Leadership.Chairs}}* [{{.Name}}](https://github.com/{{.GitHub}}){{if .Company}}, {{.Company}}{{end}}<br>{{end}}|* [Slack](https://kubernetes.slack.com/messages/{{.Contact.Slack}})<br>* [Mailing List]({{.Contact.MailingList}})|{{range .Meetings}}* {{.Description}}: [{{.Day}}s at {{.Time}} {{.TZ}} ({{.Frequency}})]({{.URL}})<br>{{end}}
 {{- end }}
 
 ### Committees
@@ -50,5 +50,5 @@ When the need arises, a [new SIG can be created](sig-wg-lifecycle.md)
 | Name |  Label | Members | Contact |
 |------|--------|---------|---------|
 {{- range .Committees}}
-|[{{.Name}}]({{.Dir}}/README.md)|[{{.Label}}](https://github.com/kubernetes/kubernetes/labels/committee%2F{{.Label}})|{{range .Leadership.Chairs}}* [{{.Name}}](https://github.com/{{.GitHub}}){{if .Company}}, {{.Company}}{{end}}<br>{{end}}|{{ if .Contact.Slack }}* [Slack](https://kubernetes.slack.com/messages/{{.Contact.Slack}})<br>{{ end }}{{ if .Contact.MailingList }}* [Mailing List]({{.Contact.MailingList}})<br>{{ end }}{{ if .Contact.PrivateMailingList }}* [Private Mailing List]({{.Contact.PrivateMailingList}}){{ end }}
+|[{{.Name}}]({{.Dir}}/README.md)|[{{.Label}}](https://github.com/kubevirt/kubevirt/labels/committee%2F{{.Label}})|{{range .Leadership.Chairs}}* [{{.Name}}](https://github.com/{{.GitHub}}){{if .Company}}, {{.Company}}{{end}}<br>{{end}}|{{ if .Contact.Slack }}* [Slack](https://kubernetes.slack.com/messages/{{.Contact.Slack}})<br>{{ end }}{{ if .Contact.MailingList }}* [Mailing List]({{.Contact.MailingList}})<br>{{ end }}{{ if .Contact.PrivateMailingList }}* [Private Mailing List]({{.Contact.PrivateMailingList}}){{ end }}
 {{- end }}
