@@ -1,7 +1,7 @@
 # SIG YOURSIG Charter
 
-This charter adheres to the conventions described in the [Kubernetes Charter README] and uses
-the Roles and Organization Management outlined in [sig-governance].
+This charter adheres to the conventions described in the [sig-charter-guide] and uses
+the Roles and Organization Management outlined in [sig-governance-requirements].
 
 ## Scope
 
@@ -15,10 +15,9 @@ necessarily all of the internals.
 
 - list of what qualifies a piece of code, binary or service
 - as falling into the scope of this SIG
-- e.g. *clis for working with Kubernetes APIs*, 
-- *CI for kubernetes repos*, etc
-- **This is NOT** a list of specific code locations,
-- or projects those go in [SIG Subprojects][sig-subprojects]
+- e.g. _clis for working with Kubernetes APIs_,
+- _CI for kubernetes repos_, etc
+- **This is NOT** a list of specific code locations
 
 #### Cross-cutting and Externally Facing Processes
 
@@ -33,8 +32,8 @@ Outline of things that could be confused as falling into this SIG but don't or d
 
 ## Roles and Organization Management
 
-This sig follows adheres to the Roles and Organization Management outlined in [sig-governance]
-and opts-in to updates and modifications to [sig-governance].
+This sig follows adheres to the Roles and Organization Management outlined in [sig-governance-requirements]
+and opts-in to updates and modifications to [sig-governance-requirements].
 
 ### Additional responsibilities of Chairs
 
@@ -46,7 +45,7 @@ and opts-in to updates and modifications to [sig-governance].
 - list of any additional responsibilities
 - of Tech Leads
 
-### Deviations from [sig-governance]
+### Deviations from [sig-governance-requirements]
 
 - list of other ways this SIG's roles and governance differ from
 - the outline
@@ -59,6 +58,5 @@ Pick one:
 1. SIG Technical Leads
 2. Federation of Subprojects
 
-[sig-governance]: https://github.com/kubernetes/community/blob/master/committee-steering/governance/sig-governance.md
-[sig-subprojects]: https://github.com/kubernetes/community/blob/master/sig-YOURSIG/README.md#subprojects
-[Kubernetes Charter README]: https://github.com/kubernetes/community/blob/master/committee-steering/governance/README.md
+[sig-charter-guide]: sig-charter-guide.md
+[sig-governance-requirements]: sig-governance-requirements.md
