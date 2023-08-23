@@ -65,24 +65,19 @@ updated or let the automation restart all of them for me.
 # Design
 Create a new virtctl command `virtctl update machine-types` that will allow
 the user to automatically update the machine type of any VMs with a machine type
-that is no longer supported. This command invokes a k8s `Job` that iterates
-through all VMs within a specified namespace (or all namespaces if none is
-specified), determines if the machine type is no longer supported, and updates
-it to the latest supported version. If the Job fails or is killed, it will be
-restarted with `restartPolicy=OnFailure` in the Job spec. The `restart-vm-required`
-label may then remain on a VM that has already been shut down, so the Job will
-first check VMs with the label and confirm if the machine types have been updated.
-If they have, then the label will be removed, but if not, the label will remain
-and the VM will continue to be tracked until it is restarted and its machine
-type is updated. Both the minimum supported machine type and the target machine
-type will be determined (retrieved) and configured internally when the command is
-invoked, and these values will automatically be updated as future versions are
-released and more machine types are deprecated upon these releases.
+that matches the machine type regex provided by the user. This command invokes
+a Kubernetes `Job` that iterates through all VMs within a specified namespace
+(or all namespaces if none is specified), and if the machine type matches the
+regex, it removes the machine type field. Removing the machine type means that
+the next time that VM is started/restarted, its machine type will automatically
+be populated with the default machine type stored in the Kubevirt CR, which will
+always be a supported machine type.
 
 If the VM is running, the update will not take effect until it is restarted,
 so the label `restart-vm-required` will be applied to the VM until the VMI is
-removed (indicating the VM has been stopped), upon which the label will be cleared
-after verifying that its machine type has been successfully updated. The job will
+removed (indicating the VM has been stopped); when the job detects the VMI removal,
+after verifying that its machine type has been successfully updated in VM spec,
+it will automatically clear the `restart-vm-required` label from the VM. The job will
 only terminate once all `restart-vm-required` labels have been cleared. By default,
 the user must handle stopping/restarting the labelled VMs manually. This is to allow
 the user to safely update the machine types of their VMs at a time they choose
@@ -90,15 +85,23 @@ without worrying about workload interruptions. However, the user also has the
 option to allow the job to automatically restart every running VM that is being
 updated and apply the changes immediately.
 
-The options to specify by namespace, label-selector, or restart the VMs
-immediately are configurable with the `--namespace`, `--label-selector`,
-and `--restart-now` respectively. In follow-ups to the initial implementation,
-other methods of specifying which VMs to convert the machine types of will be
-added, such as specifying a single VM by name, or configuring a limit on the
-number of VMs that can be restarted at once when restarting the running VMs
-immediately.
+If the Job fails or is killed, it will be restarted with `restartPolicy=OnFailure`
+in the Job spec. The `restart-vm-required` label may then remain on a VM that
+has already been shut down, so the Job will first check VMs with the label and
+confirm if the machine types have been updated. If they have, then the label
+will be removed, but if not, the label will remain and the VM will continue to
+be tracked until it is restarted and its machine type is updated.
 
-Given a VM with the following spec:
+The user may use the `--which-matches-glob` flag to specify the regex of the
+machine types the user wishes to update. The user may also specify by namespace
+or label-selector, or restart the VMs immediately are using the `--namespace`,
+`--label-selector`, and `--restart-now` respectively. In follow-ups to the initial
+implementation, other methods of specifying which VMs to convert the machine
+types of will be added, such as specifying a single VM by name, or configuring
+a limit on the number of VMs that can be restarted at once when restarting the
+running VMs immediately.
+
+Using the CentOS Stream example from the overview, given a VM with the following spec:
 ```yaml
 ---
 apiVersion: kubevirt.io/v1
@@ -112,7 +115,10 @@ spec:
         machine:
           type: pc-q35-rhel8.2.0
 ```
-When the MMTT is invoked, the VM spec will be updated to: 
+When the user calls the virtctl command:
+`virtctl update machine-types --which-matches-glob *rhel-8.*`
+
+The MMTT Job is deployed, and the VM spec will be updated to: 
 ```yaml
 ---
 apiVersion: kubevirt.io/v1
@@ -124,12 +130,13 @@ spec:
     spec:
       domain:
         machine:
-          type: pc-q35-rhel9.2.0
+          type:
 ```
-where `pc-q35-rhel9.2.0` is the latest machine type version.
+where the machine type in the VM spec is now empty. Upon starting this VM,
+the machine type will automatically be populated with the default machine type
+in the Kubevirt CR.
 
-Along with machine types being in the format `pc-q35-rhelx.x.x`, a VM may have
-a machine type of `q35`, an alias for the current latest machine type *at the time the VM is started*.
+A VM may have a machine type of `q35`, an alias for the current latest machine type *at the time the VM is started*.
 
 For example, this VM:
 ```yaml
@@ -162,8 +169,8 @@ status:
 ```
 and need to have its machine type updated.
 
-To handle this, any running VMs with 'q35' machine type and an outdated machine
-type (reported in VMI's status.machine.type) will be labelled with `restart-vm-required`:
+To handle this, any running VMs with 'q35' machine type and a machine type that matches
+the regex (reported in VMI's status.machine.type) will be labelled with `restart-vm-required`:
 ```yaml
 ---
 apiVersion: kubevirt.io/v1
@@ -191,7 +198,8 @@ spec:
         machine:
           type: q35
 ```
-Now when a new VMI is created when starting this VM, it should have the latest machine type:
+Now when a new VMI is created when starting this VM, it should have the default machine type from 
+Kubevirt CR.
 ```yaml
 ---
 apiVersion: kubevirt.io/v1
@@ -208,92 +216,50 @@ status:
 
 ## Update/Rollback Compatibility
 As both the minimum supported machine type version and the latest machine type
-change in the future when new versions are released, Kubevirt is already able
+change in the future when new versions are released, Kubevirt CR is already able
 to determine the latest machine type, so that will automatically be updated.
-The command will also be fetching the minimum supported machine type using
-the list of supported and deprecated QEMU machine types, thus minimizing the
-need to manually maintain these values.
 
 ## Functional Testing Approach
-* Functional tests will follow the same basic procedure:
-	* Create (a) VM(s) with the necessary machine type for the test case; start the VM if testing functionality of running VMs
-	* Configure environment variables `NAMESPACE` and `RESTART_NOW` as necessary for the test case
-	* Ensure VM spec has the correctly updated machine type version
-	* Ensure the VM has/doesn't have the `restart-vm-required` label
-	* Ensure all VMs have been updated accordingly
-* Test cases:
-	* Single VM (each of these will be their own individual test)
-		* Running
-			* VM machine type version less than the minimum supported machine type
-				* `RESTART_NOW` is **false**
-				* `RESTART_NOW` is **true**
-			* VM machine type is `q35`
-				* `RESTART_NOW` is **false**
-				* `RESTART_NOW` is **true**
-			* VM machine type version is greater than or equal to the minimum supported machine type
-		* Not running
-			* VM machine type version less than the minimum supported machine type
-			* VM machine type version is greater than or equal to the minimum supported machine type
-			* VM machine type is equal to `q35`
-	* Multiple VMs (these cases will be split into 4 functional tests based on the environment variable configuration: `NAMESPACE`  specified/unspecified and `RESTART_NOW` **true**/**false**)
-		* `NAMESPACE` is specified
-			* `RESTART_NOW` is **true**
-				* Running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-				* Not running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-			* `RESTART_NOW` is **false**
-				* Running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-				* Not running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-		* `NAMESPACE` is not specified
-			* `RESTART_NOW` is **true**
-				* Running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-				* Not running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-			* `RESTART_NOW` is **false**
-				* Running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
-				* Not running
-					* VM machine type is less than the minimum supported machine type
-					* VM machine type is greater than or equal to the minimum supported machine type
-					* VM machine type is equal to `q35`
+Functional tests will follow the same basic procedure:
+* Create VMs with the necessary machine type for the test case; start the VM if testing functionality of running VMs
+* Create and execute the `virtctl update machine-types` command with the designated flags for that test case
+* Ensure that the VMs with the specified machine type have been updated
+* Ensure that flag-specific conditions have been fulfilled
+* Each virtctl command flag will have its own individual test
+* There will also be a complex example that combines all the flags into one test.
+* All tests will use `--which-matches-glob *rhel-8.*` as the machine type to update.
+
+* `--namespace` flag test:
+	* Across 2 different namespaces, each namespace will have one stopped VM and one running VM with a machine type that needs to be updated.
+	* Verify that only the VMs in the specified namespace were updated
+	* Verify that only the running VM in the specified namespace has the `restart--vm-required` label.
+* `--label-selector` flag test:
+	* Two VMs with specified label, two without the label. Each set of VMs will have one running and one stopped VM.
+	* Verify that only the VMs with the specified label were updated.
+	* Verify that only the running VM with the specified label has the `restart-vm-required` label
+* `--restart-required` flag test:
+	* One running VM and one stopped VM with machine types that need to be updated.
+	* Verify that the  VMs are updated.
+	* Verify that the running VM does not have the `restart-vm-required` label
+	* Verify that a new VMI object has been created with the updated machine type in its Status.
+* The complex example will be a combination of these three test cases.
+
 
 # Implementation Phases
 ## Initial Phase
 This will be a bare-bones design that will be functional for the user, but with
-limited features that focus on the specific use case of upgrading the machine
-types of VMs with outdated or deprecated machine types to the latest supported
-machine type. The user will have the ability to use the command with the flags
-to specify by namespace, label-selector,  or to restart any running VMs immediately.
-In this stage, the minimum supported machine type and the latest machine type will
-be determined and stored internally; the user will not be able to configure what
-machine types they would like to use at this time. Additionally, to monitor and
-manage/delete the job, the user can utilize the `kubectl` commands. In future phases,
-we will add subcommands that allow the user to monitor and manage the specific machine
-type transition job directly.
+limited features. The user must specify the machine type they wish to update
+and have the ability to use the command with the flags to specify by namespace,
+label-selector,  or to restart any running VMs immediately. Additionally, to monitor
+and manage/delete the job, the user can utilize the `kubectl` commands. In future
+phases, we will add subcommands that allow the user to monitor and manage the
+specific MMTT job directly.
  - [ ] Create mass machine type transition package that k8s job will use as an image, and build the image.
  - [ ] Add `virtctl` subcommand that will create the k8s job and run it, with flags for specifying by namespace, label-selector, and immediately restarting running VMs that have been affected.
  - [ ] Add unit and functional tests.
 ## Future Phases
 As follow-ups, we will implement the following features:
- - Dynamically retrieving the supported and deprecated QEMU machine types and allowing the user to select a specific machine type to migrate to. Some more discussion and planning will be required to flesh out exactly how to implement this; namely how the user will know what machine types are supported and any restrictions we want to place on the user when selecting a machine type to convert to.
+ - Dynamically retrieving the supported and deprecated QEMU machine types as a subcommand to provide the user with a list of machine types to choose from. This will be implemented in conjuction with the ability for the user to specify a target machine type to update to; this machine type will be selected from the list of supported machine types provided to the user.
  - Subcommands that the user can use to monitor and manage the jobs. These could include `virtctl update machine-types delete` which will safely terminate and clean up the job and delete it, and `virtctl update machine-types list` which will allow the user to see the status of the VMs being updated by the job.
  - Other flags that the user can specify VMs to be affected by. For example, if the user wants to only convert a single specific VM, we might want to implement a flag to allow the user to specify the VM by name.
  - When using the `restart-now` flag, allow the user to configure how many VMs they want to restart at once; depending on the number of running VMs, it may be very intensive to trigger the restart of possibly thousands of VMs at once.
