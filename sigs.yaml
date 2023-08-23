@@ -1,133 +1,187 @@
 sigs:
-    - dir: sig-release
-      name: release
-      label: sig/release
-      subprojects:
-        - name: kubevirt
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/sig-release/main/OWNERS
-    - dir: sig-compute
-      name: compute
-      label: sig/compute
-      subprojects:
-        - name: kubevirt
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
-        - name: hyperconverged-cluster-operator
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
-        - name: ssp-operator
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/common-instancetypes/master/OWNERS
-        - name: misc
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/libvirt/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/external-storage/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS            
-            - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
-    - dir: sig-documentation
-      name: documentation
-      label: sig/documentation
-      subprojects:
-        - name: documentation
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/demo/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
-    - dir: sig-storage
-      name: storage
-      label: sig/storage
-      subprojects:
-        - name: containerized-data-importer
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
-    - dir: sig-testing
-      name: testing
-      label: sig/testing
-      subprojects:
-        - name: kubevirtci
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
-    - dir: sig-network
-      name: network
-      label: sig/network
-      subprojects:
-        - name: kubevirt
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/ovs-cni/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
-        - name: nmstate
-          owners:
-            - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/main/OWNERS
-        - name: k8snetworkplumbingwg
-          owners:
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
-    - dir: sig-scale
-      name: KubeVirt Perf and Scale SIG
-      mission_statement: |
-        Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
-      label: sig/scale
-      leadership:
-        chairs:
-            - github: rthallisey
-              name: Ryan T. Hallisey
-              company: Nvidia
-      meetings:
-        - description: KubeVirt Perf and Scale SIG Meeting
-          day: Thursday
-          time: "14:00"
-          tz: UTC
-          frequency: bimonthy
-          url: https://zoom.us/j/3205945033
-          archive_url: https://docs.google.com/document/d/1d_b2o05FfBG37VwlC2Z1ZArnT9-_AEJoQTe7iKaQZ6I/edit?usp=sharing
-          recordings_url: https://www.youtube.com/channel/UC2FH36TbZizw25pVT1P3C3g
-      contact:
-        slack: kubevirt-dev
-        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
-        teams:
-            - name: kubevirt-community
-              description: General Discussion
+  - dir: sig-compute
+    name: compute
+    mission_statement: >
+      TBD
+
+    charter_link: charter.md
+    label: compute
+    leadership:
+      chairs: []
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: hyperconverged-cluster-operator
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
+      - name: kubevirt
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+      - name: misc
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/external-storage/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/libvirt/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
+      - name: ssp-operator
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/common-instancetypes/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
+  - dir: sig-documentation
+    name: documentation
+    mission_statement: >
+      TBD
+
+    charter_link: charter.md
+    label: documentation
+    leadership:
+      chairs: []
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: documentation
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/demo/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS
+  - dir: sig-network
+    name: network
+    mission_statement: >
+      TBD
+
+    charter_link: charter.md
+    label: network
+    leadership:
+      chairs: []
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: k8snetworkplumbingwg
+        owners:
+          - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
+          - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS
+          - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
+      - name: kubevirt
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/ovs-cni/main/OWNERS
+      - name: nmstate
+        owners:
+          - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/main/OWNERS
+  - dir: sig-release
+    name: release
+    mission_statement: >
+      TBD
+
+    charter_link: charter.md
+    label: release
+    leadership:
+      chairs: []
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: kubevirt
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/sig-release/main/OWNERS
+  - dir: sig-scale
+    name: Scale
+    mission_statement: "Define and drive scalability and performance goals within KubeVirt. \nThis includes documenting, testing, and measuring performance and scalability for a KubeVirt release.\n"
+    charter_link: charter.md
+    label: scale
+    leadership:
+      chairs:
+        - github: rthallisey
+          name: Ryan T. Hallisey
+          company: Nvidia
+    meetings:
+      - description: KubeVirt Perf and Scale SIG Meeting
+        day: Thursday
+        time: "14:00"
+        tz: UTC
+        frequency: bimonthy
+        url: https://zoom.us/j/3205945033
+        archive_url: https://docs.google.com/document/d/1d_b2o05FfBG37VwlC2Z1ZArnT9-_AEJoQTe7iKaQZ6I/edit?usp=sharing
+        recordings_url: https://www.youtube.com/channel/UC2FH36TbZizw25pVT1P3C3g
+    contact:
+      slack: kubevirt-dev
+      mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+      teams:
+        - name: kubevirt-community
+          description: General Discussion
+    subprojects:
+      - name: kubevirt
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/performance/OWNERS
+  - dir: sig-storage
+    name: storage
+    mission_statement: >
+      TBD
+
+    charter_link: charter.md
+    label: storage
+    leadership:
+      chairs: []
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: containerized-data-importer
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
+  - dir: sig-testing
+    name: testing
+    mission_statement: >
+      TBD
+
+    charter_link: charter.md
+    label: testing
+    leadership:
+      chairs: []
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: kubevirtci
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+          - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+workinggroups: []
 usergroups:
-    - dir: kubevirt-community
-      name: KubeVirt Community
-      mission_statement: |
-        Lorem Ipsum.
-      label: kubevirt-community
-      leadership:
-        chairs: []
-      meetings:
-        - description: Regular KubeVirt Community Meeting
-          day: Wednesday
-          time: "15:00"
-          tz: UTC
-          frequency: weekly
-          url: https://zoom.us/j/92221936273
-          archive_url: https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls/edit
-          recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
-      contact:
-        slack: virtualization
-        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
-        teams:
-            - name: kubevirt-community
-              description: General Discussion
+  - dir: ug-kubevirt-community
+    name: KubeVirt Community
+    mission_statement: >
+      Lorem Ipsum.
+
+    label: kubevirt-community
+    leadership:
+      chairs: []
+    meetings:
+      - description: Regular KubeVirt Community Meeting
+        day: Wednesday
+        time: "15:00"
+        tz: UTC
+        frequency: weekly
+        url: https://zoom.us/j/92221936273
+        archive_url: https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls/edit
+        recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
+    contact:
+      slack: virtualization
+      mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+      teams:
+        - name: kubevirt-community
+          description: General Discussion
 committees: []

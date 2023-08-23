@@ -1,0 +1,13 @@
+aliases:
+  sig-compute-leads:
+  sig-documentation-leads:
+  sig-network-leads:
+  sig-release-leads:
+  sig-scale-leads:
+    - rthallisey
+  sig-storage-leads:
+  sig-testing-leads:
+  ug-kubevirt-community-leads:
+## BEGIN CUSTOM CONTENT
+
+## END CUSTOM CONTENT
