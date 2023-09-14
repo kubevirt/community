@@ -1,6 +1,8 @@
 aliases:
   sig-compute-leads:
   sig-documentation-leads:
+  sig-governance-leads:
+    - lyarwood
   sig-network-leads:
   sig-release-leads:
   sig-scale-leads:

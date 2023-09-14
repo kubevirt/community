@@ -34,6 +34,7 @@ When the need arises, a [new SIG can be created](sig-wg-lifecycle.md)
 |------|-------|--------|---------|----------|
 |[compute](sig-compute/README.md)|[compute](https://github.com/kubevirt/kubevirt/labels/sig%2Fcompute)||* [Slack](https://kubernetes.slack.com/messages/)<br>* [Mailing List]()|
 |[documentation](sig-documentation/README.md)|[documentation](https://github.com/kubevirt/kubevirt/labels/sig%2Fdocumentation)||* [Slack](https://kubernetes.slack.com/messages/)<br>* [Mailing List]()|
+|[governance](sig-governance/README.md)|[governance](https://github.com/kubevirt/kubevirt/labels/sig%2Fgovernance)|* [Lee Yarwood](https://github.com/lyarwood), Red Hat<br>|* [Slack](https://kubernetes.slack.com/messages/)<br>* [Mailing List]()|
 |[network](sig-network/README.md)|[network](https://github.com/kubevirt/kubevirt/labels/sig%2Fnetwork)||* [Slack](https://kubernetes.slack.com/messages/)<br>* [Mailing List]()|
 |[release](sig-release/README.md)|[release](https://github.com/kubevirt/kubevirt/labels/sig%2Frelease)||* [Slack](https://kubernetes.slack.com/messages/)<br>* [Mailing List]()|
 |[Scale](sig-scale/README.md)|[scale](https://github.com/kubevirt/kubevirt/labels/sig%2Fscale)|* [Ryan T. Hallisey](https://github.com/rthallisey), Nvidia<br>|* [Slack](https://kubernetes.slack.com/messages/kubevirt-dev)<br>* [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev)|* KubeVirt Perf and Scale SIG Meeting: [Thursdays at 14:00 UTC (bimonthy)](https://zoom.us/j/3205945033)<br>

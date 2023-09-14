@@ -58,6 +58,24 @@ sigs:
           - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
           - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/main/OWNERS
           - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS
+  - dir: sig-governance
+    name: governance
+    mission_statement: >
+      To be responsible for stewarding the SIG creation and maintenance processes within the KubeVirt project.
+
+    charter_link: charter.md
+    label: governance
+    leadership:
+      chairs:
+        - github: lyarwood
+          name: Lee Yarwood
+          company: Red Hat
+    meetings: []
+    contact: {}
+    subprojects:
+      - name: community
+        owners:
+          - https://raw.githubusercontent.com/kubevirt/community/main/OWNERS
   - dir: sig-network
     name: network
     mission_statement: >
