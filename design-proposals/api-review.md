@@ -10,7 +10,7 @@ KubeVirt.
 
 
 ## Motivation
-Since KubeVirt is reaching v1 soon and has already had some APIs with v1 version, implementing an API review process
+Since KubeVirt has reached v1 and has some APIs with v1 version, implementing an API review process
 ensures code quality, usability, stability, and fosters community collaboration, ultimately leading to a successful and
 sustainable software ecosystem.  
 
@@ -53,11 +53,15 @@ the following changes:
 - Tools and tests: Tools and automation that can be helpful to reduce human burden and errors to carry-out api changes
 
 More details on each of the aforementioned items is highlighted below in separate sections.
+
 ## Contributors responsibilities
-* Contributors must explain why the API change is needed, which functionality it adds and who requested it. They should include links to github issues, email threads or any other public document where users request this functionality.
-* Contributors should contact the users who requested the functionality via the channel they have used, to give them the opportunity to review the API. We do not want to define an API that the user finds inconvenient.
+- Contributors must explain why the API change is needed, which functionality it adds and who requested it. They should
+  include links to github issues, email threads or any other public document where users request this functionality.
+- Contributors should contact the users who requested the functionality via the channel they have used, to give them the
+  opportunity to review the API. We do not want to define an API that the user finds inconvenient.
+
 ## Process for api reviewers
-Recent changes to reviewer guidelines recommend forming small groups in specific areas of expertise. sig-api-reviews is 
+Recent changes to reviewer guidelines recommend forming small groups in specific areas of expertise. sig-api is 
 one such group. This group will be responsible for:
 - Reviewing all the PRs with `kind/api-change` labels
 - Maintaining a high quality, stable and crisp api surface that is backward compatible
@@ -70,8 +74,8 @@ KubeVirt project.
 Kubernetes has a very well-defined process for api-reviews. Taking an inspiration from that, KubeVirt should have the 
 following:
 
-- A specific community call for sig-api-reviewer
-- In this call all the PRs with api-facing changes will be reviewed. Check list of items to check in the call
+- A specific community call for sig-api
+- In this call all the PRs with api-facing changes will be reviewed. Check list of items to go through in the call
   - does the PR introduce breaking changes?
   - can the API changes be better?
   - Any other communication that is needed for contributor to move forward.
@@ -93,8 +97,8 @@ contributing api-facing changes.
 ### How to achieve this?
 
 - Have a document to describe the right process for contributors with the following details:
-  - Any API-facing change with design doc can be reviewed by the sig-api-reviewers for initial feedback.
-  - Any API-facing change PR can be brought up for the discussion in sig-api-reviewers call
+  - Any API-facing change with design doc can be reviewed by the sig-api for initial feedback.
+  - Any API-facing change PR can be brought up for the discussion in sig-api call
   - Link to a conventions document for good practices and guidance
 
 ## Tools for reviewers
