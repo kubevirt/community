@@ -17,12 +17,20 @@ sustainable software ecosystem.
 More importantly, it allows for a common framework through which all stake-holders can discuss and decide API facing 
 changes in KubeVirt.
 
+Currently, the project has a very hand-wavy mechanism for contributing, reviewing and discussion API facing changes. This
+document attempts to specific focus areas where improvement is needed in the Goals section below and proposal for 
+implementing the improvements in the design section.
+
+
 ## Goals
 
+- Establish a policy for API evolution
 - Establish a process for API reviews such that:
   - contributors have a clear idea about how to implement an API facing change
   - reviews have a guideline about the necessary checks required for a successful API facing change
   - community has a guideline about how to handle API breakages upon upgrade
+    - API fields in an object could belong to different features. Depending on the maturity of the feature, the field 
+      could evolve differently. 
   - propose necessary tools to make process easier and reliable, and avoid human errors
 
 ## Non Goals
@@ -33,10 +41,12 @@ changes in KubeVirt.
 - Contributors
 
 ## User Stories
-- As a user of KubeVirt project, I want KubeVirt to maintain an intuitive, stable and simple API, that can 
-   be used as a foundational block to build products and projects
+- As a stakeholder of KubeVirt project, I would like the project to have a crip policy of how APIs will evolve across
+  different versions.
+- As a user of KubeVirt project, consuming the API by creating objects (manually or programmatically), I want KubeVirt to
+   maintain an intuitive, stable and simple API, that can be used as a foundational block to build products and projects
 - As a contributor, I need guidance on the right way to approach API facing change. Ideally this guidance should include
-    all the steps design docs, contributing the change and post contribution steps
+    all the steps: design docs, contributing the change and post contribution steps
 - As a reviewer, I need to have a comprehensive list of checks needed for approving an API facing change
 - As a reviewer, ideally, I need to be able to leverage automation wherever possible to make reviewing easier
 
@@ -48,11 +58,21 @@ changes in KubeVirt.
 In order to achieve the stability, quality and consistency of APIs like the core Kubernetes APIs this document proposes
 the following changes:
 
+- For all stakeholders: Describe a policy of API evolution
 - For API reviewers: There should be a one or more engineers that review api breaking changes on a regular basis.
 - For contributors: There should be a guide explaining how to merge and api change
 - Tools and tests: Tools and automation that can be helpful to reduce human burden and errors to carry-out api changes
 
 More details on each of the aforementioned items is highlighted below in separate sections.
+
+## Policy of API Evolution
+- Alpha features should always introduce an optional field to APIs that have GA'ed or in Beta
+- Alpha features and hence by extensions fields that are introduced behind a feature flag, is not guaranteed to work
+  in all future versions. Hence, they should not be deployed in production. This ensures that new feature development 
+  work is not slowed down by requirement to maintain api-compatibility. Even though compatibility for experimental or 
+  alpha APIs is not strictly required, but breaking compatibility should not be done lightly, as it disrupts all users
+  of the feature.
+- Beta or GA features that introduces new fields to beta or stable APIs should not break compatibility
 
 ## Contributors responsibilities
 - Contributors must explain why the API change is needed, which functionality it adds and who requested it. They should
