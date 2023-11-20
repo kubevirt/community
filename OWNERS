@@ -1,15 +1,17 @@
 reviewers:
+  - aburdenthehand
   - cwilkers
-  - jobbler
   - jean-edouard
+  - jobbler
 
 approvers:
+  - aburdenthehand
+  - AlonaKaplan
   - cwilkers
+  - davidvossel
   - fabiand
   - rmohr
-  - davidvossel
   - vladikr
-  - AlonaKaplan
 
 emeritus_approvers:
   - karmab # 10 july 2019
