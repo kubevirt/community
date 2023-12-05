@@ -43,7 +43,7 @@ implementing the improvements in the design section.
 ## User Stories
 - As a stakeholder of KubeVirt project, I would like the project to have a crip policy of how APIs will evolve across
   different versions.
-- As a user of KubeVirt project, consuming the API by creating objects (manually or programmatically), I want KubeVirt to
+- As a KubeVirt cluster operator, consuming the API by creating objects (manually or programmatically), I want KubeVirt to
    maintain an intuitive, stable and simple API, that can be used as a foundational block to build products and projects
 - As a contributor, I need guidance on the right way to approach API facing change. Ideally this guidance should include
     all the steps: design docs, contributing the change and post contribution steps
@@ -179,4 +179,24 @@ TODO
 (an overview on the approaches used to functional test this design)
 
 # Implementation Phases
-(How/if this design will get broken up into multiple phases)
+
+The process for achieving api-stability will involve the following: 
+
+### Phase 1
+
+- creation of a sig-api that will meet on a regular cadence for the following:
+  - triage all the open PRs with `kind/api-change` label
+  - interested reviewers will pick up PRs and design documents for review
+  - discuss common observed patterns in the api reviews
+  - the PRs are not gated on api-review approval
+- This is the initial phase where api reviews will be tried in the community. This phase will last atleast 1 release, 
+  currently planned for release 1.2
+
+### Phase 2
+
+- develop automation to help PR reviewers find breaking changes
+- PRs will be gated on api-review approval
+- identify additional work like e2e upgrade test to enhance API stability
+
+### Phase 3
+- implementation and addition of upgrade tests
