@@ -1,6 +1,6 @@
 # Overview
 
-Today changes to a VM object (i.e. changing VM.spec.template) get applied, but only take effect upon the next restart - we call these pending changes “staged”. This is a proposal to introduce a custer-level rollout strategy field to control how changes to the VM object will propagate to the VirtualMachineInstance object without interupting the workload.
+Today changes to a VM object (i.e. changing VM.spec.template) get applied, but only take effect upon the next restart - let's call these pending changes “staged”. This is a proposal to introduce a custer-level rollout strategy field to control how changes to the VM object will propagate to the VirtualMachineInstance object without interupting the workload.
 
 
 ## Motivation
@@ -23,7 +23,7 @@ In most cases, the user would prefer the changes to the VM object to eventually 
 
 ## Definition of Users
 
-A VM owner - with (at a minimum) create, update, and patch access for VM objects within a namespace.
+A VM owner - with edit permissions for VM objects within a namespace.
 
 
 ## User Stories
@@ -40,7 +40,7 @@ kubevirt/kubevirt
 # Design
 
 > **Note:** Below we are only discussing changes to fields that support live updates.
-                  References to `all` fields only refers to fields that can be live-updated. 
+  The term `all` only refers to fields that can be live-updated. 
 
 ## KubeVirt CR
 
@@ -68,12 +68,14 @@ If `RestartRequired` condition is present, the VM has to be restarted.
 
 ### CPU Hot Plug
 Since the LiveUpdateFeatures API will be deprecated the `spec.template.spec.domain.cpu.maxSockets`field of the VM object will become mutable and stays optional.
-If it is not set by the user then the maxSockets value will continue to be internally computed according the cluster-wide `maxHotPlugRatio`, as it is done today.
-
 Changes to `spec.template.spec.domain.cpu.maxSockets` would require a restart of the VM. This would also set the `RestartRequired` condition.
+
+If it is not set by the user then the maxSockets value will continue to be internally computed according the cluster-wide `maxHotPlugRatio`, as it is done today.
 
 CPU hot plug is triggered by changing `spec.template.spec.domain.cpu.sockets`. This change will be propagated to the VMI object as long as its value is lower than the value of `MaxSockets` on the last VM startup.
 Increasing the value of the `spec.template.spec.domain.cpu.sockets` beyond the `MaxSockets` will require a restart to take effect.
+
+The `RestartRequired` condition is guaranteed to be present on the VM object right after a change to the VM object was made *and* a restart is required.
 
 ### Memory Hot Plug
 
@@ -87,8 +89,9 @@ All other hot plug behavior wil remain the same.
 
 ## Drawbacks / Limitations
 
--   No cluster- and VM-level fine-grained control over rollout settings of specific features.
--   No VM-specific controll over the rollout strategy.
+- No cluster- and VM-level fine-grained control over rollout settings of specific features.
+- No VM-specific controll over the rollout strategy.
+- Changing the cluster-level rollout strategy while VMs are running will lead to an udefined behavior 
 
 ## API 
 
