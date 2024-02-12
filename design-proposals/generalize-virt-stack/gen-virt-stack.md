@@ -31,6 +31,8 @@ Support all features available in KubeVirt in all libvirt hypervisor drivers. As
 
 ## Definition of Users
 
+This proposal is aimed at serving users who intend to use KubeVirt on a cluster where at least one node has a virtualization stack different from the default QEMU-KVM stack.
+
 ## User Stories
 
 - A user trying to use KubeVirt on a cluster of machines that have a hypervisor-VMM pair that is not necessarily QEMU/KVM.
@@ -82,7 +84,7 @@ Conversion of the VMI spec to `virt-launcher` pod spec needs to take into accoun
 
 ### Virt-Launcher
 
-- Use the `libvirtd` daemon instead of `virtqemud`. TODO Is this really necessary?
+- Launch the libvirt modular daemon (e.g., `virtqemud`, `virtxend`) if available for the `vmi.hypervisor` choice, otherwise launch the monolithic libvirtd daemon.
 
 - Libvirt connection URI is hypervisor-driver specific.
 
@@ -101,6 +103,19 @@ For each supported value of `vmi.hypervisor`, do the following:
 
 
 # Implementation Phases
+
+- Extension of KubeVirt API to include `vmi.hypervisor` field.
+
+- Creation of virt-launcher images for the supported libvirt hypervisor-drivers.
+    - Test these images independently of being able to spin-up pods and launch libvirt domains, similar to what would be done in a typical KubeVirt VMI creation flow.
+
+- Refactoring of virt-controller code to create 
+
+- Refactoring virt-handler code to remove hardcoded references to `qemu/kvm` and generalize the code to handle multiple hypervisor-drivers. 
+
+- Refactoring of virt-launcher code to convert a very simple VMI spec to libvirt domain for all supported hypervisor-drivers.
+
+- Progressively test KubeVirt VMI features against different libvirt hypervisor-drivers and resolve limitations in virt-launcher code-base.
 
 
 # References
