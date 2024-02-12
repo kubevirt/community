@@ -66,8 +66,6 @@ Maintain a list of which VMI features are supported by different hypervisor-driv
 
 ## Generalization of KubeVirt components
 
-- One `virt-launcher` image per hypervisor-driver.
-
 ### VMI spec to virt-launcher pod spec by Virt-Controller
 
 Conversion of the VMI spec to `virt-launcher` pod spec needs to take into account the `vmi.hypervisor` field. The value of this field would affect the following:
@@ -88,8 +86,15 @@ Conversion of the VMI spec to `virt-launcher` pod spec needs to take into accoun
 
 - Libvirt connection URI is hypervisor-driver specific.
 
+- Creation of auxilliary resources for the libvirt domain, such as the cloud-init disk needs to be done in a hypervisor-specific way. For instance, the `cloud-hypervisor` VMM does not support ISOs - in which case cloud-init needs to be provided as a `raw` disk. 
+
 - Conversion of VMI spec to libvirt domain XML needs to be hypervisor-driver specific. E.g., `cloud-hypervisor` does not support ISOs. Therefore, `cloud-init` needs to be provided as a `raw` disk.
 
+### VMI flow
+
+The flow of a VMI lifecycle would remain the same as before, with the addition of hypervisor-specific logic at virt-controller, virt-handler and virt-launcher.
+
+![image info](./kubvirt-vmi-flow.drawio.png)
 
 ## Functional Testing Approach
 
