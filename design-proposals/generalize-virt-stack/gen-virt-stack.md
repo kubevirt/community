@@ -44,21 +44,61 @@ Support all features available in KubeVirt in all libvirt hypervisor drivers. As
 
 # Design
 
-## Notes [remove this section]
+## API Changes
 
-- Nodes should advertise which hypervisor-driver they can support
-- KubeVirt API should be extended to say which hypervisor-driver to use.
-- Different virt-launcher image for each supported hypervisor-driver.
-- Maintain a list of which VM/VMI features are supported by different hypervisor-drivers. If the KubeVirt API user requests a feature for a VMI that is not supported by the requested hypervisor-driver, then the request for creation of VMI should be rejected.
-  - If the cluster of machines has diff machines running diff hypervisor-drivers, then the virt-controller should select a machine to host the VMI so that the VMI features are supported on that machine's hypervisor driver. 
+Addition of a `vmi.hypervisor` field. Example of how a user could request a specific hypervisor as the underlying libvirt hypervisor-driver through the VMI spec:
 
-## KubeVirt
+```yaml
+spec:
+  hypervisor: cloud-hypervisor
+```
 
-## Libvirt
+- Introduction of a new field `hypervisor` in `VirtualMachineInstanceSpec`
+- By default if no `hypervisor` is provided, it would default to `qemu-kvm`.
+- The set of acceptable values for the `hypervisor` field would be the set of all hypervisor-drivers that libvirt supports.
 
-## API Examples
+### Supported feature check
+
+Maintain a list of which VMI features are supported by different hypervisor-drivers. If the KubeVirt API user requests a feature for a VMI that is not supported by the requested hypervisor-driver, then the request for creation of VMI should be rejected.
+
+
+## Generalization of KubeVirt components
+
+- One `virt-launcher` image per hypervisor-driver.
+
+### VMI spec to virt-launcher pod spec by Virt-Controller
+
+Conversion of the VMI spec to `virt-launcher` pod spec needs to take into account the `vmi.hypervisor` field. The value of this field would affect the following:
+
+- `virt-launcher` pod image should be specific to the `vmi.hypervisor`.
+
+- Hypervisor resource needed by the `virt-launcher` pod. For instance, for a VMI with `hypervisor=qemu-kvm`, the corresponding virt-launcher pod requires the resource `devices.kubevirt.io/kvm: 1`.
+
+- The resource requirement of the virt-launcher pod should be adjusted (w.r.t. to the resource spec of the VMI), to take into account the resources consumed by the requested VMM daemon running in the `virt-launcher` pod. Currently, the field `VirtqemudOverhead` holds the memory overhead of the `virtqemud` process.
+
+### Virt-Handler
+
+- Label each node based on which hypervisor devices (e.g., `/dev/kvm` or `/dev/mshv`) are available, e.g., `devices.kubevirt.io/kvm: 1000`.
+
+### Virt-Launcher
+
+- Use the `libvirtd` daemon instead of `virtqemud`. TODO Is this really necessary?
+
+- Libvirt connection URI is hypervisor-driver specific.
+
+- Conversion of VMI spec to libvirt domain XML needs to be hypervisor-driver specific. E.g., `cloud-hypervisor` does not support ISOs. Therefore, `cloud-init` needs to be provided as a `raw` disk.
+
 
 ## Functional Testing Approach
+
+For each supported value of `vmi.hypervisor`, do the following:
+
+- Setup KubeVirt on a cluster with the given hypervisor.
+
+- Ensure that each node is labeled with the correct hypervisor, such that each node has the resource `devices.kubevirt.io/<hypervisor>: 1000`.
+
+- Create VMIs with all features supported the given hypervisor.
+
 
 # Implementation Phases
 
