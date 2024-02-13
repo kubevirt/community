@@ -23,11 +23,13 @@ There are several parts in the KubeVirt source-code that hard-code the use of th
 
 ## Goals
 
-KubeVirt should be able to offer a choice to its users over which libvirt hypervisor-driver they want to use to create their VMI. The aim is to remove any hard-coded dependency of KubeVirt on qemu-kvm and have it interact solely with libvirt.
+KubeVirt should be able to offer a choice to its users over which libvirt hypervisor-driver they want to use to create their VMI. The aim is to remove any hard-coded dependency of KubeVirt on qemu-kvm and have it interact solely with libvirt, while still being able to provide the same functionality for qemu-kvm based VMIs.
+
+Additionally, this design proposal intends to provide developers of other hypervisors with a flexible way of onboarding their own hypervisor to KubeVirt.
 
 ## Non Goals
 
-Support all features available in KubeVirt in all libvirt hypervisor drivers. As libvirt makes progress in bringing feature parity among its hypervisor drivers, KubeVirt will also enable more features in the evolving hypervisor drivers.
+Support all libvirt hypervisor-drivers in KubeVirt. As the developers of hypervisor `H` make its libvirt hypervisor-driver stable, they would add functionality to KubeVirt so that it can leverage hypervisor `H` to create VMIs.
 
 ## Definition of Users
 
