@@ -32,12 +32,9 @@ route contributors to the appropriate SIG; SIGs should follow these guidelines:
 
 ### Notes on Roles
 
-Within this section, "Lead" refers to someone who is a member of the union of a
-Chair, Tech Lead, or Subproject Owner role. Leads may, and frequently do, hold
-more than one role. There is no singular lead to any KubeVirt community
-group. Leads have specific decision-making power over some part of a group and
- thus, additional accountability. Each role is detailed below.
-
+There is no singular lead to any KubeVirt community group. Leads have
+ specific decision-making power over some part of a group and  thus, 
+additional accountability. Each role is detailed below.
 
 Initial roles are defined at the founding of the SIG or Subproject as part of
 the acceptance of that SIG or Subproject.
@@ -90,7 +87,6 @@ the acceptance of that SIG or Subproject.
   metadata of the SIGs enhancements for the current release and serve as
   point of contact for the release team, but *MAY* delegate to other
   contributors to fulfill these responsibilities.
-- *MAY* delegate the creation of a SIG roadmap to other Leads.
 - *MUST* organize a main group meeting and make sure [sigs.yaml] is up to date.
 - *SHOULD* facilitate meetings but *MAY* delegate to other Leads or future
   chairs/chairs in training.
@@ -98,23 +94,15 @@ the acceptance of that SIG or Subproject.
   appropriate SIG folder if the contributor experience or on-boarding knowledge
   is different than in the general [contributor guide]. *MAY* delegate to
   contributors to create or update.
-- *MUST* organize KubeCon/CloudNativeCon Intros and Deep Dives with CNCF Event
-  staff and approve presented content but *MAY* delegate to other contributors.
 - *MUST* ensure meetings are recorded and made available.
-- *MUST* coordinate sponsored working group updates to the SIG and the wider
-  community.
 - *MUST* coordinate communication and be a connector with other community
   groups like SIGs and the Steering Committee but *MAY* delegate the actual
   communication and creation of content to other contributors where appropriate.
-- *MUST* create the yearly [annual report] for the group but *SHOULD* get help
-  with curation from other SIG participants.
 
 #### Tech Lead
 
 - Number: 2+
 - Membership tracked in [sigs.yaml]
-- *MUST* Approve & facilitate the creation of new subprojects
-- *MUST* Approve & facilitate decommissioning of existing subprojects
 - *MUST* Resolve cross-Subproject and cross-SIG technical issues and decisions
   or delegate to another Lead as needed
 - *MUST* in conjunction with the Chairs identify, track, and maintain the
@@ -134,19 +122,6 @@ Additional information on the Tech Lead role can be found in
   SIG at large.
 - *SHOULD* hold some documented role or responsibility in the SIG and / or at
   least one subproject (e.g. reviewer, approver, etc)
-- *MAY* build new functionality for subprojects
-- *MAY* participate in decision making for the subprojects they hold roles in
-- *MUST* take an [Inclusive Open Source Community Orientation course] in
-  support of our community values within 30 days from the date of their
-  appointment.
-
-### Security Contact
-
-- Defined in `SECURITY_CONTACTS` at the root of the repository. Example:
-  [SECURITY_CONTACTS]
-- *MUST* be a contact point for the Security Response Committee to reach out to
-  for triaging and handling of incoming issues
-- *MUST* accept the [Embargo Policy]
 
 ### Other Roles
 
@@ -162,10 +137,8 @@ Example of SIG roles created to help operations:
 
 - [The Release Team: Bug Triage, CI Signal, and more]
 - [API Reviewer and Moderator]
-- [Production Readiness Reviewer]
 - [Events Lead]
 - [PR Wrangler]
-- [Contributor Comms]
 
 Other roles...
 - *MUST* be tracked on the SIGs README with a link to the role definition.
@@ -199,16 +172,13 @@ otherwise fulfill its Organizational Management responsibilities
 [sig-wg-lifecycle]: /sig-wg-lifecycle.md
 ["member" on our contributor ladder]: /community-membership.md
 [Kubernetes Community YouTube playlist]: https://www.youtube.com/channel/UCZ2bu0qutTOM0tHYa_jkIwg
-[annual report]: ./annual-reports.md
 [contributor guide]: /contributors/guide/README.md
 [devel]: /contributors/devel/README.md
 [#tech-lead]: #Tech-Lead
 [Google group]: https://groups.google.com/forum/#!forum/kubernetes-sig-config
 [dashboard]: https://testgrid.k8s.io/
 [The Release Team: Bug Triage, CI Signal, and more]: https://github.com/kubernetes/sig-release/tree/master/release-team/role-handbooks
-[Production Readiness Reviewer]: /sig-architecture/production-readiness.md#becoming-a-prod-readiness-reviewer-or-approver
 [API Reviewer and Moderator]: /sig-architecture/api-review-process.md#expanding-the-reviewer-and-approver-pool
-[Contributor Comms]: https://github.com/kubernetes/community/tree/master/communication/contributor-comms/role-handbooks
 [Events Lead]: /events/events-team/events-lead.md
 [PR Wrangler]: https://kubernetes.io/docs/contribute/participate/pr-wranglers/
 [Inclusive Open Source Community Orientation course]: https://training.linuxfoundation.org/training/inclusive-open-source-community-orientation-lfc102/
