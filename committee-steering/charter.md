@@ -47,10 +47,6 @@ the acceptance of that SIG or Subproject.
 #### Activity Expectations
 
 - Leads *SHOULD* remain active and responsive in their Roles.
-- Leads taking an extended leave of 1 or more months *SHOULD* coordinate with
-  other leads to ensure the role is adequately staffed during their leave.
-- Leads going on leave for 1-3 months *MAY* work with other Leads to identify a
-  temporary replacement.
 - Leads *SHOULD* remove any other leads that have not communicated a leave of
   absence and either cannot be reached for more than one month or are not
   fulfilling their documented responsibilities for more than one month.
@@ -95,9 +91,7 @@ the acceptance of that SIG or Subproject.
   point of contact for the release team, but *MAY* delegate to other
   contributors to fulfill these responsibilities.
 - *MAY* delegate the creation of a SIG roadmap to other Leads.
-- *MUST* organize a main group meeting and make sure [sigs.yaml] is up to date,
-  including subprojects and their meeting information, but *SHOULD* delegate
-  the need for subproject meetings to subproject owners.
+- *MUST* organize a main group meeting and make sure [sigs.yaml] is up to date.
 - *SHOULD* facilitate meetings but *MAY* delegate to other Leads or future
   chairs/chairs in training.
 - *MUST* ensure there is a maintained CONTRIBUTING.md document in the
@@ -132,41 +126,6 @@ the acceptance of that SIG or Subproject.
 
 Additional information on the Tech Lead role can be found in
 [technical-lead.md]; within the [Chair & TL Contributor Documentation].
-
-#### Subproject Lead
-
-**Note:** This is a generalized high-level description of the role, and the
-specifics of the subproject lead role's responsibilities and related
-processes *MUST* be defined for individual SIGs or subprojects. The process
-for becoming an Subproject Lead should be defined in the SIG charter of the
-SIG owning the subproject.
-
-Subproject Leads are the technical authority for a subproject in the Kubernetes
-project. They *MUST* have demonstrated both good judgement and responsibility
-towards the health of that subproject.
-
-- Number: 2+
-- Membership tracked in [sigs.yaml] via *subproject.leads* entry and scoped to a subproject
-- *MUST* set technical direction and make or approve design decisions for their subproject - either directly or through delegation
-- *MUST* mentor and guide approvers, reviewers, and contributors to the subproject.
-- *MUST* maintain components, review, shepherd and approve proposals for enhancing areas owned by the subproject
-- *MUST* actively participate in triaging issues and reviewing PRs
-- *SHOULD* be an escalation point for technical discussions and decisions in the subproject
-- *SHOULD* set milestone priorities or delegate this responsibility
-- *SHOULD* ensure a healthy process for discussion and decision making is in place.
-- *MAY* make decisions to resolve conflicts
-
-#### Subproject Owner
-
-- *Optional if and only if Subproject Leads are defined for the subproject*
-  - Number: 2+
-  - Membership tracked in [sigs.yaml] via links to OWNERS files
-  - *If no Subproject Leads are defined for the subproject, the Subproject Owners will be responsible for the same duties.*
-- Scoped to a subproject defined in [sigs.yaml]
-- *MUST* actively participate in triaging issues and reviewing PRs
-- *SHOULD* mentor and guide contributors of the subproject
-- *SHOULD* help the subproject leads (if defined) in their responsibilities
-
 
 #### All Leads
 
@@ -217,37 +176,6 @@ Other roles...
 - *SHOULD* be sent to dev@kubernetes.io for awareness as a notice with a lazy
   consensus period when they are newly created
 - *MAY* Fill in for another named role on a temporary basis
-
-
-## Subprojects
-
-### Subproject Creation
-
-Subprojects may be created with a simple majority vote of SIG Technical Leads.
-- [sigs.yaml] *MUST* be updated to include subproject information and [OWNERS]
-  files with subproject owners.
-- Where subprojects processes differ from the SIG governance, they must
-  document how. e.g. if subprojects release separately - they must document
-  how release and planning is performed
-
-### Subproject Requirements
-
-Subprojects broadly fall into two categories, those that are directly part
-of [Kubernetes] core and those that are tool, driver, or other component that
-do not adhere to the Kubernetes release cycle.
-
-**Kubernetes Core Subprojects**
-- *MUST* use the [KEP] process for introducing new features and decision
-  making.
-- *MUST* Adhere to release test health requirements.
-
-**Non Kubernetes Core Subprojects**
-- *SHOULD* define how releases are performed.
-- *SHOULD* setup and monitor test health.
-
-Issues impacting multiple subprojects in the SIG should be resolved by the
-SIG's Tech Leads or a federation of Subproject Owners.
-
 
 ## SIG Retirement
 
