@@ -31,6 +31,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
     - dir: sig-documentation
       name: documentation
       subprojects:
@@ -53,12 +54,6 @@ sigs:
           owners:
             - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
-    - dir: sig-virtctl
-      name: virtctl
-      subprojects:
-        - name: kubectl-virt-plugin
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
     - dir: sig-virt
       name: virtblocks
       subprojects:
