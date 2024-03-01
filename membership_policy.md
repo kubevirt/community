@@ -2,17 +2,17 @@
 
 This document outlines the various responsibilities of contributor roles in KubeVirt.
 
-| Role  | Responsibilities | Requirements | Defined by
-| ----- | ---------------- | ------------ | ----------
-| Contributor | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/master/code-of-conduct.md) | Submit at least one pull request | Active GitHub account
-| Member | Active contributor in the community | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project | KubeVirt GitHub org member
-| Reviewer | Review contributions from others | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver | [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file reviewer entry |
-| Approver| Approve accepting contributions | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers| [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file approver entry |
+| Role  | Responsibilities                                                                                             | Requirements | Defined by                                                                                    |
+| ----- |--------------------------------------------------------------------------------------------------------------| ------------ |-----------------------------------------------------------------------------------------------|
+| Contributor | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request | Active GitHub account                                                                         |
+| Member | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project | KubeVirt GitHub org member                                                                    |
+| Reviewer | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver | [OWNERS_ALIASES] file reviewer entry                                                          |
+| Approver| Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers| [OWNERS_ALIASES] file approver entry |
 
 
 ## New contributors
 
-[New contributors](https://github.com/kubevirt/kubevirt/blob/master/CONTRIBUTING.md) should be welcomed to the community by existing members, helped with PR workflow, and directed to relevant documentation and communication channels.
+[New contributors](https://github.com/kubevirt/kubevirt/blob/main/CONTRIBUTING.md) should be welcomed to the community by existing members, helped with PR workflow, and directed to relevant documentation and communication channels.
 All contributors are expected to adhere to the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
 
 ## Established community members
@@ -75,7 +75,7 @@ Reviewer Status is scoped to a part of the project.
 
 ## Requirements
 
-The following apply to the part of project for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
 
   * Member for at least 3 months
   * Primary reviewer for at least 5 PRs to the project
@@ -88,7 +88,7 @@ The following apply to the part of project for which one would be a reviewer in 
 
 ### Responsibilities and privileges
 
-  * The following apply to the part of project for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+  * The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
   * Tests are automatically run for PullRequests from members of the KubeVirt GitHub organization
   * Reviewer status may be a precondition to accepting L+ contributions
   * Responsible for project quality control via reviews
@@ -107,7 +107,7 @@ Defined by: Approvers entry in an OWNERS file in a repo owned by the KubeVirt pr
 Approver Status is scoped to a part of the project.
 
 ### Requirements
-The following apply to the part of project for which one would be an approver in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+The following apply to the part of project for which one would be an approver in the [OWNERS_ALIASES] file.
 
   * Reviewer of the project for at least 3 months
   * Primary reviewer for at least 10 substantial PRs to the project
