@@ -65,12 +65,6 @@ sigs:
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
-    - dir: sig-userinterface
-      name: userinterface
-      subprojects:
-        - name: userinterface
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/web-ui/main/OWNERS
     - dir: sig-scale
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
