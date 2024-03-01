@@ -21,7 +21,7 @@ Established community members are expected to demonstrate their adherence to the
 
 ## Member
 
-Members are active contributors in the community. They can have issues and PRs assigned to them, participate in community related meetings (e.g. bug scrub), and pre-submit tests are automatically run for their PRs. Members are expected to remain active contributors to the community.
+Members are continuously active contributors in the community. They can have issues and PRs assigned to them, participate in community related meetings (e.g. bug scrub), and pre-submit tests are automatically run for their PRs. Members are expected to remain active contributors to the community.
 Defined by: Member of the KubeVirt GitHub organization
 
 ### Requirements
@@ -127,3 +127,37 @@ The following apply to the part of project for which one would be an approver in
   * Expected to be responsive to review requests as per community expectations
   * Mentor contributors and reviewers
   * May approve contributions for acceptance
+
+## Inactive members
+
+[_Members are continuously active contributors in the community._](#member)
+
+A core principle in maintaining a healthy community is encouraging active
+participation. It is inevitable that people's focuses will change over time, and
+they are not expected to be actively contributing forever.
+
+However, being a member of the KubeVirt GitHub organization comes with
+an elevated set of permissions. These capabilities should not be used by those
+that are not familiar with the current state of the KubeVirt project.
+
+Therefore, members with an extended period away from the project with no activity
+will be removed from the KubeVirt GitHub Organization and will be required to
+go through the org membership process again after re-familiarizing themselves
+with the current state.
+
+### How inactivity is measured
+
+Inactive members are defined as members of the KubeVirt Organization
+with **no** contributions within the KubeVirt organization within 12 months. 
+This is measured by the [CNCF DevStats project].
+
+**Note:** Devstats does not take into account non-code contributions. If a
+non-code contributing member is accidentally removed this way, they may open an
+issue to quickly be re-instated.
+
+After an extended period away from the project with no activity
+those members would need to re-familiarize themselves with the current state
+before being able to contribute effectively.
+
+[CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/48/users-statistics-by-repository-group?orgId=1&from=now-1y&to=now&var-period=w&var-metric=activity&var-repogroup_name=All&var-users=All
+[OWNERS_ALIASES]: https://github.com/kubevirt/kubevirt/tree/main/OWNERS_ALIASES
