@@ -175,7 +175,7 @@ def write_repo_groups_sql(k8s_groups, fp):
 
 def main(sigs_yaml, repo_groups_sql):
     with open(sigs_yaml) as fp:
-        k8s_groups = yaml.round_trip_load(fp)
+        k8s_groups = yaml.YAML().load(fp)
 
     if repo_groups_sql is not None:
         with open(repo_groups_sql, 'w') as fp:
