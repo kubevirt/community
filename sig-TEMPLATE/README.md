@@ -29,10 +29,6 @@ SIGs should use [the template][Short Template] or [prefilled template][Short Tem
 
 The primary goal of the charters is to define the scope of the SIG within KubeVirt and how the SIG leaders exercise ownership of these areas by taking care of their responsibilities. A majority of the effort should be spent on these concerns.
 
-## FAQ
-
-See [frequently asked questions]
-
 [Short Template]: sig-charter-template.md
 [Short Template with examples]: sig-charter-template-prefilled.md
 [sigs.yaml]: ../sigs.yaml

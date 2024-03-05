@@ -22,7 +22,7 @@ Outline of things that could be confused as falling into this SIG but don't or d
 
 ## Roles and Organization Management
 
-This sig follows adheres to the Roles and Organization Management outlined in [OARP]
+This sig follows the Roles and Organization Management outlined in [OARP]
 
 ### Additional responsibilities of Chairs
 

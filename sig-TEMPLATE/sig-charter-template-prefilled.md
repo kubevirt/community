@@ -23,7 +23,7 @@ Bar API and controller, because they are cluster and not node level.
 
 ## Roles and Organization Management
 
-This sig follows adheres to the Roles and Organization Management outlined in [OARP]
+This sig follows the Roles and Organization Management outlined in [OARP]
 
 ### Additional responsibilities of Chairs
 
