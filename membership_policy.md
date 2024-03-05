@@ -2,17 +2,17 @@
 
 This document outlines the various responsibilities of contributor roles in KubeVirt.
 
-| Role  | Responsibilities | Requirements | Defined by
-| ----- | ---------------- | ------------ | ----------
-| Contributor | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/master/code-of-conduct.md) | Submit at least one pull request | Active GitHub account
-| Member | Active contributor in the community | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project | KubeVirt GitHub org member
-| Reviewer | Review contributions from others | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver | [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file reviewer entry |
-| Approver| Approve accepting contributions | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers| [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file approver entry |
+| Role  | Responsibilities                                                                                             | Requirements | Defined by                                                                                    |
+| ----- |--------------------------------------------------------------------------------------------------------------| ------------ |-----------------------------------------------------------------------------------------------|
+| Contributor | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request | Active GitHub account                                                                         |
+| Member | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project | KubeVirt GitHub org member                                                                    |
+| Reviewer | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver | [OWNERS_ALIASES] file reviewer entry                                                          |
+| Approver| Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers| [OWNERS_ALIASES] file approver entry |
 
 
 ## New contributors
 
-[New contributors](https://github.com/kubevirt/kubevirt/blob/master/CONTRIBUTING.md) should be welcomed to the community by existing members, helped with PR workflow, and directed to relevant documentation and communication channels.
+[New contributors](https://github.com/kubevirt/kubevirt/blob/main/CONTRIBUTING.md) should be welcomed to the community by existing members, helped with PR workflow, and directed to relevant documentation and communication channels.
 All contributors are expected to adhere to the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
 
 ## Established community members
@@ -21,7 +21,7 @@ Established community members are expected to demonstrate their adherence to the
 
 ## Member
 
-Members are active contributors in the community. They can have issues and PRs assigned to them, participate in community related meetings (e.g. bug scrub), and pre-submit tests are automatically run for their PRs. Members are expected to remain active contributors to the community.
+Members are continuously active contributors in the community. They can have issues and PRs assigned to them, participate in community related meetings (e.g. bug scrub), and pre-submit tests are automatically run for their PRs. Members are expected to remain active contributors to the community.
 Defined by: Member of the KubeVirt GitHub organization
 
 ### Requirements
@@ -75,7 +75,7 @@ Reviewer Status is scoped to a part of the project.
 
 ## Requirements
 
-The following apply to the part of project for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
 
   * Member for at least 3 months
   * Primary reviewer for at least 5 PRs to the project
@@ -88,7 +88,7 @@ The following apply to the part of project for which one would be a reviewer in 
 
 ### Responsibilities and privileges
 
-  * The following apply to the part of project for which one would be a reviewer in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+  * The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
   * Tests are automatically run for PullRequests from members of the KubeVirt GitHub organization
   * Reviewer status may be a precondition to accepting L+ contributions
   * Responsible for project quality control via reviews
@@ -107,7 +107,7 @@ Defined by: Approvers entry in an OWNERS file in a repo owned by the KubeVirt pr
 Approver Status is scoped to a part of the project.
 
 ### Requirements
-The following apply to the part of project for which one would be an approver in the [OWNERS](https://github.com/kubevirt/kubevirt/blob/master/OWNERS_ALIASES) file.
+The following apply to the part of project for which one would be an approver in the [OWNERS_ALIASES] file.
 
   * Reviewer of the project for at least 3 months
   * Primary reviewer for at least 10 substantial PRs to the project
@@ -127,3 +127,37 @@ The following apply to the part of project for which one would be an approver in
   * Expected to be responsive to review requests as per community expectations
   * Mentor contributors and reviewers
   * May approve contributions for acceptance
+
+## Inactive members
+
+[_Members are continuously active contributors in the community._](#member)
+
+A core principle in maintaining a healthy community is encouraging active
+participation. It is inevitable that people's focuses will change over time, and
+they are not expected to be actively contributing forever.
+
+However, being a member of the KubeVirt GitHub organization comes with
+an elevated set of permissions. These capabilities should not be used by those
+that are not familiar with the current state of the KubeVirt project.
+
+Therefore, members with an extended period away from the project with no activity
+will be removed from the KubeVirt GitHub Organization and will be required to
+go through the org membership process again after re-familiarizing themselves
+with the current state.
+
+### How inactivity is measured
+
+Inactive members are defined as members of the KubeVirt Organization
+with **no** contributions within the KubeVirt organization within 12 months. 
+This is measured by the [CNCF DevStats project].
+
+**Note:** Devstats does not take into account non-code contributions. If a
+non-code contributing member is accidentally removed this way, they may open an
+issue to quickly be re-instated.
+
+After an extended period away from the project with no activity
+those members would need to re-familiarize themselves with the current state
+before being able to contribute effectively.
+
+[CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/48/users-statistics-by-repository-group?orgId=1&from=now-1y&to=now&var-period=w&var-metric=activity&var-repogroup_name=All&var-users=All
+[OWNERS_ALIASES]: https://github.com/kubevirt/kubevirt/tree/main/OWNERS_ALIASES
