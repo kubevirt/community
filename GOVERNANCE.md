@@ -61,8 +61,6 @@ Maintainer on receipt of a security issue or CoC report.  All current Maintainer
 must be invited to such closed meetings, except for any Maintainer who is
 accused of a CoC violation.
 
-More details can be found [here](commnuity_meeting.md).
-
 ## CNCF Resources
 
 Any Maintainer may suggest a request for CNCF resources, in the
