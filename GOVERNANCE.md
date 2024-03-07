@@ -53,7 +53,7 @@ Approved maintainers will be added to the [private maintainer mailing list](mail
 ## Meetings
 
 Time zones permitting, Maintainers are expected to participate in the weekly public
-community meeting. 
+community meeting. More details can be found [here](commnuity_meeting.md).
 
 Maintainers will also have closed meetings in order to discuss security reports
 or Code of Conduct violations.  Such meetings should be scheduled by any
