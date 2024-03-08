@@ -8,7 +8,7 @@ label, indicating that members have committed to providing extra assistance for
 new contributors. All `good first issue` items also have the `help wanted`
 label.
 
-We also have some [suggestions](#suggestions) for using these labels to help
+We also have some [suggestions](#suggestions-for-experienced-community-members) for using these labels to help
 grow and improve our community.
 
 ## Help Wanted
@@ -36,10 +36,6 @@ Items marked with the `help wanted` label need to ensure that they meet these cr
 - **Up-To-Date**
   Often these issues become obsolete and have already been completed, are no longer
   desired, no longer make sense, or have changed priority or difficulty.
-
-<!-- TODO find a good one
-A good example of a Help Wanted issue description can be found here: [kubernetes/test-infra#21356 (comment)](https://github.com/kubernetes/test-infra/issues/21356#issuecomment-799972711).
--->
 
 These commands can be used with GitHub issues to manage the `help wanted` label:
 
@@ -87,10 +83,6 @@ items in addition to meeting the following criteria:
   fit to be copied. If the area of code doesn't have tests, before labeling the
   issue, add a test fixture. This prep often makes a great `help wanted` task!
 
-<!-- TODO find a good one
-A good example of a `good first issue` description can be found here: [kubernetes/kubernetes#68231](https://github.com/kubernetes/kubernetes/issues/68231).
--->
-
 These commands can be used in the GitHub issue comments to control the `good first issue` label:
 
 - `/good-first-issue` : Adds the `good first issue` label to an issue. Also adds
@@ -119,20 +111,22 @@ If you make someone feel like a part of our community, they will know that it is
 questions, that people will let them know the rules, and that their
 contributions are helpful and appreciated. They will stick around! 🌈
 
-- Encourage new contributors to seek help on the appropriate slack channels,
+- Encourage new contributors to seek help on the appropriate slack channel [#kubevirt-dev],
   introduce them, and include them in your conversations.
 - Invite them to the SIG meetings.
 - Give credit to new contributors so that others get to know them: "Hey, would
-  someone help give a second LGTM on @newperson's first PR on chocolate
-  bunnies?" Mention them in the SIG channel and meeting, and thank them on Twitter or
-  #shoutouts.
+  someone help give an LGTM on @newperson's first PR on chocolate
+  bunnies?" Mention them in [#kubevirt-dev] and meeting, and thank them on social media or
+  [#kubevirt-dev].
 - Use all the emoji in your approve or lgtm comment. 💖 🚀
 - Let them know that their `good first issue` is getting extra attention to make
   the first one easier and help them find a follow-up issue.
-- Suggest a related `help wanted` so that can build up experience in an area.
+- Suggest a related `help wanted` so that they can build up experience in an area.
 - People are more likely to continue contributing when they know what to expect.
   They want to know the acceptable way to ask for people to review a PR, and how to nudge things along
   when a PR is stalled. Show them how we operate by helping move their first PR
   along.
 - If you have time, let the contributor know that they can DM you with questions
   that they aren't yet comfortable asking the wider group.
+
+[#kubevirt-dev]: https://kubernetes.slack.com/archives/C0163DT0R8X
