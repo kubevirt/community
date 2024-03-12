@@ -129,6 +129,39 @@ sigs:
           - github: xpivarc
             name: "Luboslav Pivarc"
             company: Red Hat
+    - dir: sig-ci
+      name: KubeVirt CI Operations Group
+      mission_statement: |
+        Ensure that the CI infrastructure is operational, that CI jobs are executed in a timely manner and PRs of any of the onboarded projects are not blocked.
+      leadership:
+        chairs:
+        - github: brianmcarey
+          name: "Brian Carey"
+          company: Red Hat
+        - github: dhiller
+          name: "Daniel Hiller"
+          company: Red Hat
+      meetings:
+      - description: KubeVirt CI Taskforce Sync meeting
+        day: Monday
+        time: "09:00"
+        tz: UTC
+        frequency: weekly
+        url: https://meet.google.com/pcy-dnin-ojj
+        archive_url: https://docs.google.com/document/d/17eKwt7zaPsEcFrP6hVEz2Bvj_DVg3zJLIUMO0XM7kp4/edit?usp=sharing
+      - description: KubeVirt tests quarantine catch-up
+        day: Wednesday
+        time: "08:45"
+        tz: UTC
+        frequency: weekly
+        url: https://meet.google.com/obu-gcyx-afz
+        archive_url: https://docs.google.com/document/d/17eKwt7zaPsEcFrP6hVEz2Bvj_DVg3zJLIUMO0XM7kp4/edit?usp=sharing
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+        - name: kubevirt-community
+          description: General Discussion
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
