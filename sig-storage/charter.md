@@ -1,5 +1,53 @@
 # SIG Storage
 
+## Scope
+
+SIG Storage mainly responsible for the code that bridges the gap between Kubernetes storage primitives (PersistentVolumeClaims, VolumeSnapshots, CSI drivers, etc) and Virtual Machine storage requirements (bootable/mountable VM disk images, disk expansion, hotplug support, etc).
+
+### In Scope
+
+The main areas:
+* APIs
+  * VirtualMachineSnapshot
+  * VirtualMachineRestore
+  * VirtualMachineExport
+* KubeVirt volumes
+  * ContainerDisks
+  * PersistentVolumeClaims
+  * DataVolumes
+  * EphemralDisks
+  * EmptyDisks
+  * HostDisks
+  * ConfigMaps
+  * Secrets
+  * MemoryDumps
+* Virtualization tools compatibility
+  * Hotplug Volumes
+  * virtio-fs
+  * SCSI persistent reservation
+  * libguestfs tools
+* KubeVirt client commands
+  * virtctl image-upload
+  * virtctl guestfs
+  * virtctl vmexport
+  * virtctl memory-dump
+
+Additional **secondary** responsibilities are:
+* Fixing storage related functional tests and flakiness
+
+### Out of scope
+The SIG is NOT responsible for:
+* Testing and fixing every CSI storage provider integrating with KubeVirt.
+
+## Roles and Organization Management
+
+This sig follows the Roles and Organization Management outlined in [OARP]
+
+### Additional responsibilities of Chairs
+
+* Welcome new contributors
+* Resolve conflicts
+
 ## Meeting Mechanics
 
 * Where: Zoom meeting ID: 97050528531
@@ -11,6 +59,6 @@
   * mail-to: kubevirt-dev@googlegroups.com
   * Subject: [SIG-storage] Meeting Notes <DATE>
 
-## Agenda 
+## Agenda
 * Discuss storage topics important to community members.
 * Raise awareness of issues and pull requests that affect storage.
