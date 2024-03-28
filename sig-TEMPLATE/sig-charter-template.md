@@ -29,4 +29,4 @@ This sig follows the Roles and Organization Management outlined in [OARP]
 - Be welcoming to new contributors
 - Resolve conflicts
 
-[OARP]: [OARP]: https://stumblingabout.com/tag/oarp/
+[OARP]: https://stumblingabout.com/tag/oarp/
