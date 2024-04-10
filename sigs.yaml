@@ -90,6 +90,20 @@ sigs:
         teams:
             - name: kubevirt-community
               description: General Discussion
+    - dir: sig-observability
+      name: observability
+      subprojects:
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/monitoring/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
