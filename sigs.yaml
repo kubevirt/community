@@ -104,6 +104,31 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
+    - dir: sig-buildsystem
+      name: KubeVirt Buildsystem SIG
+      subprojects:
+      - name: kubevirt-buildsystem
+        owners:
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/automation/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/builder/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/bazel/OWNERS
+      mission_statement: |
+        SIG buildsystem takes care of all things building and automating for the KubeVirt project - they ensure new and existing contributors have a smooth contribution experience, i.o.w. contributors shouldn't have the feeling that they are wasting their time.
+        This includes bazel, test automation and updates, also support of failing builds or test lanes in case of infrastructural or configuration problems.
+      label: sig-buildsystem
+      leadership:
+        chairs:
+          - github: dhiller
+            name: "Daniel Hiller"
+            company: Red Hat
+          - github: brianmcarey
+            name: "Brian Carey"
+            company: Red Hat
+          - github: xpivarc
+            name: "Luboslav Pivarc"
+            company: Red Hat
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community

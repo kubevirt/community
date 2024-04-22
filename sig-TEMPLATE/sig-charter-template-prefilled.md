@@ -30,4 +30,4 @@ This sig follows the Roles and Organization Management outlined in [OARP]
 - list of any additional responsibilities
 - of Chairs
 
-[OARP]: [OARP]: https://stumblingabout.com/tag/oarp/
+[OARP]: https://stumblingabout.com/tag/oarp/
