@@ -148,7 +148,7 @@ sigs:
         tz: UTC
         frequency: weekly
         url: https://meet.google.com/pcy-dnin-ojj
-        archive_url: https://docs.google.com/document/d/17eKwt7zaPsEcFrP6hVEz2Bvj_DVg3zJLIUMO0XM7kp4/edit?usp=sharing
+        archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
       - description: KubeVirt tests quarantine catch-up
         day: Wednesday
         time: "08:45"
