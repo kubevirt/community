@@ -1,6 +1,18 @@
 sigs:
     - dir: sig-compute
-      name: compute
+      label: sig-compute
+      leadership:
+        chairs:
+          - github: iholder101
+            name: "Itamar Holder"
+            company: Red Hat
+          - github: jean-edouard
+            name: "Jed Lejosne"
+            company: Red Hat
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+      name: sig-compute
       subprojects:
         - name: kubevirt
           owners:
