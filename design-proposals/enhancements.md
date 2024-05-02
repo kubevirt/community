@@ -12,6 +12,7 @@ it is not clear who is owning them post-merge.
 
 In this proposal we are proposing to change the process and shape them
 around SIGs.
+
 At its core, this proposal requires:
 
 1. designs to be sponsored by a SIG
@@ -101,7 +102,7 @@ Require this process for KubeVirt v1.4 and onwards.
 
 # Implementation Phases
 
-Beta for KubeVirt v1.3
-GA in KubeVirt v1.4
+Beta for KubeVirt v1.4
+GA in KubeVirt v1.5
 
 [^1]: The exact feature life-cycle is under discussion in https://github.com/kubevirt/community/pull/251. This doc here should be updated once #251 got merged.
