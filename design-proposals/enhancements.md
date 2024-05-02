@@ -1,7 +1,7 @@
 # Overview
 
 Rework the existing KubeVirt design proposal process into a more
-formal - still lean - Enhancement Porposal process.
+formal - but still lean - and SIG-aligned Enhancement Proposal process.
 
 ## Motivation
 
@@ -12,12 +12,12 @@ it is not clear who is owning them post-merge.
 
 In this proposal we are proposing to change the process and shape them
 around SIGs.
-At the heart this proposal is requiring
+At its core, this proposal requires:
 
 1. designs to be sponsored by a SIG
-2. to make a SIG responsible for the design process (reviews of design, code, documentation)
-3. to make a SIG responsible for managing the design process (collaboration with other SIGs as needed)
-4. to make a SIG owning the feature once it has been merged. The SIG is responsible for maintaing, fixing, running, everything it.
+2. to make one SIG responsible for the design process (reviews of design, code, documentation)
+3. to make one SIG responsible for managing the design process (collaboration with other SIGs as needed)
+4. to make one SIG to own the feature once it has been merged. The SIG is responsible for maintaining, fixing, running, _everything-it_.
 
 This has a few effects - see the following Goals section.
 
@@ -27,7 +27,7 @@ This has a few effects - see the following Goals section.
 2. SIG approvers are empowered to approve designs, increase the approvers pool
 3. The ownership of an implemented feature becomes clear
 4. Ensure that designs converge (accept, reject)
-5. Formalize this process as an Virtualization Enhnacement Proposal (VEP) process
+5. Formalize this process as an Virtualization Enhancement Proposal (VEP) process
 
 ## Non Goals
 
@@ -56,24 +56,26 @@ This has a few effects - see the following Goals section.
 
 Key elements:
 
-- Ownership: SIGs own a freature from it's inception (design) all the way to it's end
+- Ownership: SIGs own a _feature_ (which includes the process, but also
+  the resulting code) from it's inception (design) all the way (fixes, maintenance) to it's end (removal)[^1]
 - Approvals: SIG approvers will be allowed to approve designs
-- Responsibilities: SIG Approvers are responsible for driving a design, and connecitng it to other SIGs as needed
+- Responsibilities: SIG Approvers are responsible for driving a design, and connecting it to other SIGs as needed
 
 Process elements:
 
 - VEP Author creates a GitHub Issue for getting a unique identifier and starting the process
 - VEP Author creates a PR to propose the design targeting a specific SIG
-- SIG decides on an approver to sheppered the VEP
-- SIG collaborates with other SIGs to ensure it's throughly reviewed
+- SIG decides on an approver to shepherd the VEP
+- SIG collaborates with other SIGs to ensure its thoroughly reviewed
 - SIG approves or rejects VEP
 - Other SIG approvers can veto a proposal
 - SIG owns future maintenance of the implementation
+- KubeVirt Maintainers are responsible to support the owning SIG and VEP author in the case of conflicts and questions
 
 Technical elements:
 
 - VEPs will live in a new dedicated repository `kubevirt/enhancements`
-- `OWNER_ALIASES` will be mirrored from kubevirt/kubveirt in order to have the same sigs in the EP repository
+- `OWNER_ALIASES` will be mirrored from kubevirt/kubevirt in order to have the same SIGs in the EP repository
 - Approvals and ownership is defined with `OWNERS` files in the `veps/sig-*` directories, tying into the general prow approval and merge flow
 - GitHub Issues will be used to create unique identifiers
 
@@ -95,9 +97,11 @@ We move back to the community/design-proposals process.
 
 ## Functional Testing Approach
 
-Require this process for KubeVirt v1.3+
+Require this process for KubeVirt v1.4 and onwards.
 
 # Implementation Phases
 
 Beta for KubeVirt v1.3
 GA in KubeVirt v1.4
+
+[^1]: The exact feature life-cycle is under discussion in https://github.com/kubevirt/community/pull/251. This doc here should be updated once #251 got merged.
