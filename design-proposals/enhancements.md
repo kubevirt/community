@@ -48,6 +48,8 @@ This has a few effects - see the following Goals section.
   in order to make sure that we are able to maintain it
 * As a SIG Approver I want to ensure that a design is sound before a
   VEP Author is approaching an implementation.
+* As a KubeVirt developer, I want to have a single source-of-truth
+  w.r.t. the current status, design API of a feature.
 
 ## Repos
 
@@ -85,7 +87,6 @@ Technical elements:
 None.
 
 ## Scalability
-
 
 Instead of relying on a small approvers pool, now the process starts
 with routing VEPs in the beginning of their life-time to SIGs.
