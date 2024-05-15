@@ -157,14 +157,14 @@ sigs:
       - description: KubeVirt CI Taskforce Sync meeting
         day: Monday
         time: "09:00"
-        tz: UTC
+        tz: CET
         frequency: weekly
         url: https://zoom.us/j/96583958896
         archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
       - description: KubeVirt tests quarantine catch-up
         day: Wednesday
         time: "08:45"
-        tz: UTC
+        tz: CET
         frequency: weekly
         url: https://zoom.us/j/94552009485
         archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
