@@ -111,9 +111,10 @@ The drawback side is that `virt-launcher` pod would need to be run with `privile
 Device plugins have the ability to add hostPath mounts to the pods when they request for managed resources.
 We could implement a vhostuser device plugin that would manage two kinds of resources:
 - dataplane: 1
-  This only resource is resquested by the userspace dataplane, and add a `/var/run/vhost_sockets` mount to the dataplane pod.
+  This only resource is requested by the userspace dataplane, and add a `/var/run/vhost_sockets` mount to the dataplane pod.
 - vhostuser sockets: n
-  This as many resources as we want to handle, is requested by the `virt-launcher` pod using vhostuser plugin. This makes the device plugin create a per pod directory like `/var/run/vhost_sockets/<launcher-id>`, and mount it into the `virt-launcher` pod.
+  This as many resources as we want to handle, is requested by the `virt-launcher` pod using vhostuser plugin. This makes the device plugin create a per pod directory like `/var/run/vhost_sockets/<pod-dp-id>`, and mount it into the `virt-launcher` pod.
+  The device plugin has to generate a `pod-dp-id` and push it as a pod annotation. This will be used later by the CNI to configure the vhostuser socket in the dataplane with right path.:w
 
 This solution allows both dataplane and vm pods to share the vhostuser sockets without requiring to be privileged, and without the need for the CNI to do some bind mounts and avoid the constraints on Multus mountPropagation option.
 
