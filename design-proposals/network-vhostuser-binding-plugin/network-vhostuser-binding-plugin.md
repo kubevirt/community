@@ -88,7 +88,7 @@ Sharing the `vhostuser` sockets between `virt-launcher` pods and the dataplane p
 
 ## Alternative designs
 
-Some alternative designs were discussed in ![kubevirt-dev mailing-list](https://groups.google.com/g/kubevirt-dev/c/3w_WStrJfZw/m/yWSBpDAKAQAJ).
+Some alternative designs were discussed in [kubevirt-dev mailing-list](https://groups.google.com/g/kubevirt-dev/c/3w_WStrJfZw/m/yWSBpDAKAQAJ).
 
 ### Expose a virt-launcher pod directory to binding plugin
 
