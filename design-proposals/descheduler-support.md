@@ -30,21 +30,19 @@ The descheduler should be able to operate on `virt-launcher` pods.
 ## User Stories
 - As a cluster admin running a K8s cluster with a descheduler, I want to deploy and use KubeVirt.
 - As a cluster admin running a K8s cluster with KubeVirt, I want to deploy a descheduler that will correctly operate on my VMs.
-- As a cluster admin I want to enable cluster-wide KubeVirt's descheduler support.
 
 ## Repos
 1. kubevirt/kubevirt
-2. kubevirt/hyperconverged-cluster-operator
 
 # Design
 ## Descheduler Requirements
 1. In order for the descheduler to be able to differentiate `virt-launcher` pods from other pods, all `virt-launcher` pods should be annotated with `descheduler.alpha.kubernetes.io/request-evict-only`.
 2. In cases where the VM will be migrated, eviction requests on `virt-launcher` pods should return 429 HTTP code with a special reason message.
-3. In order for the deschduler to understand that a `virt-launcher` pod is pending migration, it should be annotated with `descheduler.alpha.kubernetes.io/eviction-in-progress` so it will not try to evict it again.
+3. In order for the descheduler to understand that a `virt-launcher` pod is pending migration, it should be annotated with `descheduler.alpha.kubernetes.io/eviction-in-progress` so it will not try to evict it again.
 4. In case the migration failed, the `descheduler.alpha.kubernetes.io/eviction-in-progress` annotation will be removed from the source `virt-launcer` so the descheduler will understand that it could try evicting it again.
 
 ## Feature Gate
-A `DeschedulerSupport` feature gate will be introduced in order to enable this feature.
+A feature gate is not needed.
 
 ## Changes to Pod Eviction Webhook
 Currently, the descheduler observes the one of the following responses:
@@ -87,11 +85,9 @@ The flow will be tested e2e without a real descheduler by manually evicting a `v
 This should be done with all eviction strategies.
 
 # Implementation Phases
-1. Add a feature gate in KubeVirt.
-2. Add the logic to pod eviction webhook.
-3. Add the `descheduler.alpha.kubernetes.io/request-evict-only` annotation to newly created `virt-launcher` pods.
-4. Add the `descheduler.alpha.kubernetes.io/request-evict-only` annotation to existing `virt-launcher` pods that do not have it.
-5. Add the `descheduler.alpha.kubernetes.io/eviction-in-progress` annotation to `virt-launcher` pods that their controlling VMI is marked for eviction.
-6. Remove the `descheduler.alpha.kubernetes.io/eviction-in-progress` annotation to `virt-launcher` pods which failed migration.
-7. Add an E2E test simulating an eviction.
-8. Add an enabler in HCO.
+1. Add the logic to pod eviction webhook.
+2. Add the `descheduler.alpha.kubernetes.io/request-evict-only` annotation to newly created `virt-launcher` pods.
+3. Add the `descheduler.alpha.kubernetes.io/request-evict-only` annotation to existing `virt-launcher` pods that do not have it.
+4. Add the `descheduler.alpha.kubernetes.io/eviction-in-progress` annotation to `virt-launcher` pods that their controlling VMI is marked for eviction.
+5. Remove the `descheduler.alpha.kubernetes.io/eviction-in-progress` annotation to `virt-launcher` pods which failed migration.
+6. Add an E2E test simulating an eviction.
