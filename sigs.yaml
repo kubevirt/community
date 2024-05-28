@@ -101,6 +101,28 @@ sigs:
           url: https://zoom.us/j/3205945033
           archive_url: https://docs.google.com/document/d/1d_b2o05FfBG37VwlC2Z1ZArnT9-_AEJoQTe7iKaQZ6I/edit?usp=sharing
           recordings_url: https://www.youtube.com/channel/UC2FH36TbZizw25pVT1P3C3g
+    - dir: sig-api
+      name: KubeVirt API SIG
+      mission_statement: |
+        Define and drive graceful, forward and backward compatible API changes in within KubeVirt
+      label: kubevirt-community
+      leadership:
+        chairs:
+          - github: EdDev
+            name: "Edward Haas"
+            company: Red Hat
+          - github: alaypatel07
+            name: "Alay Patel"
+            company: Nvidia
+      meetings:
+        - description: KubeVirt API Meeting
+          day: Wednesday
+          time: "13:00"
+          tz: UTC
+          frequency: weekly
+          url: https://zoom.us/j/94066461783
+          archive_url: https://docs.google.com/document/d/1LCLt5k9x1yISZE_0SxGb5hcU3Q0pzDqRfIMEffgqlnk/edit?usp=sharing
+          recordings_url: https://www.youtube.com/channel/UC2FH36TbZizw25pVT1P3C3g
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
