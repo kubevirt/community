@@ -174,6 +174,30 @@ sigs:
         teams:
         - name: kubevirt-community
           description: General Discussion
+    - dir: sig-lifecycle
+      name: KubeVirt Lifecycle SIG
+      mission_statement: |
+        SIG Lifecycle is currently focused on the implementation and graduation of the `instancetype.kubevirt.io` API and CRDs to `v1` but will hopefully grow to maintain more of the VM lifecycle in the future.
+      label: kubevirt-community
+      subprojects:
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/common-instancetypes/main/OWNERS
+      leadership:
+        chairs:
+          - github: lyarwood
+            name: "Lee Yarwood"
+            company: Red Hat
+          - github: 0xFelix
+            name: "Felix Matouschek"
+            company: Red Hat
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+            - name: kubevirt-community
+              description: General Discussion
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
