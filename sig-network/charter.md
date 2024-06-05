@@ -26,6 +26,7 @@ Some notable examples of areas owned by SIG Network:
 - Developer and user documentation around networking.
 - Help for onboarding new SIG Network members.
 - Grooming network related bugs.
+- IPAM for secondary networks.
 
 ### Out of scope
 - Node networking, it may be managed by [kubernetes-nmstate](https://github.com/nmstate/kubernetes-nmstate).
