@@ -81,11 +81,20 @@ sigs:
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
         Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
+      subprojects:
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tools/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/performance/OWNERS
       label: kubevirt-community
       leadership:
         chairs:
           - github: rthallisey
-            name: "Ryan T. Hallisey"
+            name: "Ryan Hallisey"
+            company: Nvidia
+          - github: alaypatel07
+            name: "Alay Patel"
             company: Nvidia
       meetings:
         - description: KubeVirt Perf and Scale SIG Meeting
