@@ -224,6 +224,63 @@ pod.
     - Mount points
     - Downward API
 
+##### Sidecar Resource Requirements / Limits
+When registering a network binding plugin in the KubeVirt CR, it is possible to specify an optional sidecar container image. 
+Currently, this sidecar container's CPU/Memory requests and/or limits are set in any of the following scenarios:
+1. The VMI was configured to have dedicated CPUs (by setting `Spec.Domain.CPU.DedicatedCPUPlacement`).
+2. The VMI was configured to have a virt-launcher pod with [Guaranteed QOS class](https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#guaranteed) (by setting `Spec.Domain.Resources`).
+3. The cluster-admin had configured sidecar pods requests and/or limits on the [KubeVirt CR](https://kubevirt.io/api-reference/main/definitions.html#_v1_supportcontainerresources).
+
+> **Note**
+>
+> Setting CPU/memory requests and/or limits for sidecar pods on the KubeVirt CR will apply uniformly on all [hook sidecar containers](https://kubevirt.io/user-guide/user_workloads/hook-sidecar/) and network binding plugin sidecar containers.
+
+In the common scenario of a regular VM and no spacial configuration on the KubeVirt CR, 
+the network binding plugin sidecar containers do not have CPU/Memory requests and limits.
+The sidecar container can have a memory leak and may cause node's destabilization.
+
+Suggested solution:
+
+An additional API for network binding plugin sidecar resource specification will be added:
+
+The network binding plugin API in the KubeVirt CR shall receive an additional input field to specify the sidecar resource requirements:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: KubeVirt
+metadata:
+  name: kubevirt
+  namespace: kubevirt
+spec:
+  configuration:
+    network:
+      binding:
+        mynetbindingplugin:
+          sidecarImage: quay.io/kubevirt/mynetbindingplugin
+          sidecarResources:
+            requests:
+              cpu: 200m
+              memory: 20Mi
+```
+
+In case a sidecar image was specified for the plugin in the KubeVirt CR, the VMI controller (part of virt-controller) will create a sidecar container spec with the resource specification provided in `sidecarResources`.
+Since the VMI controller creates a single sidecar container per unique plugin defined on the VMI spec, the plugin sidecar's resources will only be added once.
+
+Pros:
+- Cluster-wide definition of network binding plugin sidecar resources per plugin.
+- Finer grained control over resources allocated to network binding plugin sidecars.
+- Decoupling from existing hook sidecars.
+- Additional resources could be requested other than CPU and memory.
+- The additional resource specification is visible to cluster admins.
+
+Cons:
+- Requires an API change.
+- When upgrading KubeVirt / network binding plugin versions, the sidecar container's resource specification might require adjustments.
+
+This solution was selected since it provides the cluster admin more control in regard to resource allocation.
+
+For the alternative solutions please see [Appendix G](#appendix-g-alternatives-to-plugin-sidecar-container-resource-specification)
+
 #### Configure Pod netns
 
 The CNI plugin has privileged access to the pod network namespace and
@@ -1163,3 +1220,45 @@ Libvirt configuration snippet:
 ```
 
 - The domain itself is created by the `virt-launcher`.
+
+# Appendix G: Alternatives to plugin sidecar container resource specification
+
+1. The cluster admin could configure worst case CPU/Memory requests and/or limits on the KubeVirt CR:
+
+Pros:
+- Already implemented.
+
+Cons:
+- Applies uniformly on all hook sidecars and network binding plugins
+    - Worst case CPU/Memory requests/limits should be defined on the KubeVirt CR which maybe wasteful for a combination of hook sidecars and network binding plugins.
+    - Coarse level of control.
+    - Only supports CPU and memory requests and limits.
+
+2. Mutating Webhook
+
+For each unique network binding plugin used, the VMI controller will add a label on the virt-launcher pod with the following format:
+
+`kubevirt.io/network-binding-plugin:<plugin-name>`
+
+The binding plugin authors will provide a [mutating webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook) that will intercept
+virt-launcher pod creation that have the above label, and add the appropriate resources requests/limits
+for every relevant sidecar container.
+
+The mutating webhook will be able to identify the plugin's sidecar container by its image URL.
+
+Pros:
+- Plugin authors have full control over the sidecar's resources
+- Additional API is not added to KubeVirt.
+- Opens the door for additional changes to the virt-launcher pod without changes to KubeVirt.
+- Code changes in KubeVirt are very small.
+
+Cons:
+- Plugin authors should provide another component and integrate it.
+- Additional point of failure.
+- Requires maintaining certificates for the webhook.
+- Additional latency when creating VMs with network binding plugins.
+- The additional resource specification is less visible to cluster admins.
+- Resource specification could collide with the support container resources specified on the KubeVirt CR or other webhooks.
+
+This solution provides flexibility for plugin authors while keeping the network binding plugin API in KubeVirt small.
+The requirement to maintain certificates for the webhook could be mitigated using tools such as [cert-manager](https://cert-manager.io/).
