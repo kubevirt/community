@@ -12,46 +12,56 @@ Be able to add `vhostuser` secondary interfaces to the VM definition in Kubevirt
 The `vhostuser` secondary interfaces configuration in the dataplane is under the responsibility of Multus and the CNI such as `userspace CNI`.
 
 ## Definition of Users
-Users of the feature are everyone that deploys a VM.
+- **VM User** is the persona that configures `VirtualMachine` or `VirtualMachineInstance`
+- **Cluster Admin** is the persona that configures `KuberVirt` resources
+- **Network Binding Plugin Developer** is the persona that implements the `network-vhostuser-binding` plugin
+- **CNI Developer** is the persona that implements the CNI that configures the dataplane with vhostuser sockets
+- **Dataplane Developer** is the persona that implements the userspace dataplane
 
 ## User Stories
-- As a user, I want to create a VM with one or serveral `vhostuser` interfaces attached to a userspace dataplane.
-- As a user, I want the `vhostuser` interface to be configured with a specific MAC address.
-- As a user, I want to enable multi-queue on the `vhostuser` interface
-- As a Network Binding Plugin developper, I want the shared socket path to be accessible to virt-launcher pod 
-- As a CNI developper, I want to access the shared vhostuser sockets from Multus pod
-
+- As a VM User, I want to create a VM with one or serveral `vhostuser` interfaces attached to a userspace dataplane.
+- As a VM User, I want the `vhostuser` interface to be configured with a specific MAC address.
+- As a VM User, I want to enable multi-queue on the `vhostuser` interface
+- As a VM User, I want to be able to configure the `vhostuser` interface as transitional
+- As a Cluster Admin, I want to be able to enable `network-vhostuser-binding`
+- As a Network Binding Plugin Developer, I want the shared socket path to be accessible to `virt-launcher` pod 
+- As a Dataplane Developer, I want to access all `vhostuser` sockets of VM pods
+- As a CNI Developer, I want to know whet vhostuser sockets are located
+ 
 ## Repos
-Kubevirt repo, and most specificaly cmd/sidecars.
+Kubevirt repo, and most specificaly [cmd/sidecars](https://github.com/kubevirt/kubevirt/tree/main/cmd/sidecars).
 
 ## Design
-This proposal leverages the Kubevirt Network Binding Plugin sidecar framework to implement a new `network-vhostuser-binding`.
+This proposal leverages the KubeVirt Network Binding Plugin sidecar framework to implement a new `network-vhostuser-binding`.
 
-`network-vhostuser-binding` role is to implement the modification to the domain XML according to the VMI definition passed through its gRPC service by the `virt-launcher` pod.
+`network-vhostuser-binding` role is to implement the modification to the domain XML according to the VMI definition passed through its gRPC service by the `virt-launcher` pod on `OnDefineDomain` event from `virt-handler`.
 
 `vhostuser` interfaces are defined in the VMI under `spec/domain/devices/interfaces` using the binding name `vhostuser`:
 
 ```yaml
-    spec:
-      domain:
-        devices:
-          networkInterfaceMultiqueue: true
-          interfaces:
-          - name: default
-            masquerade: {}
-          - name: net1
-            binding:
-              name: vhostuser
-            macAddress: ca:fe:ca:fe:42:42
+spec:
+  domain:
+    devices:
+      networkInterfaceMultiqueue: true
+      interfaces:
+      - name: default
+        masquerade: {}
+      - name: net1
+        binding:
+          name: vhostuser
+        macAddress: ca:fe:ca:fe:42:42
 ```
 
-`network-vhostuser-binding` translates the VMI definition into libvirt domain XML modifications:
+`network-vhostuser-binding` translates the VMI definition into libvirt domain XML modifications on `OnDefineDomain`:
 1. Creates a new interface with `type='vhostuser'`
 2. Set the MAC address if specified in the VMI spec
-3. If `networkInterfaceMultiqueue` is set to `true`, add the number of queues calculated after the number of cores of the VMI
-4. Add `memAccess='shared'` to all NUMA cells elements
-5. Define the device name according to Kubevirt naming schema
-6. Define the `vhostuser` socket path
+3. Define model type according to `useVirtioTransitional` VMI spec
+4. If `networkInterfaceMultiqueue` is set to `true`, add the number of queues calculated after the number of cores of the VMI
+5. Add `memAccess='shared'` to all NUMA cells elements
+6. Define the device name according to Kubevirt naming schema
+7. Define the `vhostuser` socket path
+
+As `OnDefineDomain` hook can be called multiple times by KubeVirt, `network-vhostuser-binding` modification must be idempotent.
 
 Below is an example of modified domain XML:
 
@@ -64,7 +74,7 @@ Below is an example of modified domain XML:
         </numa>
 </cpu>
 <interface type='vhostuser'>
-    <source type='unix' path='/var/run/kubevirt/sockets/poda08a0fcbdea' mode='server'/>
+    <source type='unix' path='/var/run/vhostuser/poda08a0fcbdea' mode='server'/>
     <target dev='poda08a0fcbdea'/>
     <model type='virtio-non-transitional'/>
     <mac address='ca:fe:ca:fe:42:42'/>
@@ -73,55 +83,89 @@ Below is an example of modified domain XML:
 </interface>
 ```
 
-This design leverages the existing `sockets` emptyDir mounted in `/var/run/kubevirt/sockets`. This allows the CNI to bind mount the socket emptyDir (`/var/lib/kubelet/<pod uid>/volumes/kubernetes.io~empty-dir/sockets`) to a host directory available to the dataplane pod through a hostPath mount.
+### Implementation details
 
-However this assumes:
-- the `sockets` emptyDir can be used for such a purpose
-- the CNI has access to the `sockets` emptyDir of the `virt-launcher` pod and that it can bind mount it to a path available to the dataplane. This can be tricky especially with Multus 4 in thick plugin mode, where the CNI is executed by the mutlus pod. Usually the multus thick plugin daemonset defines a `/hostroot` hostPath volume mount with `mountPropagation: HostToContainer` option. A `mountPropagation: Bidirectional` option is needed for the bind mount to be propagated back to the host and to the dataplane pod.
-- the dataplane pod has the privilege to mount a hostPath
+The socket path have to be available to both `virt-launcher` pod (and `compute` container) and dataplane pod.  
+In order to not use hostPath volumes that requires pod to be privileged, we propose to implement a **vhostuser Device Plugin** that will be able to inject mounts to the sockets directory into unprivileged pods, and annotations.
 
-Here is a diagram showing sockets sharing mecanisms between `virt-launcher` pod, `userspace CNI` and the `dataplane` pod.
+### Device Plugin for **vhostuser sockets** resource
 
-![kubevirt-vhostuser-shared-sockets](kubevirt-vhostuser-shared-sockets.png)
+Device plugins have the ability to add mounts into the pods when they request for managed resources.
 
-Sharing the `vhostuser` sockets between `virt-launcher` pods and the dataplane pod is something to be enhanced in order to limit usage of hostPath volumes and bind mounts.
-
-## Alternative designs
-
-Some alternative designs were discussed in [kubevirt-dev mailing-list](https://groups.google.com/g/kubevirt-dev/c/3w_WStrJfZw/m/yWSBpDAKAQAJ).
-
-### Expose a virt-launcher pod directory to binding plugin
-
-This requires to implement a new network binding plugin mechanism we could expose the content of a `virt-launcher` directory to an external plugin.
-The plugin registration in Kubervirt resource would define the target directory on the node where the directory should be exposed.
-
-This diagram explains this mechanism.
-
-![kubevirt-plugin-extension](kubevirt-plugin-extension.png)
-
-The advantages of such an approach are:
-- is generic and could also be potentially reused by other device types
-- hides the KubeVirt implementation details. Currently, you need to know where the KubeVirt sockets are located in the virt-launcher filesystem. Potentially, if we change the directory path for the sockets, this would break the CNI plugin
-- can isolate the resources dedicated to that particular plugin
-
-The drawback side is that `virt-launcher` pod would need to be run with `privileged: true` in order to do the bind mount.
-
-### Device plugin for `vhostuser sockets` resource
-
-Device plugins have the ability to add hostPath mounts to the pods when they request for managed resources.
-We could implement a vhostuser device plugin that would manage two kinds of resources:
-- dataplane: 1
+This design proposal relies on a device plugin that would manage two kinds of resources, representing a host directory where sockets will rely (for example `/var/run/vhost_sockets`):
+- **dataplane**: `1`  
   This only resource is requested by the userspace dataplane, and add a `/var/run/vhost_sockets` mount to the dataplane pod.
-- vhostuser sockets: n
-  This as many resources as we want to handle, is requested by the `virt-launcher` pod using vhostuser plugin. This makes the device plugin create a per pod directory like `/var/run/vhost_sockets/<pod-dp-id>`, and mount it into the `virt-launcher` pod.
-  The device plugin has to generate a `pod-dp-id` and push it as a pod annotation. This will be used later by the CNI to configure the vhostuser socket in the dataplane with right path.:w
+- **vhostuser sockets**: `n`  
+  This as many resources as we want to handle and may represent the number of port of the dataplane vSwitch.  
+  It is requested through VM or VMI definition in resources request spec. In turn the `virt-launcher` pod will request the same resources.  
+  This makes the device plugin create a per pod directory like `/var/run/vhost_sockets/<pod-dp-id>`, and mount it into the `virt-launcher` pod as to well known location `/var/run/vhostuser`.  
+  The device plugin has to generate a `pod-dp-id` and push it as an annotation in `virt-launcher` pod. This will be used later by the CNI or any component that configures the vhostuser socket in the dataplane with right path.
 
-This solution allows both dataplane and vm pods to share the vhostuser sockets without requiring to be privileged, and without the need for the CNI to do some bind mounts and avoid the constraints on Multus mountPropagation option.
+We still have to care about directory and sockets permission and SELinux. 
 
-We still have to care about directory and sockets permission (and SELinux categories?). 
+### Implementation diagram
+
+![kubevirt-vhostuser-shared-sockets](kubevirt-vhostuser-binding-plugin-device-plugin.png)
 
 ## API Examples
-(tangible API examples used for discussion)
+No modification needed to KubeVirt API.
+
+Example of a `VirtualMachine` definition using `network-vhostuser-binding` plugin and device plugin resources requests:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: vhostuser-vm
+  namespace: tests
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        kubevirt.io/domain: vhostuser-vm
+    spec:
+      architecture: amd64
+      domain:
+        cpu:
+          cores: 4
+        devices:
+          disks:
+          - disk:
+              bus: virtio
+            name: containerdisk
+          interfaces:
+          - masquerade: {}
+            name: default
+          - binding:
+              name: vhostuser
+            macAddress: ca:fe:ca:fe:42:42
+            name: net1
+          networkInterfaceMultiqueue: true
+        machine:
+          type: q35
+        memory:
+          hugepages:
+            pageSize: 1Gi
+        resources:
+          limits:
+            vhostuser/sockets: 1
+          requests:
+            memory: 2Gi
+            vhostuser/sockets: 1
+      networks:
+      - name: default
+        pod: {}
+      - multus:
+          networkName: vhostuser-network
+        name: net1
+      nodeSelector:
+        node-class: dpdk
+      volumes:
+      - containerDisk:
+          image: os-container-disk-40g
+        name: containerdisk
+```
 
 ## Scalability
 (overview of how the design scales)
@@ -137,6 +181,6 @@ Create a VM with several `vhostuser` interfaces then:
 - check the VM is running
 
 # Implementation Phases
-1. First implementation done
-2. Iterate on design issues regarding socket sharing
+1. First implementation of the `network-vhostuser-binding` done
+2. Implement vhostuser device plugin
 3. Upstream `network-vhostuser-binding`
