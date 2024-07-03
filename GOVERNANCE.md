@@ -151,17 +151,17 @@ that are short-lived or that span multiple SIGs.
 Working groups are primarily used to facilitate topics of discussion that are in
 scope for KubeVirt but that cross SIG lines.
 
- Our WGs define mission and scope via their charter, and members and roles in
+Our WGs define mission and scope via their charter, and members and roles in
  [sigs.yaml].
 
 For more details see also the [Kubernetes WGs] model.
 
 ## Roles and Organization Management
 
-All our SIGs and WGs follow the Roles and Organization Management outlined in [OARP]
+All our SIGs and WGs follow the Roles and Organization Management outlined in our [membership policy].
 
 [Kubernetes SIGs]: https://github.com/kubernetes/community/blob/master/governance.md#sigs
 [Kubernetes Subprojects]: https://github.com/kubernetes/community/blob/master/governance.md#subprojects
 [Kubernetes WGs]: https://github.com/kubernetes/community/blob/master/governance.md#working-groups
-[OARP]: https://stumblingabout.com/tag/oarp/
+[membership policy]: ./membership_policy.md
 [sigs.yaml]: ./sigs.yaml
