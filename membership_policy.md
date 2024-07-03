@@ -2,13 +2,15 @@
 
 This document outlines the various responsibilities of contributor roles in KubeVirt.
 
-| Role  | Responsibilities                                                                                             | Requirements | Defined by                                                                                    |
-| ----- |--------------------------------------------------------------------------------------------------------------| ------------ |-----------------------------------------------------------------------------------------------|
-| Contributor | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request | Active GitHub account                                                                         |
-| Member | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project | KubeVirt GitHub org member                                                                    |
-| Reviewer | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver | [OWNERS_ALIASES] file reviewer entry                                                          |
-| Approver| Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers| [OWNERS_ALIASES] file approver entry |
-
+| Role                                        | Responsibilities                                                                                             | Requirements                                                                                                        | Defined by                           |
+|---------------------------------------------|--------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+| Contributor                                 | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request                                                                                    | Active GitHub account                |
+| Member                                      | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                         | KubeVirt GitHub org member           |
+| Reviewer                                    | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver                        | [OWNERS_ALIASES] file reviewer entry |
+| Approver                                    | Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers   | [OWNERS_ALIASES] file approver entry |
+| [SIG Chair](#sig-chair)                     | Lead a SIG aligned to the goals of the SIG charter                                                           | * sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project            | [sigs.yaml] chair entry              |
+| [SIG Subproject Lead](#sig-subproject-lead) | Lead a subproject aligned to the goals of the SIG charter                                                    | * sig-reviewer<br>* Highly experienced in SIG subproject matters<br> * Active reviewer & contributor to the project | [sigs.yaml] subproject leads entry   |
+| [WG Chair](#wg-chair)                       | Lead a WG aligned to the goals of the WG charter                                                             | * Highly experienced in WG matters<br> * Active reviewer & contributor to the project                               | [sigs.yaml] WG chairs entry          |
 
 ## New contributors
 
@@ -128,6 +130,45 @@ The following apply to the part of project for which one would be an approver in
   * Mentor contributors and reviewers
   * May approve contributions for acceptance
 
+## SIG Chair
+
+### Requirements
+
+* contributor
+* advanced knowledge in SIG subject
+
+### Responsibilities and privileges
+
+* is an organizer and facilitator
+* operates the SIG
+* communicates and coordinates with other SIGs, and the broader community
+* may claim approver rights in scope
+
+## SIG Subproject Lead
+
+### Requirements
+
+* contributor
+* advanced knowledge in subproject scope
+
+### Responsibilities and privileges
+
+* leads within subproject scope
+* is an active reviewer
+* may claim approver rights in scope
+
+## WG Chair
+
+### Requirements
+
+* contributor
+* advanced knowledge in WG scope
+
+### Responsibilities and privileges
+
+* is an organizer and facilitator
+* gives updates to respective sponsoring SIG Chairs
+
 ## Inactive members
 
 [_Members are continuously active contributors in the community._](#member)
@@ -161,3 +202,4 @@ before being able to contribute effectively.
 
 [CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/48/users-statistics-by-repository-group?orgId=1&from=now-1y&to=now&var-period=w&var-metric=activity&var-repogroup_name=All&var-users=All
 [OWNERS_ALIASES]: https://github.com/kubevirt/kubevirt/tree/main/OWNERS_ALIASES
+[sigs.yaml]: ./sigs.yaml
