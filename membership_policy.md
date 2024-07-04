@@ -2,15 +2,15 @@
 
 This document outlines the various responsibilities of contributor roles in KubeVirt.
 
-| Role                                        | Responsibilities                                                                                             | Requirements                                                                                                        | Defined by                           |
-|---------------------------------------------|--------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| Contributor                                 | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request                                                                                    | Active GitHub account                |
-| Member                                      | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                         | KubeVirt GitHub org member           |
-| Reviewer                                    | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver                        | [OWNERS_ALIASES] file reviewer entry |
-| Approver                                    | Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br>Sponsored by 2 approvers   | [OWNERS_ALIASES] file approver entry |
-| [SIG Chair](#sig-chair)                     | Lead a SIG aligned to the goals of the SIG charter                                                           | * sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project            | [sigs.yaml] chair entry              |
-| [SIG Subproject Lead](#sig-subproject-lead) | Lead a subproject aligned to the goals of the SIG charter                                                    | * sig-reviewer<br>* Highly experienced in SIG subproject matters<br> * Active reviewer & contributor to the project | [sigs.yaml] subproject leads entry   |
-| [WG Chair](#wg-chair)                       | Lead a WG aligned to the goals of the WG charter                                                             | * Highly experienced in WG matters<br> * Active reviewer & contributor to the project                               | [sigs.yaml] WG chairs entry          |
+| Role                                           | Responsibilities                                                                                             | Requirements                                                                                                         | Defined by                           |
+|------------------------------------------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+| [Contributor](#new-contributors)               | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request                                                                                     | Active GitHub account                |
+| [Member](#member)                              | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                          | KubeVirt GitHub org member           |
+| [Reviewer](#reviewer)                          | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver                         | [OWNERS_ALIASES] file reviewer entry |
+| [Approver](#approver)                          | Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br> * Sponsored by 2 approvers | [OWNERS_ALIASES] file approver entry |
+| [SIG Chair](#special-interest-group-sig-chair) | Lead a SIG aligned to the goals of the SIG charter                                                           | * sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project             | [sigs.yaml] chair entry              |
+| [SIG Subproject Lead](#sig-subproject-lead)    | Lead a subproject aligned to the goals of the SIG charter                                                    | * sig-reviewer<br>* Highly experienced in SIG subproject matters<br> * Active reviewer & contributor to the project  | [sigs.yaml] subproject leads entry   |
+| [WG Chair](#working-group-wg-chair)            | Lead a WG aligned to the goals of the WG charter                                                             | * Highly experienced in WG matters<br> * Active reviewer & contributor to the project                                | [sigs.yaml] WG chairs entry          |
 
 ## New contributors
 
@@ -52,7 +52,7 @@ Defined by: Member of the KubeVirt GitHub organization
 > [!IMPORTANT]
 > After the pull request against the org members section has been merged (see above), an invitation to the KubeVirt GitHub organization will be automatically sent to the new member. The new member needs to accept the invitation to receive member status.
 
-## Responsibilities and privileges
+### Responsibilities and privileges
 
   * Responsive to issues and PRs assigned to them
   * Responsive to mentions
@@ -75,7 +75,7 @@ Defined by: reviewers entry in an OWNERS file of the KubeVirt project.
 Note: Acceptance of contributions requires at least one approver in addition to the assigned reviewers.
 Reviewer Status is scoped to a part of the project.
 
-## Requirements
+### Requirements
 
 The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
 
@@ -130,44 +130,75 @@ The following apply to the part of project for which one would be an approver in
   * Mentor contributors and reviewers
   * May approve contributions for acceptance
 
-## SIG Chair
+## Special Interest Group (SIG) Chair
 
 ### Requirements
 
-* contributor
-* advanced knowledge in SIG subject
+* Active reviewer for SIG matters for at least three months
+* Track record of contributions to SIG matters
+* Advanced knowledge in SIG subject
 
 ### Responsibilities and privileges
 
-* is an organizer and facilitator
-* operates the SIG
-* communicates and coordinates with other SIGs, and the broader community
-* may claim approver rights in scope
+* Is an organizer, i.e.
+  * Ensures that SIG meetings are moderated
+  * Ensures that meeting notes are captured
+* Is a facilitator, i.e.
+  * Advances SIG topics
+* Operates the SIG
+  * Updates charter when required
+  * Updates sigs.yaml SIG entry
+* Communicates and coordinates
+  * With sponsored WGs,
+  * With other SIGs, and
+  * The broader community
+* Claims approver rights in scope, i.e. by
+  * Creating a sig-approver group in `OWNERS_ALIASES`,
+  * Adding a reference to the above in an `OWNERS` file 
+  * Adding an `owners` reference in sigs.yaml
 
 ## SIG Subproject Lead
 
 ### Requirements
 
-* contributor
-* advanced knowledge in subproject scope
+* Active reviewer for subproject matters for at least three months
+* Track record of contributions to subproject matters
+* Advanced knowledge in subproject scope
 
 ### Responsibilities and privileges
 
-* leads within subproject scope
-* is an active reviewer
-* may claim approver rights in scope
+* Leads within subproject scope, i.e.
+  * Sets technical direction,
+  * Makes design decisions
+  * Mentors other contributors
+  * Moderates technical discussions and decisions
+* Claims approver rights in scope, i.e. by
+  * Creating a subproject-approver group in `OWNERS_ALIASES`
+  * Adding a reference to the above in an `OWNERS` file
+  * Adding an `owners` reference in sigs.yaml
 
-## WG Chair
+## Working Group (WG) Chair
 
 ### Requirements
 
-* contributor
-* advanced knowledge in WG scope
+* Active reviewer for WG matters for at least three months
+* Track record of contributions to WG matters
+* Advanced knowledge in WG scope
 
 ### Responsibilities and privileges
 
-* is an organizer and facilitator
-* gives updates to respective sponsoring SIG Chairs
+* Is an organizer, i.e.
+  * Ensures that WG meetings are moderated
+  * Ensures that meeting notes are captured
+* Is a facilitator, i.e.
+  * Advances exploration of the WG scope
+  * Fosters collaboration across SIG boundaries related to WG scope
+* Operates the WG
+  * Updates charter when required
+  * Updates sigs.yaml WG entry
+* Communicates and coordinates
+  * Gives updates to respective sponsoring SIG Chairs
+  * The broader community
 
 ## Inactive members
 
