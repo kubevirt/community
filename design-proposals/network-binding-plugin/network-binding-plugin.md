@@ -224,6 +224,56 @@ pod.
     - Mount points
     - Downward API
 
+##### Compute Container Resource Overhead
+
+For some plugins, an additional resource consumption can be expected from the virt-launcher pod compute container.
+For example, there could be need to execute an additional binary in the compute container.
+Since this binary has its own CPU and memory limits, they should be somehow accounted for.
+Another example could be increased resource consumption of the virt-stack resulting from using the plugin.
+
+Suggested solution:
+
+Additional API for compute container resource overhead:
+
+The network binding plugin API in the KubeVirt CR could receive an additional input field to specify the resource requirements overhead for the compute container:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: KubeVirt
+metadata:
+  name: kubevirt
+  namespace: kubevirt
+spec:
+  configuration:
+    network:
+      binding:
+        mynetbindingplugin:
+          sidecarImage: quay.io/kubevirt/mynetbindingplugin
+          computeResourceOverhead:
+            requests:
+              memory: 200Mi
+```
+
+If specified, KubeVirt will add the resource overhead specified in `computeResourceOverhead` to the compute container of the virt-launcher pod.
+The specified resource overhead will be added to the compute container per unique usage of the plugin (not per NIC using the binding).
+
+For example, assuming there is a plugin registered with a 200Mi memory overhead for the `compute` container, and
+there are two interfaces using it.
+`virt-controller` will only add 200Mi of memory to the `compute` container.
+
+Pros:
+- Cluster-wide definition of compute resource overhead per plugin.
+- Additional resources could be requested other than CPU and memory.
+- The resource overhead specification is visible to cluster admins.
+
+Cons:
+- Requires an API change.
+- When upgrading KubeVirt / network binding plugin versions, the compute resource overhea specification might require adjustments.
+
+This solution was selected since it provides the cluster admin more control in regard to resource allocation.
+
+For the alternative solutions please see [Appendix G](#appendix-g-alternatives-to-compute-container-resource-overhead-specification)
+
 #### Configure Pod netns
 
 The CNI plugin has privileged access to the pod network namespace and
@@ -1163,3 +1213,67 @@ Libvirt configuration snippet:
 ```
 
 - The domain itself is created by the `virt-launcher`.
+
+# Appendix G:  Alternatives to compute container resource overhead specification
+
+1. Manually setting the VM's resources:
+
+Users could manually provide the additional memory overhead for the network binding plugin, under `spec.domain.resources.requests.memory`:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: vm-cirros
+spec:
+  template:
+    spec:
+      domain:
+        memory:
+          guest: 128Mi
+        resources:
+          requests:
+            memory: 640Mi # 128Mi for the guest + 512Mi for the network binding plugin
+```
+
+KubeVirt will create a virt-launcher pod's compute container with a memory request containing the following:
+- Guest's memory
+- Memory overhead for KubeVirt's components (calculated by virt-controller)
+- Memory overhead for the network binding plugin
+
+Pros:
+- Already implemented.
+
+Cons:
+- Error prune
+- Defined per VM and not cluster-wide.
+- Exposes the VM owner to unnecessary implementation details
+
+2. Mutating webhook
+
+For each unique network binding plugin used, the VMI controller will add a label on the virt-launcher pod with the following format:
+
+`kubevirt.io/network-binding-plugin:<plugin-name>`
+
+The binding plugin authors will provide a [mutating webhook](https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#mutatingadmissionwebhook) that will intercept
+virt-launcher pod creation that have the above label, and add the appropriate resources requests/limits
+for the pod's `compute` container.
+
+The mutating webhook will be able to identify the plugin's compute container by its name (`compute`) or using the value of
+the `kubectl.kubernetes.io/default-container` annotation.
+
+Pros:
+- Plugin authors have full control over the compute resources
+- Additional API is not added to KubeVirt.
+- Opens the door for additional changes to the virt-launcher pod without changes to KubeVirt.
+- Code changes in KubeVirt are very small.
+
+Cons:
+- Plugin authors should provide another component and integrate it.
+- Additional point of failure.
+- Requires maintaining certificates for the webhook.
+- Additional latency when creating VMs with network binding plugins.
+- The additional resource specification is less visible to cluster admins.
+- Resource specification could collide with the support container resources specified on the KubeVirt CR or other webhooks.
+
+The requirement to maintain certificates for the webhook could be mitigated using tools such as [cert-manager](https://cert-manager.io/).
