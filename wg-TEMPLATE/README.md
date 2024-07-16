@@ -1,14 +1,14 @@
-# WG Responsibilities
+# Working Group Responsibilities
 
-All KubeVirt WGs must define a charter.
+All KubeVirt Working Groups (WGs) must define a charter.
 
-- The scope must define
+- The scope must define:
   - what problem the WG is solving
-  - what deliverable(s) will be produced to whom
-  - when the problem is solved
-- The governance must outline
-  - the responsibilities within the WG as well as
-  - the roles owning those responsibilities.
+  - what deliverable(s) will be produced, and to whom
+  - when the problem is expected to be resolved
+- The governance must outline:
+  - the responsibilities within the WG
+  - the roles owning those responsibilities
   - which SIGs are stakeholders
 
 ## Steps to create a WG charter

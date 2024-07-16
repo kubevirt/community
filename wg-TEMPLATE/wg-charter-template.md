@@ -11,8 +11,8 @@ but not necessarily all of the internals.
 ### Stakeholder SIGs
 
 A list of SIGs that are relevant to the WG.
-The template may also mention
-* which SIGs are more relevant than others,
+The template may also mention:
+* which SIGs are more relevant than others, and
 * which subprojects are related to the WG
 
 ### Roles and responsibilities
