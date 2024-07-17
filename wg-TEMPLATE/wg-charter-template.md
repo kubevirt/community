@@ -18,7 +18,5 @@ The template may also mention:
 ### Roles and responsibilities
 
 #### Chairs
-- @your-github-handle
-
-#### Leads
-- @your-github-handle
+- @your-github-handle-1
+- @your-github-handle-2
