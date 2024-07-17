@@ -1,7 +1,7 @@
 # Community
 
 Welcome to the KubeVirt Community repo!
-Here you will find all things community, including our [membership policy](membership_policy.md), [project governance](GOVERNANCE.md), charters for our SIGs (Special Interest Groups), [upcoming events](https://github.com/kubevirt/community/wiki/Events), and more.
+Here you will find all things community, including our [membership policy](membership_policy.md), [project governance](GOVERNANCE.md), charters for our [Special Interest Groups](./GOVERNANCE.md#sigs) and [Working Groups](./GOVERNANCE.md#working-groups), [upcoming events](https://github.com/kubevirt/community/wiki/Events), and more.
 
 If you're looking for the main code base, you can find it at [kubevirt/kubevirt](https://github.com/kubevirt/kubevirt).
 
