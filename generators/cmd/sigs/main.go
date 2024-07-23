@@ -76,17 +76,6 @@ func main() {
 	if err != nil {
 		log().Fatalf("failed to execute template: %v", err)
 	}
-
-	for _, sig := range sigs.Sigs {
-		_, err := os.Stat(sig.Dir)
-		if os.IsNotExist(err) {
-			log().WithField("sig", sig.Name).Warnf("sig dir %q does not exist", sig.Dir)
-			continue
-		}
-		//sigFile, err := os.Create(filepath.Join(sig.Dir, "README.md"))
-		//defer sigFile.Close()
-	}
-
 }
 
 func log() *logrus.Entry {
