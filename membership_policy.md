@@ -132,9 +132,11 @@ The following apply to the part of project for which one would be an approver in
 
 ## Special Interest Group (SIG) Chair
 
+The KubeVirt project is organized primarily into SIGs, each with a common purpose of advancing the project with respect to a specific topic, such as Networking or Storage. A SIG Chair is required to help guide and coordinate the SIG. 
+
 ### Requirements
 
-* Active reviewer for SIG matters for at least three months
+* Active reviewer for SIG matters for at least 3 months
 * Track record of contributions to SIG matters
 * Advanced knowledge in SIG subject
 
@@ -148,10 +150,10 @@ The following apply to the part of project for which one would be an approver in
 * Operates the SIG
   * Updates charter when required
   * Updates sigs.yaml SIG entry
-* Communicates and coordinates
-  * With sponsored WGs,
-  * With other SIGs, and
-  * The broader community
+* Communicates and coordinates:
+  * with sponsored WGs
+  * with other SIGs
+  * to the broader community
 * Claims approver rights in scope, i.e. by
   * Creating a sig-approver group in `OWNERS_ALIASES`,
   * Adding a reference to the above in an `OWNERS` file 
@@ -159,9 +161,11 @@ The following apply to the part of project for which one would be an approver in
 
 ## SIG Subproject Lead
 
+Specific work efforts within SIGs can be divided into subprojects. A SIG Subproject Lead is required to help guide and coordinate the subproject.  
+
 ### Requirements
 
-* Active reviewer for subproject matters for at least three months
+* Active reviewer for subproject matters for at least 3 months
 * Track record of contributions to subproject matters
 * Advanced knowledge in subproject scope
 
@@ -179,9 +183,11 @@ The following apply to the part of project for which one would be an approver in
 
 ## Working Group (WG) Chair
 
+Working groups are primarily used to facilitate topics of discussion that cross SIG lines. Working Group Chairs are required to help guide the working group and coordinate with SIG Chairs and the broader community.
+
 ### Requirements
 
-* Active reviewer for WG matters for at least three months
+* Active reviewer for WG matters for at least 3 months
 * Track record of contributions to WG matters
 * Advanced knowledge in WG scope
 
