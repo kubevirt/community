@@ -19,27 +19,30 @@ Each group's material is in its subdirectory in this project.
 
 ### User Groups
 
-| Name | Label | Chairs | Contact | Meetings |
-|------|-------|--------|---------|----------|
-|[KubeVirt Community](kubevirt-community/charter.md) |[kubevirt-community](https://github.com/kubevirt/kubevirt/labels/kubevirt-community)| |[Slack](virtualization)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |* Regular KubeVirt Community Meeting: [ Wednesday at 15:00 UTC (weekly) ](https://zoom.us/j/92221936273)<br/>  |
+| Name | Label [1] | Chairs [2] | Contact | Meetings |
+|------|-----------|---------|---------|----------|
+|[KubeVirt Community](kubevirt-community/charter.md) |[kubevirt-community](https://github.com/kubevirt/kubevirt/labels/kubevirt-community)|<ol></ol> |[Slack](virtualization)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>Regular KubeVirt Community Meeting: [ Wednesday at 15:00 UTC (weekly) ](https://zoom.us/j/92221936273)</li></ul> |
 
 
 
 
 ### Special Interest Groups
 
-| Name | Label | Chairs | Contact | Meetings |
-|------|-------|--------|---------|----------|
-|[sig-compute](sig-compute/charter.md) |[sig/compute](https://github.com/kubevirt/kubevirt/labels/sig/compute)|* [Itamar Holder](https://github.com/iholder101), Red Hat<br/>* [Jed Lejosne](https://github.com/jean-edouard), Red Hat<br/> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) | |
-|[documentation](sig-documentation/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | | |
-|[storage](sig-storage/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | | |
-|[testing](sig-testing/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | | |
-|[network](sig-network/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | | |
-|[KubeVirt Perf and Scale SIG](sig-scale/charter.md) |[kubevirt-community](https://github.com/kubevirt/kubevirt/labels/kubevirt-community)|* [Ryan Hallisey](https://github.com/rthallisey), Nvidia<br/>* [Alay Patel](https://github.com/alaypatel07), Nvidia<br/> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |* KubeVirt Perf and Scale SIG Meeting: [ Thursday at 14:00 UTC (bimonthy) ](https://zoom.us/j/3205945033)<br/>  |
-|[observability](sig-observability/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | | |
-|[KubeVirt Buildsystem SIG](sig-buildsystem/charter.md) |[sig/buildsystem](https://github.com/kubevirt/kubevirt/labels/sig/buildsystem)|* [Daniel Hiller](https://github.com/dhiller), Red Hat<br/>* [Brian Carey](https://github.com/brianmcarey), Red Hat<br/>* [Luboslav Pivarc](https://github.com/xpivarc), Red Hat<br/> | | |
-|[KubeVirt CI Operations Group](sig-ci/charter.md) |[sig/ci](https://github.com/kubevirt/kubevirt/labels/sig/ci)|* [Brian Carey](https://github.com/brianmcarey), Red Hat<br/>* [Daniel Hiller](https://github.com/dhiller), Red Hat<br/> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |* KubeVirt CI Taskforce Sync meeting: [ Monday at 09:00 CET (weekly) ](https://zoom.us/j/96583958896)<br/> * KubeVirt tests quarantine catch-up: [ Wednesday at 08:45 CET (weekly) ](https://zoom.us/j/94552009485)<br/>  |
+| Name | Label [1] | Chairs [2] | Contact | Meetings |
+|------|-----------|---------|---------|----------|
+|[sig-compute](sig-compute/charter.md) |[sig/compute](https://github.com/kubevirt/kubevirt/labels/sig/compute)|<ol><li>[Itamar Holder](https://github.com/iholder101), Red Hat</li><li>[Jed Lejosne](https://github.com/jean-edouard), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul></ul> |
+|[documentation](sig-documentation/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | |<ul></ul> |
+|[storage](sig-storage/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | |<ul></ul> |
+|[testing](sig-testing/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | |<ul></ul> |
+|[network](sig-network/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | |<ul></ul> |
+|[KubeVirt Perf and Scale SIG](sig-scale/charter.md) |[kubevirt-community](https://github.com/kubevirt/kubevirt/labels/kubevirt-community)|<ol><li>[Ryan Hallisey](https://github.com/rthallisey), Nvidia</li><li>[Alay Patel](https://github.com/alaypatel07), Nvidia</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>KubeVirt Perf and Scale SIG Meeting: [ Thursday at 14:00 UTC (bimonthy) ](https://zoom.us/j/3205945033)</li></ul> |
+|[observability](sig-observability/charter.md) |[](https://github.com/kubevirt/kubevirt/labels/)| | |<ul></ul> |
+|[KubeVirt Buildsystem SIG](sig-buildsystem/charter.md) |[sig/buildsystem](https://github.com/kubevirt/kubevirt/labels/sig/buildsystem)|<ol><li>[Daniel Hiller](https://github.com/dhiller), Red Hat</li><li>[Brian Carey](https://github.com/brianmcarey), Red Hat</li><li>[Luboslav Pivarc](https://github.com/xpivarc), Red Hat</li></ol> | |<ul></ul> |
+|[KubeVirt CI Operations Group](sig-ci/charter.md) |[sig/ci](https://github.com/kubevirt/kubevirt/labels/sig/ci)|<ol><li>[Brian Carey](https://github.com/brianmcarey), Red Hat</li><li>[Daniel Hiller](https://github.com/dhiller), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>KubeVirt CI Taskforce Sync meeting: [ Monday at 09:00 CET (weekly) ](https://zoom.us/j/96583958896)</li><li>KubeVirt tests quarantine catch-up: [ Wednesday at 08:45 CET (weekly) ](https://zoom.us/j/94552009485)</li></ul> |
 
 
 
 
+
+[1]: https://github.com/kubevirt/project-infra/blob/main/docs/labels.md
+[2]: https://github.com/kubevirt/community/blob/main/membership_policy.md
