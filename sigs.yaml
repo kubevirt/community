@@ -1,6 +1,6 @@
 sigs:
     - dir: sig-compute
-      label: sig-compute
+      label: sig/compute
       leadership:
         chairs:
           - github: iholder101
@@ -155,7 +155,7 @@ sigs:
       mission_statement: |
         SIG buildsystem takes care of all things building and automating for the KubeVirt project - they ensure new and existing contributors have a smooth contribution experience, i.o.w. contributors shouldn't have the feeling that they are wasting their time.
         This includes bazel, test automation and updates, also support of failing builds or test lanes in case of infrastructural or configuration problems.
-      label: sig-buildsystem
+      label: sig/buildsystem
       leadership:
         chairs:
           - github: dhiller
@@ -168,6 +168,7 @@ sigs:
             name: "Luboslav Pivarc"
             company: Red Hat
     - dir: sig-ci
+      label: sig/ci
       name: KubeVirt CI Operations Group
       mission_statement: |
         Ensure that the CI infrastructure is operational, that CI jobs are executed in a timely manner and PRs of any of the onboarded projects are not blocked.
