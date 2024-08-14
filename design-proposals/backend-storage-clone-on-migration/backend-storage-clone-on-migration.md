@@ -24,7 +24,8 @@ That alternative approach would enable RWX block backend-storage (as opposed to 
 
 Pros:
 - Less code to write and maintain in KubeVirt
-- No need to duplicate backend-storage PVCs on migrations
+- No need to duplicate backend-storage PVCs on migrations and delete the correct one after migration success/failure
+- Libvirt gains a feature
 
 Cons:
 - Relies on third party projects adding and maintaining options to store config files into a block devices without filesystems
@@ -80,3 +81,12 @@ of FS/block RWX/RWO work for backend-storage, if we think it's worth the additio
 First phase is block support. That effort is well underway already.  
 Second phase is changing the PVC handling and could be done as part of the first phase PR or as a separate one.  
 Either way, it's important that both phases land in the same KubeVirt release.
+
+# Diagrams
+Below are (very) rough diagrams to illustrate this proposal:
+## Current solution
+![current](current.png)
+## Proposed solution (this design proposal)
+![proposed](proposed.png)
+## Alternative solution (see [above](#alternative-approach))
+![alternative](alternative.png)
