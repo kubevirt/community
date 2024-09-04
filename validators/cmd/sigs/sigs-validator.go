@@ -4,66 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"kubevirt.io/community/pkg/sigs"
 	"log"
 	"net/http"
 	"os"
 
 	yaml "gopkg.in/yaml.v3"
 )
-
-type Sigs struct {
-	Sigs       []*Group `yaml:"sigs"`
-	Usergroups []*Group `yaml:"usergroups"`
-	Committees []*Group `yaml:"committees"`
-}
-
-type Group struct {
-	Dir              string
-	Name             string
-	MissionStatement string         `yaml:"mission_statement,omitempty"`
-	Label            string         `yaml:",omitempty"`
-	Leadership       *Leadership    `yaml:",omitempty"`
-	Meetings         []*Meeting     `yaml:",omitempty"`
-	Contact          *Contact       `yaml:",omitempty"`
-	SubProjects      []*SubProjects `yaml:",omitempty"`
-}
-
-type Contact struct {
-	Slack       string  `yaml:"slack"`
-	MailingList string  `yaml:"mailing_list"`
-	Teams       []*Team `yaml:"teams"`
-}
-
-type Team struct {
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
-}
-
-type Meeting struct {
-	Description   string
-	Day           string
-	Time          string
-	TZ            string
-	Frequency     string
-	URL           string
-	ArchiveURL    string `yaml:"archive_url"`
-	RecordingsURL string `yaml:"recordings_url"`
-}
-
-type Leadership struct {
-	Chairs []*Chair
-}
-
-type Chair struct {
-	Github  string
-	Name    string
-	Company string
-}
-
-type SubProjects struct {
-	Name   string
-	Owners []string
-}
 
 type options struct {
 	dryRun       bool
@@ -75,7 +22,7 @@ func (o *options) Validate() error {
 		return fmt.Errorf("path to sigs.yaml is required")
 	}
 	if _, err := os.Stat(o.sigsFilePath); os.IsNotExist(err) {
-			return fmt.Errorf("file %s does not exist", o.sigsFilePath)
+		return fmt.Errorf("file %s does not exist", o.sigsFilePath)
 	}
 	return nil
 }
@@ -84,7 +31,7 @@ func gatherOptions() options {
 	o := options{}
 	fs := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	fs.BoolVar(&o.dryRun, "dry-run", true, "Dry run for testing. Uses API tokens but does not mutate.")
-	fs.StringVar(&o.sigsFilePath, "sigs_file_path", "", "File path to the sigs.yaml file to check.")
+	fs.StringVar(&o.sigsFilePath, "sigs_file_path", "./sigs.yaml", "File path to the sigs.yaml file to check.")
 	err := fs.Parse(os.Args[1:])
 	if err != nil {
 		log.Fatalf("error parsing arguments %v: %v", os.Args[1:], err)
@@ -99,15 +46,9 @@ func main() {
 	}
 	log.Printf("dry-run: %v", options.dryRun)
 
-	buf, err := ioutil.ReadFile(options.sigsFilePath)
+	sigs, err := sigs.ReadFile(options.sigsFilePath)
 	if err != nil {
-		log.Fatalf("error reading %s: %v", options.sigsFilePath, err)
-	}
-
-	sigs := &Sigs{}
-	err = yaml.Unmarshal(buf, sigs)
-	if err != nil {
-		log.Fatalf("in file %q: %v", options.sigsFilePath, err)
+		log.Fatalf("invalid arguments: %v", err)
 	}
 
 	for _, sig := range sigs.Sigs {
