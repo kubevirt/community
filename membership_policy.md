@@ -8,7 +8,7 @@ This document outlines the various responsibilities of contributor roles in Kube
 | [Member](#member)                              | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                          | KubeVirt GitHub org member           |
 | [Reviewer](#reviewer)                          | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver                         | [OWNERS_ALIASES] file reviewer entry |
 | [Approver](#approver)                          | Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br> * Sponsored by 2 approvers | [OWNERS_ALIASES] file approver entry |
-| [SIG Chair](#special-interest-group-sig-chair) | Lead a SIG aligned to the goals of the SIG charter                                                           | * sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project             | [sigs.yaml] chair entry              |
+| [SIG Chair](#special-interest-group-sig-chair) | Lead a SIG aligned to the goals of the SIG charter                                                           | * Can be sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project      | [sigs.yaml] chair entry              |
 | [SIG Subproject Lead](#sig-subproject-lead)    | Lead a subproject aligned to the goals of the SIG charter                                                    | * sig-reviewer<br>* Highly experienced in SIG subproject matters<br> * Active reviewer & contributor to the project  | [sigs.yaml] subproject leads entry   |
 | [WG Chair](#working-group-wg-chair)            | Lead a WG aligned to the goals of the WG charter                                                             | * Highly experienced in WG matters<br> * Active reviewer & contributor to the project                                | [sigs.yaml] WG chairs entry          |
 
@@ -147,6 +147,7 @@ The KubeVirt project is organized primarily into SIGs, each with a common purpos
   * Ensures that meeting notes are captured
 * Is a facilitator, i.e.
   * Advances SIG topics
+  * Approves & facilitates the creation of new subprojects
 * Operates the SIG
   * Updates charter when required
   * Updates sigs.yaml SIG entry
@@ -171,6 +172,7 @@ Specific work efforts within SIGs can be divided into subprojects. A SIG Subproj
 
 ### Responsibilities and privileges
 
+* Creates and maintains a subproject
 * Leads within subproject scope, i.e.
   * Sets technical direction,
   * Makes design decisions
