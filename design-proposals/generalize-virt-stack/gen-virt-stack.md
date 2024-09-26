@@ -2,8 +2,6 @@
 
 This KubeVirt design proposal discusses how KubeVirt can be used to create `libvirt` virtual machines that are backed by diverse hypervisor drivers, such as QEMU/KVM, Xen, VirtualBox, etc. The aim of this proposal is to enumerate the design and implementation choices for enabling this multi-hypervisor support in KubeVirt. 
 
-## Motivation
-
 Although KubeVirt currently relies on libvirt to create and manage virtual machine instances (VMIs), it relies specifically on the QEMU/KVM virtualization stack (VMM and hypervisor) to host the VMI. This limits KubeVirt from being used in settings where a different VMM or hypervisor is used. 
 
 In fact, libvirt itself is flexible enough to support a diverse set of VMMs and hypervisors. The libvirt API delegates its implementation to one or more internal drivers, dependending on the [connection URI](https://libvirt.org/uri.html) passed when initializing the library. The list of currently supported hypervisor drivers in Libvirt are:
@@ -103,8 +101,66 @@ The flow of a VMI lifecycle would remain the same as before, with the addition o
 
 To allow the easy incorporation of future hypervisors, the hypervisor-specific logic in KubeVirt's components (such as the ones enumerated above) need to be abstracted out in one or more interfaces. The developers working to enable a given hypervisor `H` in KubeVirt should implement the hypervisor-specific functionality for their `H`. 
 
-It is the goal of this project to determine which functions need to be abstracted into the interface. After identifying the functions, the KubeVirt components will be modified to ensure that they are able to use the interface and implement functionality for the default hypervisor `qemu-kvm`.
+### LibvirtWrapper interface
 
+This interface encapsulates the logic for setting up and launching the hypervisor daemon (e.g., virtqemud or libvirtd)
+
+```go
+// This interface exposes functions used by virt-launcher to start and configure libvirt. The implementation varies for different hypervisors.
+type LibvirtWrapper interface {
+	// Setup libvirt for hosting the virtual machine. This function is called during the startup of the virt-launcher.
+	SetupLibvirt(customLogFilters *string) (err error)
+	// Return a list of potential prefixes of the specific hypervisor's process, e.g., qemu-system or cloud-hypervisor
+	GetHypervisorCommandPrefix() []string
+	// Start the libvirt daemon, either in modular mode or monolithic mode
+	StartHypervisorDaemon(stopChan chan struct{})
+	// Start the virtlogd daemon, which is used to capture logs from the hypervisor
+	StartVirtlog(stopChan chan struct{}, domainName string)
+	// Returns true if the libvirt process(es) should be run as root user
+	root() bool
+	// Return the URI to connect to libvirt and the user with which to connect to libvirt
+	GetLibvirtUriAndUser() (string, string)
+	// Return the directory where libvirt stores the PID files of the hypervisor processes
+	GetPidDir() string
+}
+```
+
+### Hypervisor interface
+
+This interface provides static information for tuning the `virt-launcher` pod's specification, conversion of VMI to Libvirt domain XML and tuning resource-limits of `virt-launcher` pod's processes from `virt-handler`.
+
+```go
+// Hypervisor interface defines functions needed to tune the virt-launcher pod spec and the libvirt domain XML for a specific hypervisor
+type Hypervisor interface {
+	// The `ps` RSS for virt-launcher-monitor
+	GetVirtLauncherMonitorOverhead() string
+	// The `ps` RSS for the virt-launcher process
+	GetVirtLauncherOverhead() string
+	// The `ps` RSS for virtlogd
+	GetVirtlogdOverhead() string
+	// The `ps` RSS for hypervisor daemon, e.g., virtqemud or libvirtd
+	GetHypervisorDaemonOverhead() string
+	// The `ps` RSS for vmm, minus the RAM of its (stressed) guest, minus the virtual page table
+	GetHypervisorOverhead() string
+	// Return true if the hypervisor supports ISO files
+	SupportsIso() bool
+	// Return the K8s device name that should be exposed for the hypervisor,
+	// e.g., devices.kubevirt.io/kvm for QEMU and devices.kubevirt.io/mshv for Cloud Hypervisor
+	GetHypervisorDevice() string
+	// Return true if the virt-launcher container should run privileged
+	ShouldRunPrivileged() bool
+	// Return a regex that matches the thread comm value for vCPUs
+	GetVcpuRegex() *regexp.Regexp
+	// Return the path to the libvirt connection socket file on the virt-launcher pod
+	GetLibvirtSocketPath() string
+	// Get the disk driver to be used for the hypervisor
+	GetDiskDriver() string
+	// Return true if the hypervisor requires boot order
+	RequiresBootOrder() bool
+	// Return true if the hypervisor supports memory ballooning
+	SupportsMemoryBallooning() bool
+}
+```
 
 ## Functional Testing Approach
 
