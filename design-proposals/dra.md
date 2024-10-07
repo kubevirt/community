@@ -12,13 +12,12 @@ control of their devices using Virtual Machines and Containers.
 ## Goals
 
 - Align on the API changes needed to consume DRA enabled devices in KubeVirt
-- Align on how KubeVirt will consume external and in-tree DRA drivers
-- Align on what drivers KubeVirt will support in tree
-TODO: @alayp Q: Should the decision around in-tree drivers be in scope for this proposal?
+- Align on how KubeVirt will consume devices by external DRA drivers
 
 ## Non Goals
 
 - Replace device-plugin support in KubeVirt
+- Align on what drivers KubeVirt will support in tree
 
 ## Definition of Users
 
@@ -29,8 +28,7 @@ TODO: @alayp Q: Should the decision around in-tree drivers be in scope for this 
 ## Assumptions
 
 - KubeVirt will support DRA API from kubernetes version 1.31.
-- The example demonstrate a pgpu driver, but the same mechanism could be used for vgpu
-TODO: @alayp Q: Can device plugins and DRA drivers co-exists in the same cluster?
+- The example demonstrate a pGPU driver, but the same mechanism could be used for vGPU
 
 ## User Stories
 
@@ -62,14 +60,14 @@ kubevirt/kubevirt
 
 For allowing users to consume DRA devices, there are two main changes needed:
 
-1. API changes and the plumbing required in KubeVirt to read env var and convert it into right domxml
+1. API changes and the plumbing required in KubeVirt to generate the domxml with the devices.
 2. Driver Implementation to set the env var
 
 This design focuses on part 1 of the problem.
 
 ## API Changes
 
-```
+```go
 type VirtualMachineInstanceSpec struct {
     ..
     ..
@@ -124,7 +122,6 @@ type VirtualMachineInstanceStatus struct {
 }
 
 // DeviceStatus has the information of all devices allocated spec.domain.devices
-// +k8s:openapi-gen=true
 type DeviceStatus struct {
 	// GPUStatuses reflects the state of GPUs requested in spec.domain.devices.gpus
 	// +listType=atomic
@@ -140,7 +137,8 @@ type DeviceStatus struct {
 type DeviceStatusInfo struct {
 	// Name of the device as specified in spec.domain.devices.gpus.name or spec.domain.devices.hostDevices.name
 	Name string `json:"name"`
-	// DeviceResourceClaimStatus reflects the DRA related information for the degive
+	// DeviceResourceClaimStatus reflects the DRA related information for the device
+	// +optional
 	DeviceResourceClaimStatus *DeviceResourceClaimStatus `json:"deviceResourceClaimStatus,omitempty"`
 }
 
@@ -158,12 +156,11 @@ type DeviceResourceClaimStatus struct {
 	// +optional
 	DeviceAttributes map[string]DeviceAttribute `json:"deviceAttributes,omitempty"`
 }
-
 ```
 
 The first section vmi.spec.resourceClaims will have a list of devices needed to be allocated for the VM. Having this
-available as a list will allow users to use the device available from this list in GPU section or HostDevices section of
-the DomainSpec API. 
+available as a list will allow users to use the device from this list in GPU section or HostDevices section of the 
+DomainSpec API. 
 
 In v1alpha3 version of [DRA API](https://pkg.go.dev/k8s.io/api@v0.31.0/resource/v1alpha3#DeviceClaim), multiple drivers
 could potentially provision devices that are part of a single claim. For this reason, a separate list of claims required
@@ -212,29 +209,41 @@ spec:
           deviceClassName: gpu.example.com
 ---
 apiVersion: kubevirt.io/v1
-kind: VirtualMachine
+kind: VirtualMachineInstance
 metadata:
   labels:
     kubevirt.io/vm: vm-cirros
   name: vm-cirros
 spec:
-  running: false
-  template:
-    metadata:
-      labels:
-        kubevirt.io/vm: vm-cirros
-    spec:
-      resourceClaims:
-      - name: pgpu-claim-name
-        source:
-          resourceClaimTemplateName: pgpu-claim-template
-      domain:
-        devices:
-          gpus:
-          - name: pgpu
-            claim: 
-              name: pgpu-claim-name
-              request: pgpu-request-name        
+  resourceClaims:
+  - name: pgpu-claim-name
+    source:
+      resourceClaimTemplateName: pgpu-claim-template
+  domain:
+    devices:
+      gpus:
+      - name: pgpu
+        claim: 
+          name: pgpu-claim-name
+          request: pgpu-request-name
+status:
+  deviceStatus:
+    gpuStatuses:
+    - deviceResourceClaimStatus:
+        deviceAttributes:
+          driverVersion:
+            version: 1.0.0
+          index:
+            int: 0
+          model:
+            string: LATEST-GPU-MODEL
+          uuid:
+            string: gpu-8e942949-f10b-d871-09b0-ee0657e28f90
+          pciAddress: 
+            string: 0000:01:00.0
+        deviceName: gpu-0
+        resourceClaimName: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-m4k28
+      name: pgpu     
 –--
 apiVersion: v1
 kind: Pod
@@ -252,9 +261,13 @@ spec:
   - name: pgpu-claim-name
     source:
       resourceClaimTemplateName: pgpu-claim-template
+status:
+  resourceClaimStatuses:
+  - name: gpu-resource-claim
+    resourceClaimName: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-m4k28
 ```
 
-### VM API with a GPU and a Host device
+### VM API with a Host device
 
 ```
 ---
@@ -325,6 +338,131 @@ spec:
     source:
       resourceClaimTemplateName: test-pci-claim-template
 ```
+
+### DRA API for reading device related information
+
+The examples below shows the APIs used to generate the vmi.status.deviceStatuses section: 
+1. the pod status has reference to the resourceClaimName, pod.status.resourceClaimStatuses[*].resourceClaimName where
+   the name of the claim is same as vmi.spec.resourceClaims[*].Name
+1. pod spec has node name, pod.spec.nodeName
+1. the resourceclaim status has device name and driver use for allocating the device, 
+   resourceclaim.status.allocation.devices[*].deviceName and resourceclaim.status.allocation.devices[*].driver, where
+   resourceclaim.status.allocation.devices[*].request is same as vmi.spec.domain.devices[*].gpus[*].claim.request
+1. Using node name and driver name, the resource slice for that node could be found. Using device name, the attributes 
+   of the device could be found
+
+```
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: virt-launcher-vmi-fedora-9bjwb
+  namespace: gpu-test1
+spec:
+  containers:
+  - name: compute
+    resources:
+      claims:
+      - name: gpu-resource-claim
+  resourceClaims:
+  - name: gpu-resource-claim
+    resourceClaimTemplateName: single-gpu
+status:
+  resourceClaimStatuses:
+  - name: gpu-resource-claim
+    resourceClaimName: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-m4k28
+---
+apiVersion: resource.k8s.io/v1alpha3
+kind: ResourceClaim
+metadata:
+  annotations:
+    resource.kubernetes.io/pod-claim-name: gpu-resource-claim
+  generateName: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-
+  name: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-m4k28
+  namespace: gpu-test1
+  ownerReferences:
+  - apiVersion: v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Pod
+    name: virt-launcher-vmi-fedora-9bjwb
+spec:
+  devices:
+    requests:
+    - allocationMode: ExactCount
+      count: 1
+      deviceClassName: gpu.example.com
+      name: gpu
+status:
+  allocation:
+    devices:
+      results:
+      - device: pgpu-0
+        driver: gpu.example.com
+        pool: kind-1.31-dra-control-plane
+        request: gpu
+    nodeSelector:
+      nodeSelectorTerms:
+      - matchFields:
+        - key: metadata.name
+          operator: In
+          values:
+          - kind-1.31-dra-control-plane
+  reservedFor:
+  - name: virt-launcher-vmi-fedora-9bjwb
+    resource: pods
+    uid: 8ffb7e04-6c4b-4fc7-bbaa-c60d9a1e0eaa
+---
+apiVersion: resource.k8s.io/v1alpha3
+kind: ResourceSlice
+metadata:
+  generateName: kind-1.31-dra-control-plane-gpu.example.com-
+  name: kind-1.31-dra-control-plane-gpu.example.com-drr27
+  ownerReferences:
+  - apiVersion: v1
+    controller: true
+    kind: Node
+    name: kind-1.31-dra-control-plane
+spec:
+  devices:
+  - basic:
+      attributes:
+        driverVersion:
+          version: 1.0.0
+        index:
+          int: 0
+        model:
+          string: LATEST-GPU-MODEL
+        uuid:
+          string: gpu-8e942949-f10b-d871-09b0-ee0657e28f90
+        pciAddress:
+          string: 0000:01:00.0 
+    name: pgpu-0
+  driver: gpu.example.com
+  nodeName: kind-1.31-dra-control-plane
+  pool:
+    generation: 0
+    name: kind-1.31-dra-control-plane
+    resourceSliceCount: 1
+---
+```
+
+### Web hook changes
+1. Allow DRA devices to be requested only if the corresponding DRA feature gate is enabled in kubevirt configuration
+Note: All the following sections will assume that DRA feture gate is enabled
+
+### Virt controller changes
+
+1. If devices are requested using DRA, virt controller needs to render the virt-launcher manifest such that 
+   pod.spec.resourceClaims and pod.spec.containers.resources.claim sections are filled out.
+1. virt-controller needs a mechanism to watch for virt-launcher pods, resourceclaims and resourceslices to populate the 
+   vmi.status.deviceStatus using the steps mentioned in above section that has all the attributes (for example the 
+   pciAddress for the gpu device)
+
+### Virt launcher changes
+
+1. For devices generated using DRA, virt-launcher needs to use the vmi.status.deviceStatus to generate the domxml
+   instead of environment variables as in the case of device-plugins
 
 # Alternate Designs
 
