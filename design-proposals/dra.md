@@ -28,7 +28,8 @@ control of their devices using Virtual Machines and Containers.
 ## Assumptions
 
 - KubeVirt will support DRA API from kubernetes version 1.31.
-- The example demonstrate a pGPU driver, but the same mechanism could be used for vGPU
+- DRA drivers will have to publish attributes for resources needed to generate the domxml in ResourceSlice object
+- The examples in this doc demonstrate a pGPU driver, but the same mechanism could be used for vGPU
 
 ## User Stories
 
