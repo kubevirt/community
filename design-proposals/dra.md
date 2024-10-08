@@ -90,26 +90,27 @@ type VirtualMachineInstanceSpec struct {
 
 type GPU struct {
 	// Name of the GPU device as exposed by a device plugin
-	Name string `json:"name"`
-	// DeviceName is the name of the device provisioned by device-plugins
-	DeviceName string `json:"deviceName,omitempty"`
-	// Claim is the name of the claim that is going to provision the DRA device
-	Claim             *k8sv1.ResourceClaim `json:"claim,omitempty"`
-	VirtualGPUOptions *VGPUOptions         `json:"virtualGPUOptions,omitempty"`
+	Name string                    `json:"name"`
+	DeviceSource DeviceSource      `json:",inline"`
+	VirtualGPUOptions *VGPUOptions `json:"virtualGPUOptions,omitempty"`
 	// If specified, the virtual network interface address and its tag will be provided to the guest via config drive
 	// +optional
 	Tag string `json:"tag,omitempty"`
 }
 
 type HostDevice struct {
-	Name string `json:"name"`
-	// DeviceName is the name of the device provisioned by device-plugins
-	DeviceName string `json:"deviceName,omitempty"`
-	// Claim is the name of the claim that is going to provision the DRA device
-	Claim *k8sv1.ResourceClaim `json:"claim,omitempty"`
+	Name string               `json:"name"`
+	DeviceSource DeviceSource `json:",inline"`
 	// If specified, the virtual network interface address and its tag will be provided to the guest via config drive
 	// +optional
 	Tag string `json:"tag,omitempty"`
+}
+
+type DeviceSource struct {
+	// DeviceName is the name of the device provisioned by device-plugins
+	DeviceName *string `json:"deviceName,omitempty"`
+	// Claim is the name of the claim that is going to provision the DRA device
+	Claim *k8sv1.ResourceClaim `json:"claim,omitempty"`
 }
 
 type VirtualMachineInstanceStatus struct {
@@ -457,12 +458,22 @@ Note: All the following sections will assume that DRA feture gate is enabled
    pod.spec.resourceClaims and pod.spec.containers.resources.claim sections are filled out.
 1. virt-controller needs a mechanism to watch for virt-launcher pods, resourceclaims and resourceslices to populate the 
    vmi.status.deviceStatus using the steps mentioned in above section that has all the attributes (for example the 
-   pciAddress for the gpu device)
+   pciAddress for the gpu device):
+   1. The pod status has information about the allocated/reserved resourceClaim.
+   1. The resourceClaim has information about the individual requests in the claim and their allocated device names.
+   1. The resourceslice corresponding to the node running the VMI has information about the allocated device.
 
 ### Virt launcher changes
 
 1. For devices generated using DRA, virt-launcher needs to use the vmi.status.deviceStatus to generate the domxml
    instead of environment variables as in the case of device-plugins
+1. The standard env variables `PCI_RESOURCE_<deviceName>` and `MDEV_PCI_RESOURCE_<deviceName>` may continue to be set
+   as fallback mechanisms but the focus here is to ensure we can consume the device PCIe bus address atrribute from the
+   allocated devices in virt-launcher to generate the domxml.
+1. Both GPU and HostDevice devices requested in the domain spec will have corresponding entries in the VMI status
+   at `status.deviceStatus.gpuStatuses[*]`/`status.deviceStatus.hostDeviceStatuses[*]`. From here, the relevant
+   device attributes can be inferred by virt-launcher (`pcieAddress` attr) to generate the domxml with the appropriate
+   gpu/hostdev spec.
 
 # Alternate Designs
 
