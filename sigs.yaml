@@ -201,6 +201,38 @@ sigs:
         teams:
         - name: kubevirt-community
           description: General Discussion
+workinggroups:
+- dir: wg-code-quality
+  name: Code-Quality Working Group
+  mission_statement: |
+    The Code-Quality Working Group aims to create an inter-SIG process for identifying, agreeing on and addressing code quality issues
+  label: wg/code-quality
+  leadership:
+    chairs:
+    - github: "?"
+      name: "? ?"
+      company: "?"
+    - github: dhiller
+      name: "Daniel Hiller"
+      company: Red Hat
+  meetings:
+  - description: KubeVirt Code-Quality Working Group meeting
+    day: Thu
+    time: "09:00"
+    tz: UTC
+    frequency: weekly
+    url: https://meet.google.com/dyc-ocnp-vww
+    archive_url: https://docs.google.com/document/d/1fBgXan7AQ1LZOmQpNq38H11MmtfuWxOz9DPypyV9UL0/edit
+    recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
+  contact:
+    slack: kubevirt-dev
+    mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+    teams:
+    - name: wg-code-quality
+      description: Code-Quality Working Group
+    liaison:
+      github: dhiller
+      name: "Daniel Hiller"
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
