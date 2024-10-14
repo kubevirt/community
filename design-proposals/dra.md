@@ -35,9 +35,10 @@ control of their devices using Virtual Machines and Containers.
 
 - As a user, I would like to use my GPU dra driver with KubeVirt
 - As a user, I would like to use KubeVirt's default driver
+- As a user, in heterogeneous clusters, i.e. clusters made of nodes with different hardware managed through DRA drivers,
+  I should be able to easily identify what hardware was allocated to the VMI
 - As a developer, I would like APIs to be extensible so I can develop drivers/webhooks/automation for custom use-cases
-- As a device-plugin author, I would like to have an easy way to support KubeVirt
-- As a device-plugin author, I would like to have a common mechanism for exposing devices for containers and VMs
+- As a device-plugin author, I would like to have a well documented way, intuitive way to support devices in KubeVirt
 
 ## Use Cases
 
@@ -233,16 +234,12 @@ status:
     gpuStatuses:
     - deviceResourceClaimStatus:
         deviceAttributes:
-          driverVersion:
-            version: 1.0.0
-          index:
-            int: 0
-          model:
-            string: LATEST-GPU-MODEL
-          uuid:
-            string: gpu-8e942949-f10b-d871-09b0-ee0657e28f90
-          pciAddress: 
-            string: 0000:01:00.0
+          pciAddress:
+            string: 0000:65:00.0
+          productName:
+            string: RTX 4080
+          type:
+            string: gpu
         deviceName: gpu-0
         resourceClaimName: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-m4k28
       name: pgpu     
@@ -338,6 +335,117 @@ spec:
   - name: nvme1-claim-name
     source:
       resourceClaimTemplateName: test-pci-claim-template
+```
+
+#### Comparing DRA APIs with Device Plugins
+
+In the case of device plugins, a pre-defined status resource which is usually identified by a device model, e.g. 
+`nvidia.com/GP102GL_Tesla_P40` is configured. Users consume this device via the following spec:
+```yaml
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  labels:
+    special: vmi-gpu
+  name: vmi-gpu
+spec:
+  domain:
+    devices:
+      gpus:
+      - deviceName: nvidia.com/GP102GL_Tesla_P40
+        name: pgpu
+```
+
+In the case of DRA there is a level of indirection, where the information about what device is allocated to the VMI
+could be lost in the resource claim object. For example, consider a ResourceClaimTemplate: 
+
+```yaml
+apiVersion: resource.k8s.io/v1alpha3
+kind: ResourceClaimTemplate
+metadata:
+  name: single-gpu
+  namespace: gpu-test1
+spec:
+  spec:
+    devices:
+      requests:
+      - allocationMode: ExactCount
+        count: 1
+        deviceClassName: vfiopci.nvidia.com
+        name: gpu
+---
+apiVersion: resource.k8s.io/v1alpha3
+kind: DeviceClass
+metadata:
+  name: vfiopci.example.com
+spec:
+  config:
+  - opaque:
+    driver: gpu.nvidia.com
+    parameters:
+      apiVersion: gpu.nvidia.com/v1alpha1
+      driverConfig:
+       driver: vfio-pci
+      kind: GpuConfig
+  selectors:
+  - cel:
+      expression: device.driver == 'gpu.nvidia.com' && device.attributes['gpu.nvidia.com'].type == 'gpu'
+```
+
+If the above driver is deployed in a cluster with three nodes with two different GPUs, say `RTX 4080` and `RTX 3080`.
+
+The user consumes the GPU using the following spec:
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+metadata:
+  name: vmi-fedora
+  namespace: gpu-test1
+spec:
+  resourceClaims:
+  - name: gpu-resource-claim
+    resourceClaimTemplateName: single-gpu
+  domain:
+    gpus:
+    - claim:
+         name: gpu-resource-claim
+         request: gpu
+      name: example-pgpu
+```
+
+The user will then wait for devices to be allocated. The device made available to the VMI will be available in the 
+status:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: VirtualMachineInstance
+metadata:
+  name: vmi-fedora
+  namespace: gpu-test1
+spec:
+  resourceClaims:
+  - name: gpu-resource-claim
+    resourceClaimTemplateName: single-gpu
+  domain:
+    gpus:
+    - claim:
+         name: gpu-resource-claim
+         request: gpu
+      name: example-pgpu
+status:
+  deviceStatus:
+    gpuStatuses:
+    - deviceResourceClaimStatus:
+        deviceAttributes:
+          pciAddress:
+            string: 0000:01:00.0
+          productName:
+            string: RTX 4080
+          type:
+            string: gpu
+        deviceName: gpu-0
+        resourceClaimName: virt-launcher-vmi-fedora-hhzgn-gpu-resource-claim-c26kh
+      name: example-pgpu
 ```
 
 ### DRA API for reading device related information
@@ -521,7 +629,6 @@ type ResourceClaimSource struct {
 	// be set.
 	ResourceClaimTemplateName string `json:"resourceClaimTemplateName"`
 }
-
 ```
 
 This design misses the use-case where more than one DRA device is specified in the claim template, as each
@@ -529,6 +636,57 @@ device will have its own template in the API.
 
 This design also assumes that the deviceName will be provided in the ClaimParameters, which requires the DRA drivers
 to have a ClaimParameters.spec.deviceName in their spec.
+
+
+## Alternative 2
+
+Asking the dra plugin authors to inject env variable to CDI spec.
+
+In order to uniquely identify the device required by the vmi spec, the follow env variable will have to be constructed:
+
+```
+PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>="0000:01:00.0"
+```
+
+Where the RESOURCE-CLAIM-NAME is the name of the ResourceClaim k8s object created either from ResourceClaimTemplate, or
+directly by the user. The REQUEST-NAME is the name of the request available in `vmi.spec.domain.devices.gpu/hostdevices.claims[*].request`
+
+In the case of MDEV devices it will be:
+
+```
+MDEV_PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>="uuid"
+```
+
+For this approach the following static fields are required in VMI
+```go
+type VirtualMachineInstanceStatus struct {
+    ..
+    ..
+	// ResourceClaimStatuses reflects the state of devices resourceClaims defined in virt-launcher pod.
+	// This is an optional field available only when DRA feature gate is enabled
+	// +optional
+	ResourceClaimStatuses []PodResourceClaimStatus `json:"resourceClaimStatuses,omitempty"`
+}
+
+type PodResourceClaimStatus struct {
+// Name uniquely identifies this resource claim inside the pod.
+// This must match the name of an entry in pod.spec.resourceClaims,
+// which implies that the string must be a DNS_LABEL.
+Name string `json:"name" protobuf:"bytes,1,name=name"`
+
+// ResourceClaimName is the name of the ResourceClaim that was
+// generated for the Pod in the namespace of the Pod. If this is
+// unset, then generating a ResourceClaim was not necessary. The
+// pod.spec.resourceClaims entry can be ignored in this case.
+//
+// +optional
+ResourceClaimName *string `json:"resourceClaimName,omitempty" protobuf:"bytes,2,opt,name=resourceClaimName"`
+}
+```
+
+virt-launcher will use the `vmistatus.resourClaimStatuses[*].ResourceClaimName` and `vmi.spec.domain.devices.gpu/hostdevices.claims[*].request`
+to look up the env variable: `PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>` or 
+`MDEV_PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>="uuid"` and generate the correct domxml
 
 # References
 
@@ -538,3 +696,5 @@ to have a ClaimParameters.spec.deviceName in their spec.
   https://github.com/kubernetes/enhancements/issues/4381
 - DRA
   https://kubernetes.io/docs/concepts/scheduling-eviction/dynamic-resource-allocation/
+- NVIDIA DRA driver
+  https://github.com/NVIDIA/k8s-dra-driver
