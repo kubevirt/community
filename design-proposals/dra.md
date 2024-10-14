@@ -36,6 +36,8 @@ control of their devices using Virtual Machines and Containers.
 - As a user, I would like to use my GPU dra driver with KubeVirt
 - As a user, I would like to use KubeVirt's default driver
 - As a developer, I would like APIs to be extensible so I can develop drivers/webhooks/automation for custom use-cases
+- As a device-plugin author, I would like to have an easy way to support KubeVirt
+- As a device-plugin author, I would like to have a common mechanism for exposing devices for containers and VMs
 
 ## Use Cases
 
@@ -176,12 +178,11 @@ currently handled by the design are:
 2. allowing the devices to be used as a host device (spec.domain.device.hostDevices)
 
 The status section of the VMI will contain information of the allocated devices for the VMI when the information is
-available in DRA APIs. The same information will be accessible in virt-handler, virt-launcher and sidecar containers. 
-This allows for device information to flow from DRA APIs into KubeVirt stack. 
+available in DRA APIs. The same information will be accessible in virt-handler and virt-launcher. This allows for device
+information to flow from DRA APIs into KubeVirt stack. 
 
-The virt-launcher will have the logic of converting a GPU device into its corresponding domxml. For use-cases that are 
-not handled in-tree, a sidecar container could be envisioned which will convert the information available in status to 
-the corresponding domxml.
+The virt-launcher will have the logic of converting a GPU device into its corresponding domxml. For device-plugins it
+will look for env variables (current approach). For DRA devices, it will use the vmi status section to generate the xml
 
 ### Examples
 
@@ -219,8 +220,7 @@ metadata:
 spec:
   resourceClaims:
   - name: pgpu-claim-name
-    source:
-      resourceClaimTemplateName: pgpu-claim-template
+    resourceClaimTemplateName: pgpu-claim-template
   domain:
     devices:
       gpus:
@@ -311,8 +311,7 @@ spec:
     spec:
       resourceClaims:
       - name: nvme1-claim-name
-        source:
-          resourceClaimTemplateName: test-pci-claim-template
+        resourceClaimTemplateName: test-pci-claim-template
       domain:
         devices:
           hostDevices:
@@ -451,7 +450,7 @@ spec:
 
 ### Web hook changes
 1. Allow DRA devices to be requested only if the corresponding DRA feature gate is enabled in kubevirt configuration
-Note: All the following sections will assume that DRA feture gate is enabled
+Note: All the following sections will assume that DRA feature gate is enabled
 
 ### Virt controller changes
 
@@ -469,7 +468,7 @@ Note: All the following sections will assume that DRA feture gate is enabled
 1. For devices generated using DRA, virt-launcher needs to use the vmi.status.deviceStatus to generate the domxml
    instead of environment variables as in the case of device-plugins
 1. The standard env variables `PCI_RESOURCE_<deviceName>` and `MDEV_PCI_RESOURCE_<deviceName>` may continue to be set
-   as fallback mechanisms but the focus here is to ensure we can consume the device PCIe bus address atrribute from the
+   as fallback mechanisms but the focus here is to ensure we can consume the device PCIe bus address attribute from the
    allocated devices in virt-launcher to generate the domxml.
 1. Both GPU and HostDevice devices requested in the domain spec will have corresponding entries in the VMI status
    at `status.deviceStatus.gpuStatuses[*]`/`status.deviceStatus.hostDeviceStatuses[*]`. From here, the relevant
