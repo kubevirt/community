@@ -88,22 +88,46 @@ Below is an example of modified domain XML:
 The socket path have to be available to both `virt-launcher` pod (and `compute` container) and dataplane pod.  
 In order to not use hostPath volumes that requires pod to be privileged, we propose to implement a **vhostuser Device Plugin** that will be able to inject mounts to the sockets directory into unprivileged pods, and annotations.
 
-### Device Plugin for **vhostuser sockets** resource
+#### Device Plugin for **vhostuser sockets** resources
 
-Device plugins have the ability to add mounts into the pods when they request for managed resources.
+Device plugins can instructs kubelet to add mounts into the containers when managed resources are requested.
 
-This design proposal relies on a device plugin that would manage two kinds of resources, representing a host directory where sockets will rely (for example `/var/run/vhost_sockets`):
+This design proposal relies on a device plugin that would manage two kinds of resources on the userspace dataplane that we can think of a virtual switch:
 - **dataplane**: `1`  
-  This only resource is requested by the userspace dataplane, and add a `/var/run/vhost_sockets` mount to the dataplane pod.
+  This resource give access to all sub directories of `/var/run/vhost_sockets`, and to sockets inside.  
+  It is requested by the dataplane itself.  
+  Device plugin injects `/var/run/vhost_sockets` mount in the container.
 - **vhostuser sockets**: `n`  
-  This as many resources as we want to handle and may represent the number of port of the dataplane vSwitch.  
-  It is requested through VM or VMI definition in resources request spec. In turn the `virt-launcher` pod will request the same resources.  
-  This makes the device plugin create a per pod directory like `/var/run/vhost_sockets/<pod-dp-id>`, and mount it into the `virt-launcher` pod as to well known location `/var/run/vhostuser`.  
-  The device plugin has to generate a `pod-dp-id` and push it as an annotation in `virt-launcher` pod. This will be used later by the CNI or any component that configures the vhostuser socket in the dataplane with right path.
+  This resource can be thought as a virtual switch port, and can have a limit related to dataplane own limitation (performance, CPU, etc.).  
+  It can help schedule workloads on node where dataplane has available resources.  
+  It is requested through VM or VMI definition in resources request spec. In turn the `compute` container of the `virt-launcher` pod will request the same resources.  
+  This makes the device plugin allocates a sub directory `/var/run/vhost_sockets/<socketXX>`, and mount it into the `virt-launcher` pod in a well known location `/var/run/vhostuser/<socketXX>`.  
 
-We still have to care about directory and sockets permission and SELinux. 
+The device plugin has to care about directory permissions and SELinux, for the sockets to be accessible from requesting pods.
 
-### Implementation diagram
+The device plugin has to comply with [`device-info-spec`](https://github.com/k8snetworkplumbingwg/device-info-spec/blob/main/SPEC.md#device-information-specification). This allows information sharing between device plugin and the CNI. Thanks to Multus being compliant with this spec, the CNI can retrieve device information (socket path and and type) to be used to configure the dataplane accordingly. Multus will also annotate the `compute` container with this information, KubeVirt extracts only a part into `kubevirt.io/network-info`.
+
+#### Network Binding Plugin and Kubevirt requirements
+
+Network Binding Plugin then can leverage `downwardAPI` feature available from Kubevirt v1.3.0, in order to retrieve the `kubevirt.io/network-info` annotation values, and extract the socket path to configure the interface in the domain XML.
+
+But it can't use it directly as it would break Live Migration of VMs:   
+The socket directories `/var/run/vhostuser/<socketXX>` are not predictable, and new ones get allocated when the destination pod is being created.  
+Unfortunately the domain XML is the one from the source pod (migration domain), and references sockets paths allocated to source pod.
+
+Hence, Network Binding Plugin needs to use immutable paths to sockets. This can be achieved using the interface name (or its hash version) in symbolic links to the real socket path: `/var/run/kubevirt/sockets/net1` -> `/var/run/vhostuser/<socketXX>`.
+
+But the symbolic link needs to be created in the `compute` container mount namespace, for `qemu` to be able to access it.
+
+This requires the `virt-launcher` pod to be created with `shareProcessNamespace` enabled.
+
+Then Network Binding Plugin can target one of the `compute` processes root dir through `/proc/<pid>/root` to create the symbolic link.
+
+Unfortunately not all processes can be targetted. For example it does not work with `virt-launcher` or `virt-launcher-monitor`, but it's working with `virtlogd`.
+
+Enabling `shareProcessNamespace` in KubeVirt is part of this PR: [Refactor containerdisks by accessing the artifacts via proc and pid namespace sharing](https://github.com/kubevirt/kubevirt/pull/11845)
+
+#### Implementation diagram
 
 ![kubevirt-vhostuser-shared-sockets](kubevirt-vhostuser-binding-plugin-device-plugin.png)
 
@@ -179,8 +203,12 @@ Create a VM with several `vhostuser` interfaces then:
 - check the vhostuser sockets are created in the expected directory of virt-launcher pod
 - check the vhostuser sockets are available to the dataplane pod
 - check the VM is running
+- check VM network connectivity
+- live migrate the VM
+- check the VM is migrated and is running
+- check VM network connectivity
 
 # Implementation Phases
 1. First implementation of the `network-vhostuser-binding` done
-2. Implement vhostuser device plugin
+2. Implement vhostuser device plugin done
 3. Upstream `network-vhostuser-binding`
