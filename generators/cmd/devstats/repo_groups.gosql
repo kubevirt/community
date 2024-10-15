@@ -1,0 +1,85 @@
+{{- /*
+    This file is part of the KubeVirt project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    Copyright the KubeVirt Authors.
+
+    */
+-}}
+{{- /* gotype: kubevirt.io/community/generators/cmd/devstats.RepoGroupsTemplateData */ -}}
+-- Add repository groups
+with repo_latest as (
+  select sub.repo_id,
+    sub.repo_name
+  from (
+    select repo_id,
+      dup_repo_name as repo_name,
+      row_number() over (partition by repo_id order by created_at desc, id desc) as row_num
+    from
+      gha_events
+  ) sub
+  where
+    sub.row_num = 1
+)
+update
+  gha_repos r
+set
+  alias = (
+    select rl.repo_name
+    from
+      repo_latest rl
+    where
+      rl.repo_id = r.id
+  )
+where
+  r.name like '%_/_%'
+  and r.name not like '%/%/%'
+;
+update gha_repos set repo_group = alias;
+
+insert into gha_repo_groups(id, name, alias, repo_group, org_id, org_login) select id, name, alias, coalesce(repo_group, name), org_id, org_login from gha_repos on conflict do nothing;
+insert into gha_repo_groups(id, name, alias, repo_group, org_id, org_login) select id, name, alias, org_login, org_id, org_login from gha_repos where org_id is not null and org_login is not null and trim(org_login) != '' on conflict do nothing;
+
+
+-- Per each SIG that has claimed ownership via one of it's subprojects we add a new entry in gha_repo_groups
+{{ range $repoGroup := $.RepoGroups }}
+insert into gha_repo_groups(id, name, repo_group, alias, org_id, org_login)
+select id, name, '{{ $repoGroup.Name }}', alias, org_id, org_login
+  from gha_repo_groups
+ where lower(name) in ({{ range $repo := $repoGroup.Repos }}
+          '{{ $repo }}',{{ end }}
+       )
+  on conflict update;
+{{ end }}
+
+-- for the remaining rows where the repo_group has not been touched we set the default "Other"
+
+UPDATE gha_repos
+SET repo_group = 'Other'
+WHERE repo_group = alias
+
+
+select
+  repo_group,
+  count(*) as number_of_repos
+from
+  gha_repo_groups
+where
+  repo_group is not null
+group by
+  repo_group
+order by
+  number_of_repos desc,
+  repo_group asc;
