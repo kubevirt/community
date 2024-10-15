@@ -43,6 +43,15 @@ Each group's material is in its subdirectory in this project.
 
 
 
+### Working Groups
+
+| Name | Label [1] | Chairs [2] | Contact | Meetings |
+|------|-----------|---------|---------|----------|
+|[Code-Quality Working Group](wg-code-quality/charter.md) |[wg/code-quality](https://github.com/kubevirt/kubevirt/labels/wg/code-quality)|<ol><li>[? ?](https://github.com/?), ?</li><li>[Daniel Hiller](https://github.com/dhiller), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>KubeVirt Code-Quality Working Group meeting: [ Thu at 09:00 UTC (weekly) ](https://meet.google.com/dyc-ocnp-vww)</li></ul> |
+
+
+
+
 
 [1]: https://github.com/kubevirt/project-infra/blob/main/docs/labels.md
 [2]: https://github.com/kubevirt/community/blob/main/membership_policy.md
