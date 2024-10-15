@@ -1,19 +1,15 @@
 reviewers:
   - aburdenthehand
-  - cwilkers
   - dhiller
   - jean-edouard
-  - jobbler
 
 approvers:
   - aburdenthehand
-  - AlonaKaplan
-  - cwilkers
   - davidvossel
   - fabiand
+  - jean-edouard
   - rmohr
   - vladikr
-  - jean-edouard
 
 emeritus_approvers:
   - karmab # 10 july 2019
@@ -26,3 +22,5 @@ emeritus_approvers:
   - alosadagrande # April 2020
   - codificat # Jan 2022
   - mazzystr # Jan 2022
+  - AlonaKaplan # Sep 2024
+  - cwilkers # Sep 2024
