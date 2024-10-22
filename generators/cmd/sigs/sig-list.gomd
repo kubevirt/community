@@ -55,6 +55,15 @@ Each group's material is in its subdirectory in this project.
 {{ end }}
 {{end}}
 
+{{ if $.Sigs.Workinggroups }}
+### Working Groups
+
+| Name | Label [1] | Chairs [2] | Contact | Meetings |
+|------|-----------|---------|---------|----------|
+{{ range $wg := $.Sigs.Workinggroups }}{{ template "group" $wg }}
+{{ end }}
+{{end}}
+
 {{ if $.Sigs.Committees }}
 ### Committees
 
