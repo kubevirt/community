@@ -92,8 +92,11 @@ sigs:
         - name: k8snetworkplumbingwg
           owners:
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/multi-networkpolicy-iptables/master/OWNERS
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
+            - https://raw.githubusercontent.com/k8snetworkplumbingwg/ovs-cni/main/OWNERS
+        - name: containernetworking
+          owners:
+            - https://raw.githubusercontent.com/containernetworking/plugins/main/OWNERS.md
     - dir: sig-scale
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
