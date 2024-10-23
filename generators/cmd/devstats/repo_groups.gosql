@@ -1,0 +1,119 @@
+{{- /*
+    This file is part of the KubeVirt project
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+    Copyright the KubeVirt Authors.
+
+    */
+-}}
+{{- /* gotype: kubevirt.io/community/generators/cmd/devstats.RepoGroupsTemplateData */ -}}
+-- Add repository groups
+with repo_latest as (
+  select sub.repo_id,
+    sub.repo_name
+  from (
+    select repo_id,
+      dup_repo_name as repo_name,
+      row_number() over (partition by repo_id order by created_at desc, id desc) as row_num
+    from
+      gha_events
+  ) sub
+  where
+    sub.row_num = 1
+)
+update
+  gha_repos r
+set
+  alias = (
+    select rl.repo_name
+    from
+      repo_latest rl
+    where
+      rl.repo_id = r.id
+  )
+where
+  r.name like '%_/_%'
+  and r.name not like '%/%/%'
+;
+
+-- Maybe some new repos specified in CTE config appeared, so their config will be changed
+-- And because we only want to assign not specified to 'Other' - we do this configuration again
+delete from gha_repo_groups;
+
+-- Per each SIG that has claimed ownership via one of it's subprojects we add a new entry in gha_repo_groups
+-- 'repos' CTE is a full mapping between repo name N:M repo group
+-- each line is ('repo/name', 'Repo Group Name'),
+with repos as (
+  select
+    repo,
+    repo_group
+  from (
+    values{{ range $indexOuter, $repoGroup := $.RepoGroups }}{{ if $indexOuter }},{{ end }}
+      -- {{ $repoGroup.Name }}{{ range $indexInner, $repo := $repoGroup.Repos }}{{ if $indexInner }},{{ end }}
+      ('{{ $repo }}', '{{ $repoGroup.Name }}'){{ end }}{{ end }}
+  ) AS a (repo, repo_group)
+)
+insert into gha_repo_groups(id, name, alias, repo_group, org_id, org_login)
+select
+  r.id, r.name, r.alias, c.repo_group, r.org_id, r.org_login
+from
+  gha_repos r,
+  repos c
+where
+  r.name = c.repo
+;
+
+-- To see missing repos
+/*
+select
+  c.repo
+from
+  repos c
+left join
+  gha_repos r
+on
+  r.name = c.repo
+where
+  r.name is null;
+;
+*/
+
+
+-- Remaining repos that were not assigned to at least 1 repo group fall back to 'Other' repo group
+insert into gha_repo_groups(id, name, alias, repo_group, org_id, org_login)
+select
+  r.id, r.name, r.alias, 'Other', r.org_id, r.org_login
+from
+  gha_repos r
+left join
+  gha_repo_groups rg
+on
+  r.name = rg.name
+where
+  rg.name is null
+;
+
+select
+  repo_group,
+  count(*) as number_of_repos
+from
+  gha_repo_groups
+where
+  repo_group is not null
+group by
+  repo_group
+order by
+  number_of_repos desc,
+  repo_group asc;
