@@ -1,5 +1,6 @@
 # Overview
-We are getting asks from multiple cluster admin that would like to explicitly specify the "destination" of the VM when doing Live migration.
+
+We are getting asks from multiple cluster admin that would like - in exceptionel cases - to explicitly specify the "destination" of the VM when doing Live migration.
 While this may be less important in a cloud-native environment,
 we get this ask from many users coming from other virtualization solutions, where this is a common practice.
 The same result can already be achieved today with a few steps, this is only about simplifying it with a single direct API on the single `VirtualMachineInstanceMigration` without the need to alter a VM spec.
@@ -55,7 +56,7 @@ On the other side the VM owner is not required/supposed to be aware of node name
 - Cluster-admin: the administrator of the cluster
 
 ## User Stories
-- As a cluster admin I want to be able to try to live-migrate a VM to specific node (or node within a set of nodes) for various possible reasons such as:
+- As a cluster admin I want - in exceptional but critical cases - to be able to try to live-migrate a VM to specific node (or node within a set of nodes) for various possible reasons such as:
   - I just added to the cluster a new powerful node and I want to migrate a selected VM there without trying more than once according to scheduler decisions
   - I'm not using any automatic workload rebalancing mechanism and I periodically want to manually rebalance my cluster according to my observations (see fon instance: https://github.com/kubernetes-sigs/descheduler/issues/225 )
   - Foreseeing a peak in application load (e.g. new product announcement), I'd like to balance in advance my cluster according to my expectation and not to current observations
