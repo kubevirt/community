@@ -84,6 +84,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
     - dir: sig-network
+      label: sig/network
       name: network
       subprojects:
         - name: nmstate
