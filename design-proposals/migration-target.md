@@ -43,8 +43,8 @@ This could also be relevant in terms of personas: we could have the VM owner/dev
 On the other side the VM owner is not required/supposed to be aware of node names. 
 
 ## Goals
+- The capability of live migrating a VM to a specific node is a pretty common and accepted feature across traditional virtualization solutions and also cloud native ones. The lack of this functionality on KubeVirt is currently seen as a bold limit by some potential users. Enabling it on KubeVirt, although without recommending it as the default pattern when alternatives are present, could help foster KubeVirt adoption.
 - A user allowed to trigger a live-migration of a VM and list the nodes in the cluster is able to rely on a simple and direct API to try to live migrate a VM to a specific node (or a node within a set of nodes identified by adding node affinity constraints).
-- The live migration then can successfully complete or fail for various reasons exactly as it can succeed of fail today for other reasons.
 - The target node that is explicitly required for the actual live migration attempt should not influence future live migrations or the placement in case the VM is restarted. For long-lasting placement, nodeSelectors or affinity/anti-affinity rules directly set on the VM spec are the only way to go.
 - The constraints directly added on the one-off migration can only complement and limit constraints already defined on the VM object (pure AND logic).
 
@@ -56,6 +56,9 @@ On the other side the VM owner is not required/supposed to be aware of node name
 - Cluster-admin: the administrator of the cluster
 
 ## User Stories
+- As a cluster admin that managed various traditional and cloud native VM management systems, I have well-defined processes and steps that proved useful when managing VMs.
+  One of the basic actions I require to continue following my processes and steps is to have control over the node target when migrating a VM.
+  With time, I expect to learn and trust Kubernetes and KubeVirt to achieve my needs through other means, but until that time, I would like to keep the capabilities I learned to trust so far.
 - As a cluster admin I want - in exceptional but critical cases - to be able to try to live-migrate a VM to specific node (or node within a set of nodes) for various possible reasons such as:
   - I just added to the cluster a new powerful node and I want to migrate a selected VM there without trying more than once according to scheduler decisions
   - I'm not using any automatic workload rebalancing mechanism and I periodically want to manually rebalance my cluster according to my observations (see fon instance: https://github.com/kubernetes-sigs/descheduler/issues/225 )
