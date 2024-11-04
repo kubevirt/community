@@ -132,6 +132,7 @@ sigs:
             - name: kubevirt-community
               description: General Discussion
     - dir: sig-observability
+      label: sig/observability
       name: observability
       subprojects:
         - name: kubevirt
