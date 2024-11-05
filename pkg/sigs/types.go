@@ -20,26 +20,28 @@
 package sigs
 
 type Sigs struct {
-	Sigs       []*Group `yaml:"sigs"`
-	Usergroups []*Group `yaml:"usergroups"`
-	Committees []*Group `yaml:"committees"`
+	Sigs          []*Group `yaml:"sigs"`
+	Workinggroups []*Group `yaml:"workinggroups"`
+	Usergroups    []*Group `yaml:"usergroups"`
+	Committees    []*Group `yaml:"committees"`
 }
 
 type Group struct {
 	Dir              string
 	Name             string
-	MissionStatement string         `yaml:"mission_statement,omitempty"`
-	Label            string         `yaml:",omitempty"`
-	Leadership       *Leadership    `yaml:",omitempty"`
-	Meetings         []*Meeting     `yaml:",omitempty"`
-	Contact          *Contact       `yaml:",omitempty"`
-	SubProjects      []*SubProjects `yaml:",omitempty"`
+	MissionStatement string        `yaml:"mission_statement,omitempty"`
+	Label            string        `yaml:",omitempty"`
+	Leadership       *Leadership   `yaml:",omitempty"`
+	Meetings         []*Meeting    `yaml:",omitempty"`
+	Contact          *Contact      `yaml:",omitempty"`
+	SubProjects      []*SubProject `yaml:",omitempty"`
 }
 
 type Contact struct {
-	Slack       string  `yaml:"slack"`
-	MailingList string  `yaml:"mailing_list"`
-	Teams       []*Team `yaml:"teams"`
+	Slack       string     `yaml:"slack"`
+	MailingList string     `yaml:"mailing_list"`
+	Teams       []*Team    `yaml:"teams"`
+	Liaison     *OrgMember `yaml:"liaison"`
 }
 
 type Team struct {
@@ -59,16 +61,18 @@ type Meeting struct {
 }
 
 type Leadership struct {
-	Chairs []*Chair
+	Chairs []*OrgMember
 }
 
-type Chair struct {
+type OrgMember struct {
 	Github  string
 	Name    string
-	Company string
+	Company string `yaml:",omitempty"`
 }
 
-type SubProjects struct {
-	Name   string
-	Owners []string
+type SubProject struct {
+	Name        string
+	Description string `yaml:",omitempty"`
+	Owners      []string
+	Leads       []*OrgMember `yaml:",omitempty"`
 }
