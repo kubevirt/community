@@ -156,6 +156,33 @@ sigs:
         - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
         - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/builder/OWNERS
         - https://raw.githubusercontent.com/kubevirt/kubevirt/main/bazel/OWNERS
+      - name: arch-s390x
+        description: |
+          The arch-s390x subproject takes care of all matters related to building and compiling for s390x architecture.
+        leads:
+        - github: jschintag
+          name: "Jan Schintag"
+          company: IBM
+        - github: cfilleke
+          name: "Cheryl Fillekes"
+          company: IBM
+        - github: vamsikrishna-siddu
+          name: "vamsikrishna-siddu"
+          company: IBM
+        owners:
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+      - name: arch-arm
+        description: |
+          The arch-arm subproject takes care of all matters related to building and compiling for arm architecture.
+        leads:
+        - github: zhlhahaha
+          name: "Howard Zhang"
+          company: ARM
+        owners:
+        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+        - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
       mission_statement: |
         SIG buildsystem takes care of all things building and automating for the KubeVirt project - they ensure new and existing contributors have a smooth contribution experience, i.o.w. contributors shouldn't have the feeling that they are wasting their time.
         This includes bazel, test automation and updates, also support of failing builds or test lanes in case of infrastructural or configuration problems.
@@ -205,6 +232,63 @@ sigs:
         teams:
         - name: kubevirt-community
           description: General Discussion
+      subprojects:
+      - name: ci-s390x
+        description: |
+          The ci-s390x subproject takes care of all matters related to CI for s390x architecture.
+          leads:
+          - github: jschintag
+            name: "Jan Schintag"
+            company: IBM
+          - github: cfilleke
+            name: "Cheryl Fillekes"
+            company: IBM
+          - github: vamsikrishna-siddu
+            name: "vamsikrishna-siddu"
+            company: IBM
+          - github: chandramerla
+            name: "Chandra Merla"
+            company: IBM
+        owners:
+        - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+      - name: ci-arm
+        description: |
+          The ciarch-arm subproject takes care of all matters related to CI for arm architecture.
+        leads:
+        - github: zhlhahaha
+          name: "Howard Zhang"
+          company: ARM
+        owners:
+        - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+workinggroups:
+    - dir: wg-arch-s390x
+      name: S390x architecture working group
+      mission_statement: |
+        WG ARCH s390x takes care of all things related to supporting s390x architecture on KubeVirt clusters.
+        This includes all build processes, also support of failing builds or test lanes.
+      label: wg-arch-s390x
+      leadership:
+        chairs:
+        - github: jschintag
+          name: "Jan Schintag"
+          company: IBM
+        - github: cfilleke
+          name: "Cheryl Fillekes"
+          company: IBM
+        - github: vamsikrishna-siddu
+          name: "vamsikrishna-siddu"
+          company: IBM
+    - dir: wg-arch-arm
+      name: ARM architecture working group
+      mission_statement: |
+        WG ARCH ARM takes care of all things related to supporting ARM architecture on KubeVirt clusters.
+        This includes all build processes, also support of failing builds or test lanes.
+      label: wg-arch-arm
+      leadership:
+        chairs:
+        - github: zhlhahaha
+          name: "Howard Zhang"
+          company: ARM
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
