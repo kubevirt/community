@@ -49,6 +49,7 @@ Each group's material is in its subdirectory in this project.
 |------|-----------|------------|---------|----------|
 |[S390x architecture working group](wg-arch-s390x/charter.md) |[wg-arch-s390x](https://github.com/kubevirt/kubevirt/labels/wg-arch-s390x) | <ol><li>[Jan Schintag](https://github.com/jschintag), IBM</li><li>[Cheryl Fillekes](https://github.com/cfilleke), IBM</li><li>[vamsikrishna-siddu](https://github.com/vamsikrishna-siddu), IBM</li></ol> | |<ul></ul> |
 |[ARM architecture working group](wg-arch-arm/charter.md) |[wg-arch-arm](https://github.com/kubevirt/kubevirt/labels/wg-arch-arm) | <ol><li>[Howard Zhang](https://github.com/zhlhahaha), ARM</li></ol> | |<ul></ul> |
+|[Code-Quality Working Group](wg-code-quality/charter.md) |[wg/code-quality](https://github.com/kubevirt/kubevirt/labels/wg/code-quality) | <ol><li>[Edward Haas](https://github.com/EdDev), Red Hat</li><li>[Itamar Holder](https://github.com/iholder101), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>KubeVirt Code-Quality Working Group meeting: [ Thu at 09:00 UTC (biweekly) ](https://zoom.us/j/93168599900)</li></ul> |
 
 
 
