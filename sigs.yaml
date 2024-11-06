@@ -62,6 +62,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/preference/OWNERS
     - dir: sig-documentation
+      label: sig/documentation
       name: documentation
       subprojects:
         - name: documentation
@@ -71,12 +72,14 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
     - dir: sig-storage
+      label: sig/storage
       name: storage
       subprojects:
         - name: containerized-data-importer
           owners:
             - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
     - dir: sig-testing
+      label: sig/testing
       name: testing
       subprojects:
         - name: kubevirtci
@@ -84,6 +87,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
     - dir: sig-network
+      label: sig/network
       name: network
       subprojects:
         - name: nmstate
@@ -98,6 +102,7 @@ sigs:
           owners:
             - https://raw.githubusercontent.com/containernetworking/plugins/main/OWNERS.md
     - dir: sig-scale
+      label: sig/scale
       name: KubeVirt Perf and Scale SIG
       mission_statement: |
         Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
@@ -107,7 +112,6 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tools/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/performance/OWNERS
-      label: kubevirt-community
       leadership:
         chairs:
           - github: rthallisey
@@ -294,7 +298,6 @@ usergroups:
       name: KubeVirt Community
       mission_statement: |
         Lorem Ipsum.
-      label: kubevirt-community
       leadership:
         chairs: []
       meetings:
