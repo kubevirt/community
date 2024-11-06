@@ -27,10 +27,12 @@ type Sigs struct {
 }
 
 type Group struct {
-	Dir              string
 	Name             string
+	Dir              string        `yaml:",omitempty"`
+	Description      string        `yaml:",omitempty"`
 	MissionStatement string        `yaml:"mission_statement,omitempty"`
 	Label            string        `yaml:",omitempty"`
+	Leads            []*Lead       `yaml:",omitempty"`
 	Leadership       *Leadership   `yaml:",omitempty"`
 	Meetings         []*Meeting    `yaml:",omitempty"`
 	Contact          *Contact      `yaml:",omitempty"`
@@ -40,8 +42,8 @@ type Group struct {
 type Contact struct {
 	Slack       string     `yaml:"slack"`
 	MailingList string     `yaml:"mailing_list"`
-	Teams       []*Team    `yaml:"teams"`
-	Liaison     *OrgMember `yaml:"liaison"`
+	Teams       []*Team    `yaml:"teams,omitempty"`
+	Liaison     *OrgMember `yaml:"liaison,omitempty"`
 }
 
 type Team struct {
@@ -56,23 +58,26 @@ type Meeting struct {
 	TZ            string
 	Frequency     string
 	URL           string
-	ArchiveURL    string `yaml:"archive_url"`
-	RecordingsURL string `yaml:"recordings_url"`
+	ArchiveURL    string `yaml:"archive_url,omitempty"`
+	RecordingsURL string `yaml:"recordings_url,omitempty"`
 }
 
 type Leadership struct {
-	Chairs []*OrgMember
+	Chairs []*Chair `yaml:",omitempty"`
 }
 
 type OrgMember struct {
 	Github  string
-	Name    string
+	Name    string `yaml:",omitempty"`
 	Company string `yaml:",omitempty"`
 }
+
+type Chair OrgMember
+type Lead OrgMember
 
 type SubProject struct {
 	Name        string
 	Description string `yaml:",omitempty"`
 	Owners      []string
-	Leads       []*OrgMember `yaml:",omitempty"`
+	Leads       []*Lead `yaml:",omitempty"`
 }
