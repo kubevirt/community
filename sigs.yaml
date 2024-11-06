@@ -236,19 +236,19 @@ sigs:
       - name: ci-s390x
         description: |
           The ci-s390x subproject takes care of all matters related to CI for s390x architecture.
-          leads:
-          - github: jschintag
-            name: "Jan Schintag"
-            company: IBM
-          - github: cfilleke
-            name: "Cheryl Fillekes"
-            company: IBM
-          - github: vamsikrishna-siddu
-            name: "vamsikrishna-siddu"
-            company: IBM
-          - github: chandramerla
-            name: "Chandra Merla"
-            company: IBM
+        leads:
+        - github: jschintag
+          name: "Jan Schintag"
+          company: IBM
+        - github: cfilleke
+          name: "Cheryl Fillekes"
+          company: IBM
+        - github: vamsikrishna-siddu
+          name: "vamsikrishna-siddu"
+          company: IBM
+        - github: chandramerla
+          name: "Chandra Merla"
+          company: IBM
         owners:
         - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
       - name: ci-arm
