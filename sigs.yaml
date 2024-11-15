@@ -346,7 +346,7 @@ workinggroups:
       mission_statement: |
         WG ARCH s390x takes care of all things related to supporting s390x architecture on KubeVirt clusters.
         This includes all build processes, also support of failing builds or test lanes.
-      label: wg-arch-s390x
+      label: wg/arch-s390x
       leadership:
         chairs:
         - github: jschintag
@@ -363,7 +363,7 @@ workinggroups:
       mission_statement: |
         WG ARCH ARM takes care of all things related to supporting ARM architecture on KubeVirt clusters.
         This includes all build processes, also support of failing builds or test lanes.
-      label: wg-arch-arm
+      label: wg/arch-arm
       leadership:
         chairs:
         - github: zhlhahaha
