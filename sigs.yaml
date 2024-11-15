@@ -31,6 +31,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
@@ -58,8 +59,7 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/staging/src/kubevirt.io/api/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/preference/OWNERS
-    - dir: sig-documentation
-      label: sig/documentation
+    - label: sig/documentation
       name: documentation
       subprojects:
         - name: documentation
@@ -91,8 +91,7 @@ sigs:
         - name: containerized-data-importer
           owners:
             - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
-    - dir: sig-testing
-      label: sig/testing
+    - label: sig/testing
       name: testing
       subprojects:
         - name: kubevirtci
@@ -401,8 +400,7 @@ workinggroups:
           github: dhiller
           name: "Daniel Hiller"
 usergroups:
-    - dir: kubevirt-community
-      name: KubeVirt Community
+    - name: KubeVirt Community
       mission_statement: |
         Lorem Ipsum.
       leadership:
