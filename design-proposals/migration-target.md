@@ -45,7 +45,7 @@ On the other side the VM owner is not required/supposed to be aware of node name
 ## Goals
 - The capability of live migrating a VM to a specific node is a pretty common and accepted feature across traditional virtualization solutions and also cloud native ones. The lack of this functionality on KubeVirt is currently seen as a bold limit by some potential users. Enabling it on KubeVirt, although without recommending it as the default pattern when alternatives are present, could help foster KubeVirt adoption.
 - A user allowed to trigger a live-migration of a VM and list the nodes in the cluster is able to rely on a simple and direct API to try to live migrate a VM to a specific node (or a node within a set of nodes identified by adding node affinity constraints).
-- The target node that is explicitly required for the actual live migration attempt should not influence future live migrations or the placement in case the VM is restarted. For long-lasting placement, nodeSelectors or affinity/anti-affinity rules directly set on the VM spec are the only way to go.
+- The target node that is explicitly required for the actual live migration attempt should not influence future live migrations or the placement in case the VM is restarted. This enhancement is not going to ensure that a VM will permanently stick to the selected target node: for long-lasting placement, nodeSelectors or affinity/anti-affinity rules directly set on the VM spec are the only way to go.
 - The constraints directly added on the one-off migration can only complement and limit constraints already defined on the VM object (pure AND logic).
 
 ## Non Goals
@@ -74,81 +74,37 @@ On the other side the VM owner is not required/supposed to be aware of node name
 
 # Design
 ## Proposed design
-We are going to add a new optional `addedNodeSelectorTerm` stanza of type `*k8sv1.NodeSelectorTerm` on the `VirtualMachineInstanceMigration` object.
-We are not going to alter by any mean the `spec` stanza of the VM or the VMI objects so future migrations or the node placement after a restart of the VM are not going to be affected by a `addedNodeSelectorTerm` set on a specific `VirtualMachineInstanceMigration` object.
-If the target pod fails to be started, the `VirtualMachineInstanceMigration` object will be marked as failed as it can already happen today for other reasons.
+We are going to add a new optional `addedNodeSelector` stanza of type `map[string]string` on the `VirtualMachineInstanceMigration` object.
+When rendering the target pod for the live migration, the migration controller will extend the `nodeSelector`stanza of the VM objects with additional labels defined on `addedNodeSelector`. In case of key collisions, values set on the VM objects should be preserved to ensure that `addedNodeSelector` can only restrict but not extend the list of constraints already set on the VM object.
+We are not going to alter by any mean the `spec` stanza of the VM or the VMI objects so future migrations or the node placement after a restart of the VM are not going to be affected by a `addedNodeSelector` set on a specific `VirtualMachineInstanceMigration` object.
+The one-off migration attempt is best-effort: ff the target pod fails to be started, the `VirtualMachineInstanceMigration` object will be marked as failed as it can already happen today for other reasons.
 The reason of the eventual failure will be reported back as it gets reported back today when a migration fails due to other reasons. 
+In case `nodeAffinity` is also defined on the VM object, it will still be honored in *AND* logic exactly as for today when both `nodeSelector` and `nodeAffinity` are defined for the VM.
 
-## Why addedNodeSelectorTerm and not simply addedNodeSelector
+We acknowledge that the directed live migration feature may increase the load of `VMIM` objects within the cluster in unpredictable ways.
+To protect the system from an unbounded queue of unprocessed `VMIM` requests,
+the migration controller should limit the total number of `VMIM` objects that can be queued.
+A reasonable heuristic for this max queue would to make it double the max parallel migrations count.
+Meaning that we will fast fail any `VMIM` objects that are created when the internal queue of unfinalized `VMIM` objects is greater than `2*ParallelMigrationsPerCluster`.
+
+## Why not addedNodeAffinity
 
 According to the [k8s APIs](https://github.com/kubernetes/api/blob/71385f038c1097af36f3d2f68b415860b866c1f8/core/v1/types.go#L3355-L3363), a `nodeSelector` is a list of `NodeSelectorTerms` and
 *it represents the OR of the selectors represented by the node selector terms*.
 This means that a Pod can be scheduled onto a node if just one of the specified `NodeSelectorTerms` can be satisfied (terms are ORed).
 This means that if a catch all `NodeSelectorTerm` is added in addition to existing `NodeSelectorTerms` already defined at VM level, it will completely defeat and bypass the constraints defined by the VM owner on the VM object while this proposal is only about being able to restrict the set of valid target nodes for a migration adding additional constraints (`pure AND logic`).
 In k8s APIs, `NodeSelectorTerm` are [ORed](https://github.com/kubernetes/api/blob/71385f038c1097af36f3d2f68b415860b866c1f8/core/v1/types.go#L3360) while `NodeSelectorRequirements` within a single `NodeSelectorTerm` are [ANDed](https://github.com/kubernetes/api/blob/71385f038c1097af36f3d2f68b415860b866c1f8/core/v1/types.go#L3366).
-This proposal is only about exposing **pure AND logic** to limit the set of candidate nodes for a live migration still respecting what is specified on the VM object so exposing the `NodeSelector` API is not an option.
-Exposing a single `NodeSelectorTerm` on the `VMIM` object and adding all of the `NodeSelectorRequirements` defined there to all of the `NodeSelectorTerms` already defined on the VM object is instead a viable solution to achieve *pure AND logic*.
+This proposal is only about exposing **pure AND logic** to limit the set of candidate nodes for a live migration still respecting what is specified on the VM object so exposing the `NodeAffinity.NodeSelector` API is not an option.
+Exposing a single `NodeSelectorTerm` on the `VMIM` object and adding all of the `NodeSelectorRequirements` defined there to all of the `NodeSelectorTerms` already defined on the VM object is technically a viable solution to achieve *pure AND logic*.
+On the other side, `NodeSelectorTerm` is not a first class API outside the context of `NodeAffinity`.
+While NodeSelector is less expressive, we still think it's the most straightforward for UX for users, and we assume it's enough to satisfy all the goals here.
 
-### Why to simply `NodeSelector map[string]string`
-On Pod spec we also have `NodeSelector map[string]string` which is used in **AND** with `NodeAffinity` rules so from this point of view its a viable option.
-On the other side `pod.spec.nodeSelector` is only matching labels and the predefined `kubernetes.io/hostname` [label is not guaranteed to be reliable](https://kubernetes.io/docs/reference/node/node-labels/#preset-labels).
-`NodeSelectorTerm` offers more options, and in particular:
-- the capability of matching `metadata.name` field that cannot be altered and its more reliable than `kubernetes.io/hostname` label.
-- `NotIn` and `DoesNotExist` operators allowing tp define a node anti-affinity behavior as an alternative to node taints.
+### How to propagate the additional constraint to the target virt-launcher pod
 
-### How to propagate the additional constraint (the name of a target node for instance) to the target virt-launcher pod
+When rendering the target pod for the live migration,
+if `addedNodeSelector` is defined on the VMIM object, all the additional labels defined there will be appended to `NodeSelector` as defined on the VM object. Otherwise `addedNodeSelector` will be applied as `NodeSelector` on the target pod for the migration.
+In case of key collisions, values set on the VM objects should be preserved to ensure that `addedNodeSelector` can only restrict but not extend the list of constraints already set on the VM object.
 
-If `addedNodeSelectorTerm` is defined on the VMIM object, all of the additional `NodeSelectorRequirements` defined there will be appended to all of the existing required `NodeSelectorTerms` defined in eventually set by the VM owner on the VM spec (`spec.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution`). 
-From a logical perspective, this is a pure **AND**:
-
-Nodes need to satisfy all the `NodeSelectorRequirements` defined in the `addedNodeSelectorTerm` stanza on `VirtualMachineInstanceMigration` object **AND** the preexisting `NodeAffinity` constraints defined by the VM owner on the VM spec (and taints and tolerations).
-`addedNodeSelectorTerm` will adopt the well known `nodeSelectorTerm` grammar from k8s.
-It's a pretty flexible and standard API. It can address:
-- the simplest use case (migrating to a named nome identified by its node name):
-  ```yaml
-  addedNodeSelectorTerm:
-    - matchFields:
-      - key: metadata.name
-        operator: In
-        values:
-          - <nodeName>
-  ```
-- more complex scenario like migrating to a scheduler chosen host within a group of hosts satisfying an additional requirement:
-```yaml
-addedNodeSelectorTerm:
-  - matchExpressions:
-    - key: disktype
-      operator: In
-      values:
-        - ssd
-```
-
-From a coding perspective the additional logic required on the migration controller is pretty simple.
-Pseudocode:
-```go
-	if migration.Spec.AddedNodeSelectorTerm != nil {
-		if templatePod.Spec.Affinity.NodeAffinity == nil {
-			templatePod.Spec.Affinity.NodeAffinity = &k8sv1.NodeAffinity{
-				RequiredDuringSchedulingIgnoredDuringExecution: &k8sv1.NodeSelector{
-					NodeSelectorTerms: []k8sv1.NodeSelectorTerm{*migration.Spec.AddedNodeSelectorTerm},
-				},
-			}
-		} else if templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution == nil {
-			templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution = &k8sv1.NodeSelector{
-				NodeSelectorTerms: []k8sv1.NodeSelectorTerm{*migration.Spec.AddedNodeSelectorTerm},
-			}
-		} else {
-			for i, _ := range templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms {
-				templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms[i].MatchExpressions = append(
-					templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms[i].MatchExpressions,
-					migration.Spec.AddedNodeSelectorTerm.MatchExpressions...)
-				templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms[i].MatchFields = append(
-					templatePod.Spec.Affinity.NodeAffinity.RequiredDuringSchedulingIgnoredDuringExecution.NodeSelectorTerms[i].MatchFields,
-					migration.Spec.AddedNodeSelectorTerm.MatchFields...)
-			}
-		}
-	}
-```
 
 ## Alternative designs
 During the review of this proposal alternative approached got debated.
@@ -211,32 +167,25 @@ metadata:
   name: migration-job
 spec:
   vmiName: vmi-fedora
-  addedNodeSelectorTerm:
-    - matchFields:
-      - key: metadata.name
-        operator: In
-        values:
-          - <nodeName>
+  addedNodeSelector:
+    accelerator: gpuenabled123
+    kubernetes.io/hostname: "ip-172-20-114-199.example"
 ```
 
-the API description should clearly emphasize that `addedNodeSelectorTerm` stanza is optional, and we recommend to not set it to let the scheduler find the best node (if trying to migrate to a specific named node is not strictly needed as a one-off migration).
+The API description should clearly emphasize that `addedNodeSelector` stanza is optional and in cases of key collisions the value already set on the VM object are going to be preserved.
+The API description should clearly emphasize that we recommend to avoid it to let the scheduler automatically find the best node (if trying to migrate to a specific named node is not strictly needed as a one-off migration).
 Something like:
 ```go
-// AddedNodeSelectorTerm is applied additionally to the NodeAffinity specified on the VM.
+// AddedNodeSelector is applied additionally to the NodeSelector specified on the VM.
 // The scheduler will automatically attempt a reasonable migration, addition constraints
 // on the one-off migration are required only in special cases.
-// In order to be valid migration targets, Nodes need to satisfy existing NodeAffinity as defined on the VM.
-// AND the expressions on this added NodeSelectorTerm.
-// AddedNodeSelectorTerm is empty by default (all Nodes match).
-// AddedNodeSelectorTerm can only restrict the set of Nodes that are valid target for the migration.
-// When multiple nodeSelectorTerms are specified in nodeAffinity types,
-// then the Pod can be scheduled onto a node if one of the specified terms can be satisfied (terms are ORed).
-// When multiple expressions are specified in a single nodeSelectorTerms,
-// then the Pod can be scheduled onto a node only if all the expressions are satisfied (expressions are ANDed).
-// To obtain the expected result (restrict the set of Nodes that are valid target for the migration),
-// all the expressions specified here are going to be added to all the NodeSelectorTerms defined on the VM.
+// In order to be valid migration targets, Nodes need to satisfy existing NodeAffinity and NodeSelector as defined on the VM
+// merged with additional labels defined on added AddedNodeSelector.
+// In cases of key collisions, the value already set on the NodeSelector on the VM object are going to be preserved.
+// AddedNodeSelector is empty by default (all Nodes match).
+// AddedNodeSelector can only restrict the set of Nodes that are valid target for the migration.
 // +optional
-AddedNodeSelectorTerm *k8sv1.NodeSelectorTerm `json:"addedNodeSelectorTerm,omitempty"`
+AddedNodeSelector map[string]string `json:"addedNodeSelector,omitempty"`
 ```
 
 ## Scalability
@@ -244,15 +193,22 @@ Forcing additional node affinity constraints on `VirtualMachineInstanceMigration
 But the same result can be already achieved today specifying a `nodeSelector` or `affinity` and `anti-affinity` rules on a VM. Nothing really new on this regard.
 We assume that selecting nodes as destinations is not assumed to be a default tool for balancing workloads but just a tool for exceptional situations and one-offs.
 
+On the other side, we also acknowledge that the directed live migration feature may increase the load of `VMIM` objects within the cluster in unpredictable ways.
+To protect the system from an unbounded queue of unprocessed `VMIM` requests,
+the migration controller should limit the total number of `VMIM` objects that can be queued.
+A reasonable heuristic for this max queue would to make it double the max parallel migrations count.
+Meaning that we will fast fail any `VMIM` objects that are created when the internal queue of unfinalized `VMIM` objects is greater than `2*ParallelMigrationsPerCluster`.
+
 ## Update/Rollback Compatibility
-`addedNodeSelectorTerm` on `VirtualMachineInstanceMigration` will be only an optional field so no impact in terms of update compatibility.
+`addedNodeSelector` on `VirtualMachineInstanceMigration` will be only an optional field so no impact in terms of update compatibility.
 
 ## Functional Testing Approach
-- positive test 1: a VirtualMachineInstanceMigration with an explict addedNodeSelectorTerm pointing to a node able to accommodate the VM should succeed with the VM migrating to the named node
-- negative test 1 a VirtualMachineInstanceMigration with an explict addedNodeSelector pointing to a node able to accommodate the VM but not matching a nodeSelector already present on the VM should fail
-- negative test 2: a VirtualMachineInstanceMigration with an explict addedNodeSelector should fail if the required node doesn't exist
+- positive test 1: a VirtualMachineInstanceMigration with an explict addedNodeSelector pointing to a node able to accommodate the VM should succeed with the VM migrating to the named node
+- negative test 1 a VirtualMachineInstanceMigration with an explict addedNodeSelector pointing to a node able to accommodate the VM but not matching a label already present on the nodeSelector VM should fail
+- negative test 2: a VirtualMachineInstanceMigration with an explict addedNodeSelector should fail if the required node by `kubernetes.io/hostname` label doesn't exist
 - negative test 3: a VirtualMachineInstanceMigration with an explict addedNodeSelector should fail if the VM is already running on the requested node
 - negative test 4: a VirtualMachineInstanceMigration with an explict addedNodeSelector should fail if the selected target node is not able to accommodate the additional pod for virt-launcher
+- negative test 5: a VirtualMachineInstanceMigration with an explict addedNodeSelector trying to override a label already defined on nodeSelector on the VM object should not override it on the target pod
 
 # Implementation Phases
 A really close attempt was already tried in the past with https://github.com/kubevirt/kubevirt/pull/10712 but the PR got some pushbacks because it was not clear why a new API for one-off migration is needed.
