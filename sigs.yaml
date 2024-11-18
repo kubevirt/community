@@ -74,6 +74,22 @@ sigs:
     - dir: sig-storage
       label: sig/storage
       name: storage
+      leadership:
+        chairs:
+          - github: alicefr
+            name: "Alice Frosi"
+            company: Red Hat
+          - github: mhenriks
+            name: "Michael Henriksen"
+            company: Red Hat
+      meetings:
+        - description: KubeVirt Storage SIG Meeting
+          day: Monday
+          time: "1:00 PM"
+          tz: UTC
+          frequency: bimonthly
+          url: https://zoom.us/j/97050528531
+          archive_url: https://docs.google.com/document/d/1mqJMjzT1biCpImEvi76DCMZxv-DwxGYLiPRLcR6CWpE/edit?tab=t.0
       subprojects:
         - name: containerized-data-importer
           owners:
