@@ -105,6 +105,11 @@ sigs:
     - dir: sig-network
       label: sig/network
       name: network
+      leadership:
+        chairs:
+          - name: "Edward Haas"
+            github: eddev
+            company: Red Hat
       subprojects:
         - name: nmstate
           owners:
