@@ -18,9 +18,9 @@ With this in mind, there is a need to define a clear scope on which areas and th
 * Create and maintain code-quality guidelines, best practices and standards.
 * Assure distribution of knowledge in regard to code quality.
   * This may include presentations, documentation, lectures, certifications, linters, etc.
-* Enforcement of selected standards.
-  * Through automation and active intervention in code reviews.
-  * Through codebase infrastructure. E.g reusable libraries.
+* Enforcement of selected standards via the following methods:
+  * Automation and active intervention in code reviews.
+  * Codebase infrastructure. E.g reusable libraries.
 * Management:
   * Prioritizing tasks.
   * Focusing on selected topics.
@@ -32,11 +32,11 @@ The WG will work on facilitating and managing the quality effort until enough to
 
 ### Special Interest Groups
 
-* All SIGS claiming code ownership and producing code, currently
+* All SIGs claiming code ownership and producing code, currently
   * SIG Compute
   * SIG Network
   * SIG Storage
-* sig-ci
+* SIG CI
   * automation purposes of code-quality measures
 
 ### Roles and responsibilities
@@ -52,9 +52,9 @@ The WG will work on facilitating and managing the quality effort until enough to
 ## Deliverables
 
 The inter-SIG process definition will be manifested in one or more documents that define the quality effort:
-* what tooling and what documentation is required
-* what metrics for code structure should be established and how it will be implemented
-* how reviewer and maintainer awareness will be achieved
+* The tooling and documentation required
+* The code structure metrics to be established and how they will be implemented
+* How reviewer and maintainer awareness will be achieved
 
 Also those documents will include how and when effective measures are executed.
 
