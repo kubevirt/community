@@ -309,6 +309,36 @@ workinggroups:
         - github: zhlhahaha
           name: "Howard Zhang"
           company: ARM
+    - dir: wg-code-quality
+      name: Code-Quality Working Group
+      mission_statement: |
+        The Code-Quality Working Group aims to create an inter-SIG process for identifying, agreeing on and addressing code quality issues
+      label: wg/code-quality
+      leadership:
+        chairs:
+        - github: EdDev
+          name: Edward Haas
+          company: Red Hat
+        - github: iholder101
+          name: Itamar Holder
+          company: Red Hat
+      meetings:
+      - description: KubeVirt Code-Quality Working Group meeting
+        day: Thu
+        time: "09:00"
+        tz: UTC
+        frequency: biweekly
+        url: https://zoom.us/j/93168599900
+        archive_url: https://docs.google.com/document/d/1fBgXan7AQ1LZOmQpNq38H11MmtfuWxOz9DPypyV9UL0/edit
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+        - name: wg-code-quality
+          description: Code-Quality Working Group
+        liaison:
+          github: dhiller
+          name: "Daniel Hiller"
 usergroups:
     - dir: kubevirt-community
       name: KubeVirt Community
