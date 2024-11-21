@@ -23,7 +23,6 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/ansible-kubevirt-modules/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cloud-image-builder/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/common-templates/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/ovs-cni/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/machine-remediation/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cluster-api-provider-external/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cpu-nfd-plugin/master/OWNERS
@@ -32,14 +31,12 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/krew-index/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/katacoda-scenarios/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/csi-driver/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-tekton-tasks/main/OWNERS
@@ -111,17 +108,49 @@ sigs:
             github: eddev
             company: Red Hat
       subprojects:
-        - name: nmstate
+        - name: kubevirt-network
+          leads:
+          - name: "Edward Haas"
+            github: eddev
+            company: Red Hat
           owners:
-            - https://raw.githubusercontent.com/nmstate/kubernetes-nmstate/main/OWNERS
-        - name: k8snetworkplumbingwg
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS_ALIASES
+            - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS_ALIASES
+        - name: CNAO
+          leads:
+            - name: "Ram Lavi"
+              github: RamLavi
+              company: Red Hat
           owners:
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/master/OWNERS
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/sriov-network-operator/master/OWNERS
-            - https://raw.githubusercontent.com/k8snetworkplumbingwg/ovs-cni/main/OWNERS
-        - name: containernetworking
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
+        - name: kubemacpool
+          leads:
+            - name: "Ram Lavi"
+              github: RamLavi
+              company: Red Hat
           owners:
-            - https://raw.githubusercontent.com/containernetworking/plugins/main/OWNERS.md
+            - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/main/OWNERS
+        - name: macvtap-cni
+          leads:
+            - name: "Miguel Duarte Barroso"
+              github: maiqueb
+              company: Red Hat
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
+        - name: ipam-extensions
+          leads:
+            - name: "Miguel Duarte Barroso"
+              github: maiqueb
+              company: Red Hat
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/ipam-extensions/main/OWNERS
+        - name: multus-dynamic-networks-controller
+          leads:
+            - name: "Miguel Duarte Barroso"
+              github: maiqueb
+              company: Red Hat
+          owners:
+            - https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-dynamic-networks-controller/refs/heads/main/.github/CODEOWNERS
     - dir: sig-scale
       label: sig/scale
       name: KubeVirt Perf and Scale SIG
