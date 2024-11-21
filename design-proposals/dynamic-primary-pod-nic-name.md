@@ -330,8 +330,12 @@ Existing VMs should continue working after an upgrade.
 VMs running on nodes with old virt-handler and virt-launcher should continue working as expected.
 This is because old virt-handler and virt-launcher are not aware of the new field that reports the pod interface name.
 
-When performing migration in order to upgrade the virt-launcher pod, there won't be a change to the pod interface name.
+When performing migration in order to upgrade the virt-launcher pod,
+an expectation exists that the pod interface name won't change.
 Changing the primary pod interface name on migration is a non-goal.
+However, the solution can be extended to consider such a scenario.
+See [Appendix B](#appendix-b---extending-support-for-iface-change) for
+more information.
 
 ## Functional Testing Approach
 
@@ -527,3 +531,34 @@ The primary pod interface name is set by the container runtime (for example cri-
 
 - There is no K8s API to name the pod's primary NIC
 - There is no Multus API or config to name the pod's primary NIC
+
+# Appendix B - Extending support for iface change
+
+An advanced scenario in which during a migration, the pod interface name
+changes between the source and target, is an edge case which we have intentionally
+not treated (mentioned as non-goal).
+
+However, concerns have been raised about a future change that might require
+a re-evaluation of the limitation, allowing such name changes.
+
+Therefore, a possible solution is outlined here, showing that it is possible
+to extend this proposal and add such support.
+
+## Solution
+
+The suggested solution is based on the VMI [migration status](https://kubevirt.io/user-guide/compute/live_migration/#migration-status).
+
+A new field may be added to the migration status, indicating the target pod interface name.
+The Migration controller can update the field based on the target pod network-status annotation.
+
+On the source, the virt-handler and virt-launcher components will continue
+consuming the interface status field while on the target, they will consume the migration status
+information.
+
+The solution can be applied to a future release and does not require special preparation
+on the source release.
+
+> **Note**: This optional extension brings a level of complexity which Kubevirt
+> prefers to avoid. Therefore, unless a very strong reasoning is presented, this
+> option is not planned to be added.
+ 
