@@ -404,7 +404,10 @@ usergroups:
       mission_statement: |
         Lorem Ipsum.
       leadership:
-        chairs: []
+        chairs:
+        - github: aburdenthehand
+          name: Andrew Burden
+          company: Red Hat
       meetings:
         - description: Regular KubeVirt Community Meeting
           day: Wednesday
