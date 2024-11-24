@@ -159,6 +159,8 @@ sigs:
     - dir: sig-observability
       label: sig/observability
       name: observability
+      mission_statement: |
+        Provide advanced observability, enabling seamless monitoring and management of virtual machine workloads within KubeVirt. This includes adding metrics, alerts, logs, documenting and testing for each KubeVirt release.
       subprojects:
         - name: kubevirt
           owners:
@@ -171,6 +173,28 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
+      leadership:
+        chairs:
+          - github: sradco
+            name: "Shirly Radco"
+            company: Red Hat
+          - github: machadovilaca
+            name: "João Vilaça"
+            company: Red Hat
+      meetings:
+        - description: KubeVirt Observability SIG Meeting
+          day: Tuesday
+          time: "12:30"
+          tz: UTC
+          frequency: weekly
+          url: https://zoom.us/j/98887071488
+          archive_url: https://docs.google.com/document/d/1coyAoAJGzywifjSIwUUNKTdeBdSfy6RP2OWeFn8Klzg/edit?usp=sharing
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
+        teams:
+            - name: kubevirt-community
+              description: General Discussion
     - dir: sig-buildsystem
       name: KubeVirt Buildsystem SIG
       subprojects:
