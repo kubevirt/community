@@ -1,18 +1,18 @@
 sigs:
-    - dir: sig-compute
+    - name: sig-compute
+      dir: sig-compute
       label: sig/compute
       leadership:
         chairs:
-          - github: iholder101
-            name: "Itamar Holder"
-            company: Red Hat
-          - github: jean-edouard
-            name: "Jed Lejosne"
-            company: Red Hat
+            - github: iholder101
+              name: Itamar Holder
+              company: Red Hat
+            - github: jean-edouard
+              name: Jed Lejosne
+              company: Red Hat
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
-      name: sig-compute
       subprojects:
         - name: kubevirt
           owners:
@@ -30,7 +30,6 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/node-labeller/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-template-validator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kvm-info-nfd-plugin/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/node-maintenance-operator/master/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
@@ -44,13 +43,6 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubectl-virt-plugin/main/OWNERS
         - name: instancetype
           description: The instance type and preference CRDs, APIs and feature set.
-          leads:
-            - github: lyarwood
-              name: "Lee Yarwood"
-              company: Red Hat
-            - github: 0xFelix
-              name: "Felix Matouschek"
-              company: Red Hat
           owners:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/instancetype/OWNERS
@@ -59,8 +51,15 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/staging/src/kubevirt.io/api/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/preference/OWNERS
-    - label: sig/documentation
-      name: documentation
+          leads:
+            - github: lyarwood
+              name: Lee Yarwood
+              company: Red Hat
+            - github: 0xFelix
+              name: Felix Matouschek
+              company: Red Hat
+    - name: documentation
+      label: sig/documentation
       subprojects:
         - name: documentation
           owners:
@@ -68,21 +67,21 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt.github.io/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt-tutorial/main/OWNERS
-    - dir: sig-storage
+    - name: storage
+      dir: sig-storage
       label: sig/storage
-      name: storage
       leadership:
         chairs:
-          - github: alicefr
-            name: "Alice Frosi"
-            company: Red Hat
-          - github: mhenriks
-            name: "Michael Henriksen"
-            company: Red Hat
+            - github: alicefr
+              name: Alice Frosi
+              company: Red Hat
+            - github: mhenriks
+              name: Michael Henriksen
+              company: Red Hat
       meetings:
         - description: KubeVirt Storage SIG Meeting
           day: Monday
-          time: "1:00 PM"
+          time: 1:00 PM
           tz: UTC
           frequency: bimonthly
           url: https://zoom.us/j/97050528531
@@ -91,87 +90,81 @@ sigs:
         - name: containerized-data-importer
           owners:
             - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
-    - label: sig/testing
-      name: testing
+    - name: testing
+      label: sig/testing
       subprojects:
         - name: kubevirtci
           owners:
             - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
-    - dir: sig-network
+    - name: network
+      dir: sig-network
       label: sig/network
-      name: network
       leadership:
         chairs:
-          - name: "Edward Haas"
-            github: eddev
-            company: Red Hat
-          - name: "Miguel Duarte Barroso"
-            github: maiqueb
-            company: Red Hat
+            - github: eddev
+              name: Edward Haas
+              company: Red Hat
+            - github: maiqueb
+              name: Miguel Duarte Barroso
+              company: Red Hat
       subprojects:
         - name: kubevirt-network
-          leads:
-          - name: "Edward Haas"
-            github: eddev
-            company: Red Hat
           owners:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS_ALIASES
             - https://raw.githubusercontent.com/kubevirt/user-guide/main/OWNERS_ALIASES
-        - name: CNAO
           leads:
-            - name: "Ram Lavi"
-              github: RamLavi
+            - github: eddev
+              name: Edward Haas
               company: Red Hat
+        - name: CNAO
           owners:
             - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
-        - name: kubemacpool
           leads:
-            - name: "Ram Lavi"
-              github: RamLavi
+            - github: RamLavi
+              name: Ram Lavi
               company: Red Hat
+        - name: kubemacpool
           owners:
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/kubemacpool/main/OWNERS
-        - name: macvtap-cni
           leads:
-            - name: "Miguel Duarte Barroso"
-              github: maiqueb
+            - github: RamLavi
+              name: Ram Lavi
               company: Red Hat
+        - name: macvtap-cni
           owners:
             - https://raw.githubusercontent.com/kubevirt/macvtap-cni/main/OWNERS
-        - name: ipam-extensions
           leads:
-            - name: "Miguel Duarte Barroso"
-              github: maiqueb
+            - github: maiqueb
+              name: Miguel Duarte Barroso
               company: Red Hat
+        - name: ipam-extensions
           owners:
             - https://raw.githubusercontent.com/kubevirt/ipam-extensions/main/OWNERS
-        - name: multus-dynamic-networks-controller
           leads:
-            - name: "Miguel Duarte Barroso"
-              github: maiqueb
+            - github: maiqueb
+              name: Miguel Duarte Barroso
               company: Red Hat
+        - name: multus-dynamic-networks-controller
           owners:
             - https://raw.githubusercontent.com/k8snetworkplumbingwg/multus-dynamic-networks-controller/refs/heads/main/.github/CODEOWNERS
-    - dir: sig-scale
-      label: sig/scale
-      name: KubeVirt Perf and Scale SIG
+          leads:
+            - github: maiqueb
+              name: Miguel Duarte Barroso
+              company: Red Hat
+    - name: KubeVirt Perf and Scale SIG
+      dir: sig-scale
       mission_statement: |
         Define and drive scalability and performance goals within KubeVirt.  This includes documenting, testing, and measuring performance and scalability for a KubeVirt release.
-      subprojects:
-        - name: kubevirt
-          owners:
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tools/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/performance/OWNERS
+      label: sig/scale
       leadership:
         chairs:
-          - github: rthallisey
-            name: "Ryan Hallisey"
-            company: Nvidia
-          - github: alaypatel07
-            name: "Alay Patel"
-            company: Nvidia
+            - github: rthallisey
+              name: Ryan Hallisey
+              company: Nvidia
+            - github: alaypatel07
+              name: Alay Patel
+              company: Nvidia
       meetings:
         - description: KubeVirt Perf and Scale SIG Meeting
           day: Thursday
@@ -187,31 +180,25 @@ sigs:
         teams:
             - name: kubevirt-community
               description: General Discussion
-    - dir: sig-observability
-      label: sig/observability
-      name: observability
-      mission_statement: |
-        Provide advanced observability, enabling seamless monitoring and management of virtual machine workloads within KubeVirt. This includes adding metrics, alerts, logs, documenting and testing for each KubeVirt release.
       subprojects:
         - name: kubevirt
           owners:
-            - https://raw.githubusercontent.com/kubevirt/monitoring/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/main/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tools/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/performance/OWNERS
+    - name: observability
+      dir: sig-observability
+      mission_statement: |
+        Provide advanced observability, enabling seamless monitoring and management of virtual machine workloads within KubeVirt. This includes adding metrics, alerts, logs, documenting and testing for each KubeVirt release.
+      label: sig/observability
       leadership:
         chairs:
-          - github: sradco
-            name: "Shirly Radco"
-            company: Red Hat
-          - github: machadovilaca
-            name: "João Vilaça"
-            company: Red Hat
+            - github: sradco
+              name: Shirly Radco
+              company: Red Hat
+            - github: machadovilaca
+              name: João Vilaça
+              company: Red Hat
       meetings:
         - description: KubeVirt Observability SIG Meeting
           day: Tuesday
@@ -226,188 +213,200 @@ sigs:
         teams:
             - name: kubevirt-community
               description: General Discussion
-    - dir: sig-buildsystem
-      name: KubeVirt Buildsystem SIG
       subprojects:
-      - name: kubevirt-buildsystem
-        owners:
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/automation/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/builder/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/bazel/OWNERS
-      - name: arch-s390x
-        description: |
-          The arch-s390x subproject takes care of all matters related to building and compiling for s390x architecture.
-        leads:
-        - github: jschintag
-          name: "Jan Schintag"
-          company: IBM
-        - github: cfilleke
-          name: "Cheryl Fillekes"
-          company: IBM
-        - github: vamsikrishna-siddu
-          name: "vamsikrishna-siddu"
-          company: IBM
-        owners:
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
-      - name: arch-arm
-        description: |
-          The arch-arm subproject takes care of all matters related to building and compiling for arm architecture.
-        leads:
-        - github: zhlhahaha
-          name: "Howard Zhang"
-          company: ARM
-        owners:
-        - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
-        - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+        - name: kubevirt
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/monitoring/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/cluster-network-addons-operator/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/ssp-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hostpath-provisioner-operator/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/hyperconverged-cluster-operator/master/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/must-gather/main/OWNERS
+    - name: KubeVirt Buildsystem SIG
+      dir: sig-buildsystem
       mission_statement: |
         SIG buildsystem takes care of all things building and automating for the KubeVirt project - they ensure new and existing contributors have a smooth contribution experience, i.o.w. contributors shouldn't have the feeling that they are wasting their time.
         This includes bazel, test automation and updates, also support of failing builds or test lanes in case of infrastructural or configuration problems.
       label: sig/buildsystem
       leadership:
         chairs:
-          - github: dhiller
-            name: "Daniel Hiller"
-            company: Red Hat
-          - github: brianmcarey
-            name: "Brian Carey"
-            company: Red Hat
-          - github: xpivarc
-            name: "Luboslav Pivarc"
-            company: Red Hat
-    - dir: sig-ci
-      label: sig/ci
-      name: KubeVirt CI Operations Group
+            - github: dhiller
+              name: Daniel Hiller
+              company: Red Hat
+            - github: brianmcarey
+              name: Brian Carey
+              company: Red Hat
+            - github: xpivarc
+              name: Luboslav Pivarc
+              company: Red Hat
+      subprojects:
+        - name: kubevirt-buildsystem
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/automation/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/builder/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/bazel/OWNERS
+        - name: arch-s390x
+          description: |
+            The arch-s390x subproject takes care of all matters related to building and compiling for s390x architecture.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+          leads:
+            - github: jschintag
+              name: Jan Schintag
+              company: IBM
+            - github: cfilleke
+              name: Cheryl Fillekes
+              company: IBM
+            - github: vamsikrishna-siddu
+              name: vamsikrishna-siddu
+              company: IBM
+        - name: arch-arm
+          description: |
+            The arch-arm subproject takes care of all matters related to building and compiling for arm architecture.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+          leads:
+            - github: zhlhahaha
+              name: Howard Zhang
+              company: ARM
+    - name: KubeVirt CI Operations Group
+      dir: sig-ci
       mission_statement: |
         Ensure that the CI infrastructure is operational, that CI jobs are executed in a timely manner and PRs of any of the onboarded projects are not blocked.
+      label: sig/ci
       leadership:
         chairs:
-        - github: brianmcarey
-          name: "Brian Carey"
-          company: Red Hat
-        - github: dhiller
-          name: "Daniel Hiller"
-          company: Red Hat
+            - github: brianmcarey
+              name: Brian Carey
+              company: Red Hat
+            - github: dhiller
+              name: Daniel Hiller
+              company: Red Hat
       meetings:
-      - description: KubeVirt CI Taskforce Sync meeting
-        day: Monday
-        time: "09:00"
-        tz: CET
-        frequency: weekly
-        url: https://zoom.us/j/96583958896
-        archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
-      - description: KubeVirt tests quarantine catch-up
-        day: Wednesday
-        time: "08:45"
-        tz: CET
-        frequency: weekly
-        url: https://zoom.us/j/94552009485
-        archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
+        - description: KubeVirt CI Taskforce Sync meeting
+          day: Monday
+          time: "09:00"
+          tz: CET
+          frequency: weekly
+          url: https://zoom.us/j/96583958896
+          archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
+        - description: KubeVirt tests quarantine catch-up
+          day: Wednesday
+          time: "08:45"
+          tz: CET
+          frequency: weekly
+          url: https://zoom.us/j/94552009485
+          archive_url: https://docs.google.com/document/d/1pWg6JvjStffoZ0NnVk4ALQOs3MYOdHtBpkLBlJlHTqA/edit
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
         teams:
-        - name: kubevirt-community
-          description: General Discussion
+            - name: kubevirt-community
+              description: General Discussion
       subprojects:
-      - name: ci-s390x
-        description: |
-          The ci-s390x subproject takes care of all matters related to CI for s390x architecture.
-        leads:
-        - github: jschintag
-          name: "Jan Schintag"
-          company: IBM
-        - github: cfilleke
-          name: "Cheryl Fillekes"
-          company: IBM
-        - github: vamsikrishna-siddu
-          name: "vamsikrishna-siddu"
-          company: IBM
-        - github: chandramerla
-          name: "Chandra Merla"
-          company: IBM
-        owners:
-        - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
-      - name: ci-arm
-        description: |
-          The ciarch-arm subproject takes care of all matters related to CI for arm architecture.
-        leads:
-        - github: zhlhahaha
-          name: "Howard Zhang"
-          company: ARM
-        owners:
-        - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+        - name: ci-s390x
+          description: |
+            The ci-s390x subproject takes care of all matters related to CI for s390x architecture.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+          leads:
+            - github: jschintag
+              name: Jan Schintag
+              company: IBM
+            - github: cfilleke
+              name: Cheryl Fillekes
+              company: IBM
+            - github: vamsikrishna-siddu
+              name: vamsikrishna-siddu
+              company: IBM
+            - github: chandramerla
+              name: Chandra Merla
+              company: IBM
+        - name: ci-arm
+          description: |
+            The ciarch-arm subproject takes care of all matters related to CI for arm architecture.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+          leads:
+            - github: zhlhahaha
+              name: Howard Zhang
+              company: ARM
 workinggroups:
-    - dir: wg-arch-s390x
-      name: S390x architecture working group
+    - name: S390x architecture working group
+      dir: wg-arch-s390x
       mission_statement: |
         WG ARCH s390x takes care of all things related to supporting s390x architecture on KubeVirt clusters.
         This includes all build processes, also support of failing builds or test lanes.
       label: wg/arch-s390x
       leadership:
         chairs:
-        - github: jschintag
-          name: "Jan Schintag"
-          company: IBM
-        - github: cfilleke
-          name: "Cheryl Fillekes"
-          company: IBM
-        - github: vamsikrishna-siddu
-          name: "vamsikrishna-siddu"
-          company: IBM
-    - dir: wg-arch-arm
-      name: ARM architecture working group
+            - github: jschintag
+              name: Jan Schintag
+              company: IBM
+            - github: cfilleke
+              name: Cheryl Fillekes
+              company: IBM
+            - github: vamsikrishna-siddu
+              name: vamsikrishna-siddu
+              company: IBM
+    - name: ARM architecture working group
+      dir: wg-arch-arm
       mission_statement: |
         WG ARCH ARM takes care of all things related to supporting ARM architecture on KubeVirt clusters.
         This includes all build processes, also support of failing builds or test lanes.
       label: wg/arch-arm
       leadership:
         chairs:
-        - github: zhlhahaha
-          name: "Howard Zhang"
-          company: ARM
-    - dir: wg-code-quality
-      name: Code-Quality Working Group
+            - github: zhlhahaha
+              name: Howard Zhang
+              company: ARM
+    - name: Code-Quality Working Group
+      dir: wg-code-quality
       mission_statement: |
         The Code-Quality Working Group aims to create an inter-SIG process for identifying, agreeing on and addressing code quality issues
       label: wg/code-quality
       leadership:
         chairs:
-        - github: EdDev
-          name: Edward Haas
-          company: Red Hat
-        - github: iholder101
-          name: Itamar Holder
-          company: Red Hat
+            - github: EdDev
+              name: Edward Haas
+              company: Red Hat
+            - github: iholder101
+              name: Itamar Holder
+              company: Red Hat
       meetings:
-      - description: KubeVirt Code-Quality Working Group meeting
-        day: Thu
-        time: "09:00"
-        tz: UTC
-        frequency: biweekly
-        url: https://zoom.us/j/93168599900
-        archive_url: https://docs.google.com/document/d/1fBgXan7AQ1LZOmQpNq38H11MmtfuWxOz9DPypyV9UL0/edit
+        - description: KubeVirt Code-Quality Working Group meeting
+          day: Thu
+          time: "09:00"
+          tz: UTC
+          frequency: biweekly
+          url: https://zoom.us/j/93168599900
+          archive_url: https://docs.google.com/document/d/1fBgXan7AQ1LZOmQpNq38H11MmtfuWxOz9DPypyV9UL0/edit
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
         teams:
-        - name: wg-code-quality
-          description: Code-Quality Working Group
+            - name: wg-code-quality
+              description: Code-Quality Working Group
         liaison:
-          github: dhiller
-          name: "Daniel Hiller"
+            github: dhiller
+            name: Daniel Hiller
 usergroups:
     - name: KubeVirt Community
       mission_statement: |
         Lorem Ipsum.
       leadership:
         chairs:
-        - github: aburdenthehand
-          name: Andrew Burden
-          company: Red Hat
+            - github: aburdenthehand
+              name: Andrew Burden
+              company: Red Hat
       meetings:
         - description: Regular KubeVirt Community Meeting
           day: Wednesday
