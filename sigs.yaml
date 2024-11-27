@@ -107,6 +107,9 @@ sigs:
           - name: "Edward Haas"
             github: eddev
             company: Red Hat
+          - name: "Miguel Duarte Barroso"
+            github: maiqueb
+            company: Red Hat
       subprojects:
         - name: kubevirt-network
           leads:
