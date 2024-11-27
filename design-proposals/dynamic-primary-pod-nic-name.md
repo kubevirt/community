@@ -269,6 +269,17 @@ status:
 
 Alternative solutions could be found in [Appendix A](#appendix-a---alternative-solutions).
 
+### Setting a constant tap name for the VM's primary interface
+
+Currently, for bindings on which KubeVirt is responsible for creating a tap, the tap's name is 
+derived from the pod interface's name.
+
+virt-handler will create the tap associated with the VM's primary interface as `tap0`.
+virt-launcher will consume `tap0` for the VM's primary interface when performing its network setup flow.
+
+Doing so opens up an option to support a futuristic migration to a target pod with a different
+primary interface name without modifying the domain XML.
+
 ## Network Binding Plugins
 
 A virtual machine's NIC could be bound to the pod's primary NIC using
