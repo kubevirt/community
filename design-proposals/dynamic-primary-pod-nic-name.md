@@ -269,6 +269,17 @@ status:
 
 Alternative solutions could be found in [Appendix A](#appendix-a---alternative-solutions).
 
+### Setting a constant tap name for the VM's primary interface
+
+Currently, for bindings on which KubeVirt is responsible for creating a tap, the tap's name is 
+derived from the pod interface's name.
+
+virt-handler will create the tap associated with the VM's primary interface as `tap0`.
+virt-launcher will consume `tap0` for the VM's primary interface when performing its network setup flow.
+
+Doing so opens up an option to support a futuristic migration to a target pod with a different
+primary interface name without modifying the domain XML.
+
 ## Network Binding Plugins
 
 A virtual machine's NIC could be bound to the pod's primary NIC using
@@ -330,8 +341,12 @@ Existing VMs should continue working after an upgrade.
 VMs running on nodes with old virt-handler and virt-launcher should continue working as expected.
 This is because old virt-handler and virt-launcher are not aware of the new field that reports the pod interface name.
 
-When performing migration in order to upgrade the virt-launcher pod, there won't be a change to the pod interface name.
-Changing the primary pod interface name on migration is a non-goal.
+When performing a migration in order to upgrade the virt-launcher pod,
+there is an expectation that the pod's primary interface name will not change.
+Changing the target pod's primary interface name on migration is a non-goal.
+
+However, the proposed solution could be extended to accommodate such a scenario.
+For additional details, refer to [Appendix B](#appendix-b---support-primary-interface-name-change-on-live-migration).
 
 ## Functional Testing Approach
 
@@ -527,3 +542,108 @@ The primary pod interface name is set by the container runtime (for example cri-
 
 - There is no K8s API to name the pod's primary NIC
 - There is no Multus API or config to name the pod's primary NIC
+
+# Appendix B - Support Primary Interface Name Change on Live Migration
+
+The original proposal treated the scenario where a migration target pod has a primary interface name different from the
+source as an edge case, and explicitly mentioned it as a non-goal.
+
+This limitation was raised as a concern, prompting a re-evaluation and the proposal of a mitigation strategy.
+
+## The Problem
+
+For several network bindings, the pod interface name is either directly or indirectly used to generate values that are set
+in the domain XML.
+
+Without intervention, a change to the primary interface name in the target pod will result in a migration failure due
+to a naming mismatch. Such a failure could, in turn, lead to an upgrade failure. 
+
+## Solution
+
+### Inferring the target pod's primary interface name
+
+All the alternatives listed bellow depend on knowing the target pod's primary interface name.
+However, the current logic in the VMI controller only provides the primary interface name of the source.
+
+To address this, an API change is proposed to enable the reporting of the target pod's primary interface name, allowing
+the necessary adjustments for migration to occur successfully: 
+
+```go
+type VirtualMachineInstanceMigrationState struct {
+...
+TargetPodPrimaryInterfaceName string `json:"targetPodPrimaryInterfaceName,omitempty"`
+...
+}
+```
+
+When the target pod is ready, the migration controller will:
+1. Identify its primary interface name (similar to the process used by the VMI controller).
+2. Report its value using the newly added field in the `VirtualMachineInstanceMigrationState` struct.
+
+### Adjusting the target primary interface name
+
+Since the tap associated with the VM's primary interface is always named `tap0` there is no need to adjust the domain XML
+when performing a live migration and the target pod interface name is changed.
+
+The target virt-handler will consider the `VMI.Status.MigrationState.TargetPodPrimaryInterfaceName` when executing
+the network setup flow.
+
+#### Pros
+- The addition of the migrationState field could be deferred until the need arises
+- The domain XML will not be modified in either source or target
+
+## Alternatives
+### Adding a hook to modify the domain in the target virt-launcher
+
+Currently, just before starting the migration, the source virt-launcher the option to modify the domain XML. However,
+the target virt-launcher does not have the ability to modify the domain XML upon receiving it from the source, as this
+process occurs between two libvirt daemons.
+
+The target virt-handler and virt-launcher will consider the target primary interface name when executing the network setup flow.
+A hook point will be introduced in the target virt-launcher, which will be invoked upon receiving the domain XML from the source
+and before the VM starts. This hook will trigger logic to adjust the primary interface if necessary.
+
+#### Pros
+- Provides greater flexibility by allowing the domain to be modified in the target, enabling dynamic adjustments during migrations.
+- Allows for future extensibility, making it easier to handle other changes as needed in the migration process.
+- This suggestion can be deferred and implemented when the need arises, as it does not depend on the source virt-launcher.
+- Integrate nicely with network binding plugins' sidecars.
+
+#### Cons
+- Requires additional integration and potentially development with libvirt to provide the hook point.
+- Untested and requires a PoC
+
+### Modifying the domain XML at the source virt-launcher
+
+In this alternative, the domain XML would be modified on the source virt-launcher prior to migration. 
+The source virt-launcher would handle adjustments to the primary interface name. 
+
+The target virt-handler will consider the target primary interface name when executing the network setup flow.
+
+#### Pros
+- Could be implemented entirely within KubeVirt, without the need for additional dependencies.
+- An established process already implemented by at least two features 
+
+#### Cons
+- Limits flexibility in handling dynamic changes that may arise during migration in future versions.
+- Does not integrate smoothly with network binding plugins, as modifying the domain XML solely on the source may not account for network
+configurations handled by plugins on the target.
+
+
+### Keeping the original pod interface name
+
+In this alternative, the primary interface name of the original pod would be preserved
+during the migration.
+
+The source virt-handler will report the original pod interface name for the VM's primary interface (if needed).
+
+The target virt-handler and virt-launcher will create the plumbing for the VMI's primary interface based on:
+1. The target's primary interface name.
+2. The original primary interface name.
+
+#### Pros
+ - Does not change the domain XML in the source
+ - Does not involve the source virt-launcher
+#### Cons
+ - Complicates the migration process and network setup flows.
+ - Adds additional API field
