@@ -1,26 +1,17 @@
 reviewers:
-  - aburdenthehand
-  - dhiller
-  - jean-edouard
-
+- reviewers
 approvers:
-  - aburdenthehand
-  - davidvossel
-  - fabiand
-  - jean-edouard
-  - rmohr
-  - vladikr
-
+- approvers
 emeritus_approvers:
-  - karmab # 10 july 2019
-  - tripledes # 10 july 2019
-  - e-minguez # 10 july 2019
-  - joeldavis84 # 10 july 2019
-  - jparrill # 12 Nov 2019
-  - iranzo # April 2020
-  - ptrnull # April 2020
-  - alosadagrande # April 2020
-  - codificat # Jan 2022
-  - mazzystr # Jan 2022
-  - AlonaKaplan # Sep 2024
-  - cwilkers # Sep 2024
+- karmab # 10 july 2019
+- tripledes # 10 july 2019
+- e-minguez # 10 july 2019
+- joeldavis84 # 10 july 2019
+- jparrill # 12 Nov 2019
+- iranzo # April 2020
+- ptrnull # April 2020
+- alosadagrande # April 2020
+- codificat # Jan 2022
+- mazzystr # Jan 2022
+- AlonaKaplan # Sep 2024
+- cwilkers # Sep 2024
