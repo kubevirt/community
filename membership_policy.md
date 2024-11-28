@@ -162,7 +162,7 @@ The KubeVirt project is organized primarily into SIGs, each with a common purpos
 
 ## SIG Subproject Lead
 
-Specific work efforts within SIGs can be divided into subprojects. A SIG Subproject Lead is required to help guide and coordinate the subproject.  
+Specific work efforts within SIGs can be divided into subprojects. A SIG Subproject Lead is required to help guide and coordinate the subproject.
 
 ### Requirements
 
@@ -208,7 +208,11 @@ Working groups are primarily used to facilitate topics of discussion that cross 
   * Gives updates to respective sponsoring SIG Chairs
   * The broader community
 
-## Inactive members
+## Inactivity
+
+Impermanence is one of the true constants in life: no one is expected to be with the project forever. 
+
+### Inactive members
 
 [_Members are continuously active contributors in the community._](#member)
 
@@ -225,7 +229,7 @@ will be removed from the KubeVirt GitHub Organization and will be required to
 go through the org membership process again after re-familiarizing themselves
 with the current state.
 
-### How inactivity is measured
+#### How inactivity for members is measured
 
 Inactive members are defined as members of the KubeVirt Organization
 with **no** contributions within the KubeVirt organization within 12 months. 
@@ -238,6 +242,24 @@ issue to quickly be re-instated.
 After an extended period away from the project with no activity
 those members would need to re-familiarize themselves with the current state
 before being able to contribute effectively.
+
+### Inactive Reviewers/Approvers/Chairs/Leads
+
+Reviewers, approvers, chairs and leads are pillars of the community and are fundamental to maintaining the momentum of the project.
+Considering that they have elevated permissions and responsibilities in the project, their active engagement with the project is greatly appreciated.
+
+If a reviewer and/or approver steps down from their position in a repository or the project entirely, we trust that they will notify the community and create PRs removing them as reviewers/approvers in the applicable repositories.
+This will help others identify and grow into the role so as to not leave a gap for any length of time. 
+It will also ensure they are not erroneously tagged to review/approve PRs, which is both an inconvenience to them but also an obstacle for the project.
+
+When a SIG or WG Chair or Subproject Lead needs to step down from their position, it is expected that they work with the SIG/Subproject/WG to identify and mentor a willing candidate to grow into the role.
+They should then open a PR to replace them in [sigs.yaml], and move themselves to emeritus status (if applicable).
+
+A reviewer/approver/chair/lead may also be demoted or removed from their role if they are inactive in their area for 6 months or more.
+
+#### How inactivity for Reviewers/Approvers/Chairs/Leads is measured
+
+The KubeVirt community repo has a [project activity tool](https://github.com/kubevirt/community/blob/main/generators/cmd/contributions/README.md) that can be used to demonstrate that a reviewer/approver has been inactive for 6 months.
 
 [CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/48/users-statistics-by-repository-group?orgId=1&from=now-1y&to=now&var-period=w&var-metric=activity&var-repogroup_name=All&var-users=All
 [OWNERS_ALIASES]: https://github.com/kubevirt/kubevirt/tree/main/OWNERS_ALIASES
