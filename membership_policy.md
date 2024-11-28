@@ -42,7 +42,7 @@ Defined by: Member of the KubeVirt GitHub organization
     * Sponsors must have close interactions with the prospective member
     * Sponsors must be reviewers or approvers in any of the OWNERS files found in KubeVirt's repositories, for example, [this](https://github.com/kubevirt/kubevirt/blob/main/OWNERS_ALIASES) or [this one](https://github.com/kubevirt/project-infra/blob/main/OWNERS).
     * Sponsors should be from multiple member companies to demonstrate integration across community.
-  * Open a PR against the [org members section](https://github.com/kubevirt/project-infra/blob/main/github/ci/prow-deploy/files/orgs.yaml#L22)
+  * Open a PR against the [org members section](https://github.com/kubevirt/project-infra/blob/main/github/ci/prow-deploy/kustom/base/configs/current/orgs/orgs.yaml#L20)
     * Ensure your sponsors are @mentioned on the issue
     * Complete every item on the [checklist](membership_checklist.md)
     * Make sure that the list of contributions included is representative of your work on the project.
