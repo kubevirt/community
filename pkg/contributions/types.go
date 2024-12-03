@@ -17,14 +17,49 @@
  *
  */
 
-package main
+package contributions
 
 import (
-	"context"
 	"fmt"
-	"github.com/shurcooL/githubv4"
 	"time"
 )
+
+type ActivityReport interface {
+	GenerateActivityLog() string
+	GenerateLogFileName(userName string) string
+}
+
+type UserActivityReportInOrg struct {
+	Collection *ContributionsCollection
+	Org        string
+	UserName   string
+	StartFrom  time.Time
+}
+
+func (u *UserActivityReportInOrg) GenerateActivityLog() string {
+	return fmt.Sprintf(`activity log:
+	user:         %s
+	organization: %s
+	since:        %s
+
+	hasContributions:                    %t
+	totalIssueContributions:             %d
+	totalPullRequestContributions:       %d
+	totalPullRequestReviewContributions: %d
+	totalCommitContributions:            %d
+
+`, u.UserName, u.Org, u.StartFrom.Format(time.DateTime),
+		u.Collection.HasAnyContributions,
+		u.Collection.TotalIssueContributions,
+		u.Collection.TotalPullRequestContributions,
+		u.Collection.TotalPullRequestReviewContributions,
+		u.Collection.TotalCommitContributions,
+	)
+}
+
+func (u *UserActivityReportInOrg) GenerateLogFileName(userName string) string {
+	return fmt.Sprintf("user-activity-%s-%s-*.yaml", userName, u.Org)
+}
 
 type UserActivityReportInRepository struct {
 	IssuesCreated         IssuesCreated         `yaml:"issuesCreated"`
@@ -33,6 +68,39 @@ type UserActivityReportInRepository struct {
 	PullRequestsReviewed  PullRequestsReviewed  `yaml:"pullRequestsReviewed"`
 	PullRequestsCommented PullRequestsCommented `yaml:"pullRequestsCommented"`
 	CommitsByUser         CommitsByUser         `yaml:"commitsByUser"`
+	Org                   string
+	Repo                  string
+	UserName              string
+	UserID                string
+	StartFrom             time.Time
+}
+
+func (u *UserActivityReportInRepository) GenerateActivityLog() string {
+	return fmt.Sprintf(`activity log:
+	user:       %s
+	repository: %s/%s
+	since:      %s
+
+	issues
+		created:   %d
+		commented: %d
+	pull requests:
+		reviewed:  %d
+		created:   %d
+		commented: %d
+	commits:       %d
+`, u.UserName, u.Org, u.Repo, u.StartFrom.Format(time.DateTime),
+		u.IssuesCreated.IssueCount,
+		u.IssuesCommented.IssueCount,
+		u.PullRequestsReviewed.IssueCount,
+		u.PullRequestsCreated.IssueCount,
+		u.PullRequestsCommented.IssueCount,
+		u.CommitsByUser.DefaultBranchRef.Target.Fragment.History.TotalCount,
+	)
+}
+
+func (u *UserActivityReportInRepository) GenerateLogFileName(userName string) string {
+	return fmt.Sprintf("user-activity-%s-%s_%s-*.yaml", userName, u.Org, u.Repo)
 }
 
 type Repository struct {
@@ -213,88 +281,87 @@ type CommitsByUser struct {
 	DefaultBranchRef CommitsByUserRef `yaml:"defaultBranchRef"`
 }
 
-func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, username, userid string, startFrom time.Time) (*UserActivityReportInRepository, error) {
-
-	var query struct {
-		IssuesCreated         IssuesCreated         `graphql:"issuesCreated: search(first: 5, type: ISSUE, query: $authorSearchQuery)"`
-		IssuesCommented       IssuesCommented       `graphql:"issuesCommented: search(first: 5, type: ISSUE, query: $commenterSearchQuery)"`
-		PullRequestsCreated   PullRequestsCreated   `graphql:"prsCreated: search(type: ISSUE, first: 5, query: $pullRequestsCreatedQuery)"`
-		PullRequestsReviewed  PullRequestsReviewed  `graphql:"prsReviewed: search(type: ISSUE, first: 5, query: $pullRequestsReviewedQuery)"`
-		PullRequestsCommented PullRequestsCommented `graphql:"prsCommented: search(last: 100, type: ISSUE, query: $pullRequestsCommentedQuery)"`
-		CommitsByUser         CommitsByUser         `graphql:"commitsByUser: repository(owner: $org, name: $repo)"`
-	}
-
-	fromDate := startFrom.Format("2006-01-02")
-
-	variables := map[string]interface{}{
-		"org":       githubv4.String(org),
-		"repo":      githubv4.String(repo),
-		"username":  githubv4.String(username),
-		"userID":    githubv4.ID(userid),
-		"startFrom": githubv4.GitTimestamp{Time: startFrom},
-		"authorSearchQuery": githubv4.String(fmt.Sprintf(
-			"repo:%s/%s author:%s is:issue created:>=%s",
-			org,
-			repo,
-			username,
-			fromDate,
-		)),
-		"commenterSearchQuery": githubv4.String(fmt.Sprintf(
-			"repo:%s/%s commenter:%s is:issue created:>=%s",
-			org,
-			repo,
-			username,
-			fromDate,
-		)),
-		"pullRequestsCreatedQuery": githubv4.String(fmt.Sprintf(
-			"repo:%s/%s author:%s is:pr created:>=%s",
-			org,
-			repo,
-			username,
-			fromDate,
-		)),
-		"pullRequestsReviewedQuery": githubv4.String(fmt.Sprintf(
-			"repo:%s/%s reviewed-by:%s is:pr updated:>=%s",
-			org,
-			repo,
-			username,
-			fromDate,
-		)),
-		"pullRequestsCommentedQuery": githubv4.String(fmt.Sprintf(
-			"repo:%s/%s commenter:%s is:pr updated:>=%s",
-			org,
-			repo,
-			username,
-			fromDate,
-		)),
-	}
-
-	err := client.Query(context.Background(), &query, variables)
-	if err != nil {
-		return nil, fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
-	}
-	return &UserActivityReportInRepository{
-		IssuesCreated:         query.IssuesCreated,
-		IssuesCommented:       query.IssuesCommented,
-		PullRequestsCreated:   query.PullRequestsCreated,
-		PullRequestsReviewed:  query.PullRequestsReviewed,
-		PullRequestsCommented: query.PullRequestsCommented,
-		CommitsByUser:         query.CommitsByUser,
-	}, nil
+type IssueContributionNodeFragment struct {
+	URL string `yaml:"URL"`
 }
 
-func getUserId(client *githubv4.Client, username string) (string, error) {
-	var query struct {
-		User struct {
-			ID string
-		} `graphql:"user(login: $username)"`
-	}
-	variables := map[string]interface{}{
-		"username": githubv4.String(username),
-	}
-	err := client.Query(context.Background(), &query, variables)
-	if err != nil {
-		return "", fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
-	}
-	return query.User.ID, nil
+type IssueContributionNode struct {
+	Issue      IssueContributionNodeFragment `yaml:"issue"`
+	OccurredAt time.Time                     `yaml:"occurredAt"`
+}
+
+type IssueContributions struct {
+	TotalCount int                     `yaml:"totalCount"`
+	Nodes      []IssueContributionNode `yaml:"nodes"`
+}
+
+type PullRequestContributionNodeFragment struct {
+	URL string `yaml:"URL"`
+}
+
+type PullRequestContributionNode struct {
+	PullRequest PullRequestContributionNodeFragment `yaml:"pullRequest"`
+	OccurredAt  time.Time                           `yaml:"occurredAt"`
+}
+
+type PullRequestContributions struct {
+	TotalCount int                           `yaml:"totalCount"`
+	Nodes      []PullRequestContributionNode `yaml:"nodes"`
+}
+
+type PullRequestReviewContributionNodePullRequest struct {
+	URL string `yaml:"URL"`
+}
+type PullRequestReviewContributionNodeRepository struct {
+	NameWithOwner string `yaml:"nameWithOwner"`
+}
+type PullRequestReviewContributionNodeFragment struct {
+	Repository  PullRequestReviewContributionNodeRepository  `yaml:"repository"`
+	PullRequest PullRequestReviewContributionNodePullRequest `yaml:"pullRequest"`
+	CreatedAt   time.Time                                    `yaml:"createdAt"`
+	State       string                                       `yaml:"state"`
+}
+type PullRequestReviewContributionNode struct {
+	PullRequestReview PullRequestReviewContributionNodeFragment `yaml:"pullRequestReview"`
+}
+type PullRequestReviewContributions struct {
+	TotalCount int                                 `yaml:"totalCount"`
+	Nodes      []PullRequestReviewContributionNode `yaml:"nodes"`
+}
+
+type CommitContributionsByRepositoryContributionUser struct {
+	Name string `yaml:"name"`
+}
+type CommitContributionsByRepositoryContributionRepository struct {
+	NameWithOwner string `yaml:"nameWithOwner"`
+}
+
+type CommitContributionsByRepositoryContributionsNode struct {
+	Repository CommitContributionsByRepositoryContributionRepository `yaml:"repository"`
+	User       CommitContributionsByRepositoryContributionUser       `yaml:"user"`
+	OccurredAt time.Time                                             `yaml:"occurredAt"`
+}
+
+type CommitContributionsByRepositoryContributions struct {
+	TotalCount int                                                `yaml:"totalCount"`
+	Nodes      []CommitContributionsByRepositoryContributionsNode `yaml:"nodes"`
+}
+type CommitContributionsByRepository struct {
+	Contributions CommitContributionsByRepositoryContributions `graphql:"contributions(first: 10,orderBy: {field: OCCURRED_AT, direction: DESC})"`
+}
+
+type ContributionsCollection struct {
+	HasAnyContributions                 bool `yaml:"hasAnyContributions"`
+	TotalCommitContributions            int  `yaml:"totalCommitContributions"`
+	TotalIssueContributions             int  `yaml:"totalIssueContributions"`
+	TotalPullRequestContributions       int  `yaml:"totalPullRequestContributions"`
+	TotalPullRequestReviewContributions int  `yaml:"totalPullRequestReviewContributions"`
+	IssueContributions                  `graphql:"issueContributions(first: 1, orderBy: {direction: DESC})" yaml:"issueContributions"`
+	PullRequestContributions            `graphql:"pullRequestContributions(first: 1, orderBy: {direction: DESC})" yaml:"pullRequestContributions"`
+	PullRequestReviewContributions      `graphql:"pullRequestReviewContributions(first: 1, orderBy: {direction: DESC})" yaml:"pullRequestReviewContributions"`
+	CommitContributionsByRepository     []CommitContributionsByRepository `graphql:"commitContributionsByRepository(maxRepositories: 10)" yaml:"commitContributionsByRepository"`
+}
+
+type UserContributionsInOrg struct {
+	ContributionsCollection `graphql:"contributionsCollection(organizationID: $organizationID, from: $startFrom)" yaml:"contributionsCollection"`
 }
