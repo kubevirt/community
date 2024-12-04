@@ -1,6 +1,6 @@
 # Overview
 
-This proposal is about adding supporting DRA (dynamic resource allocation) in KubeVirt.
+This proposal is about adding support for DRA (dynamic resource allocation) in KubeVirt.
 DRA allows vendors fine-grained control of devices. The device-plugin model will continue
 to exist in Kubernetes, but DRA will offer vendors more control over the device topology.
 
@@ -28,25 +28,25 @@ control of their devices using Virtual Machines and Containers.
 ## Assumptions
 
 - KubeVirt will support DRA API from kubernetes version 1.31.
-- DRA drivers will have to publish attributes for resources needed to generate the domxml in ResourceSlice object
+- DRA drivers will have to publish attributes for resources needed to generate the domain xml in ResourceSlice object
 - The examples in this doc demonstrate a pGPU driver, but the same mechanism could be used for vGPU
 
 ## User Stories
 
-- As a user, I would like to use my GPU dra driver with KubeVirt
-- As a user, I would like to use KubeVirt's default driver
+- As a user, I would like to use my GPU dra driver with KubeVirt.
+- As a user, I would like to use KubeVirt's default driver.
 - As a user, in heterogeneous clusters, i.e. clusters made of nodes with different hardware managed through DRA drivers,
-  I should be able to easily identify what hardware was allocated to the VMI
-- As a developer, I would like APIs to be extensible so I can develop drivers/webhooks/automation for custom use-cases
-- As a device-plugin author, I would like to have a well documented way, intuitive way to support devices in KubeVirt
+  I should be able to easily identify what hardware was allocated to the VMI.
+- As a developer, I would like APIs to be extensible so I can develop drivers/webhooks/automation for custom use-cases.
+- As a device-plugin author, I would like to have a well documented way, intuitive way to support devices in KubeVirt.
 
 ## Use Cases
 
 ### Supported Usecases
 
 1. Devices where the DRA driver that set agreed upon attributes for resources in ResourceSlice.
-   1. PCIe Bus address for pGPU
-   2. Device uuid for vGPU
+   1. PCIe Bus address for pGPU.
+   2. Mediated device uuid for vGPU.
 1. Devices have to either be of the type GPU or HostDevices. 
 
 ### Unsupported Usecases
@@ -64,18 +64,19 @@ kubevirt/kubevirt
 
 For allowing users to consume DRA devices, there are two main changes needed:
 
-1. API changes and the plumbing required in KubeVirt to generate the domxml with the devices.
-2. Driver Implementation to set the env var
+1. API changes and the plumbing required in KubeVirt to generate the domain xml with the devices.
+2. Driver Implementation to set the environment variable.
 
-This design focuses on part 1 of the problem.
+This design document focuses on part 1 of the problem. We're introducing a new feature gate `DynamicResourceAllocation`.
+All the API changes will be gated behind this feature gate so as not to break existing functionality.
 
 ## API Changes
 
 ```go
 type VirtualMachineInstanceSpec struct {
-    ..
-    ..
-    // ResourceClaims defines which ResourceClaims must be allocated
+	..
+	..
+	// ResourceClaims defines which ResourceClaims must be allocated
 	// and reserved before the VMI and hence virt-launcher pod is allowed to start. The resources
 	// will be made available to the domain which consume them
 	// by name.
@@ -113,15 +114,15 @@ type HostDevice struct {
 type DeviceSource struct {
 	// DeviceName is the name of the device provisioned by device-plugins
 	DeviceName *string `json:"deviceName,omitempty"`
-	// Claim is the name of the claim that is going to provision the DRA device
+	// Claim is the name of the resource claim that is going to provision the DRA device
 	Claim *k8sv1.ResourceClaim `json:"claim,omitempty"`
 }
 
 type VirtualMachineInstanceStatus struct {
-    ..
-    ..
-	// DeviceStatus reflects the state of devices requested in spec.domain.devices. This is an optional field available
-	// only when DRA feature gate is enabled
+	..
+	..
+	// DeviceStatus reflects the state of devices requested in spec.domain.devices.
+	// This is an optional field available only when DRA feature gate is enabled
 	// +optional
 	DeviceStatus *DeviceStatus `json:"deviceStatus,omitempty"`
 }
@@ -133,7 +134,6 @@ type DeviceStatus struct {
 	// +optional
 	GPUStatuses []DeviceStatusInfo `json:"gpuStatuses,omitempty"`
 	// HostDeviceStatuses reflects the state of GPUs requested in spec.domain.devices.hostDevices
-	// DRA
 	// +listType=atomic
 	// +optional
 	HostDeviceStatuses []DeviceStatusInfo `json:"hostDeviceStatuses,omitempty"`
@@ -143,23 +143,30 @@ type DeviceStatusInfo struct {
 	// Name of the device as specified in spec.domain.devices.gpus.name or spec.domain.devices.hostDevices.name
 	Name string `json:"name"`
 	// DeviceResourceClaimStatus reflects the DRA related information for the device
-	// +optional
 	DeviceResourceClaimStatus *DeviceResourceClaimStatus `json:"deviceResourceClaimStatus,omitempty"`
 }
 
-// DeviceResourceClaimStatus has to be before SyncVMI call from virt-handler to virt-launcher
 type DeviceResourceClaimStatus struct {
-	// ResourceClaimName is the name of the resource claims object used to provision this resource
+	// Name is the name of actual device on the host provisioned by the driver as reflected in
+	// resourceclaim.status
+	// +optional
+	Name string `json:"name"`
+	// Attributes are the attributes for the allocated device. This information is published by the driver
+	// running on the node in resourceslice.spec.devices.basic.attributes for the allocated device.
+	// +optional
+	Attributes *DeviceAttributes `json:"attributes,omitempty"`
+	// ResourceClaimName is the name of the resource claim object used to provision this resource
 	// +optional
 	ResourceClaimName *string `json:"resourceClaimName,omitempty"`
-	// DeviceName is the name of actual device on the host provisioned by the driver as reflected in resourceclaim.status
+}
+
+type DeviceAttributes struct {
+	// PCIAddress is the PCIe bus address of the allocated device
 	// +optional
-	DeviceName *string `json:"deviceName,omitempty"`
-	// DeviceAttributes are the attributes published by the driver running on the node in
-	// resourceslice.spec.devices.basic.attributes. The attributes are distinguished by deviceName
-	// and resourceclaim.spec.devices.requests.deviceClassName.
+	PCIAddress *string `json:"pciAddress,omitempty"`
+	// MDevUUID is the mediated device uuid of the allocated device
 	// +optional
-	DeviceAttributes map[string]DeviceAttribute `json:"deviceAttributes,omitempty"`
+	MDevUUID *string `json:"mdevUUID,omitempty"`
 }
 ```
 
@@ -182,8 +189,14 @@ The status section of the VMI will contain information of the allocated devices 
 available in DRA APIs. The same information will be accessible in virt-handler and virt-launcher. This allows for device
 information to flow from DRA APIs into KubeVirt stack. 
 
-The virt-launcher will have the logic of converting a GPU device into its corresponding domxml. For device-plugins it
-will look for env variables (current approach). For DRA devices, it will use the vmi status section to generate the xml
+Taking a GPU as an example, we can either have a passthrough-GPU as a PCI device or a virtual-GPU as a mediated device.
+The `DeviceAttributes` object will distinguish between these 2 types by populating the appropriate `PCIAddress`/`MDevUUID`
+field for the device identifier. While we haven't mentioned any other device attributes here, this object can be extended
+to hold other device information that may be relevant.
+
+The virt-launcher will have the logic of converting a GPU device into its corresponding domain xml. For device-plugins, it
+will continue to look for env variables (current approach). For DRA devices, it will use the vmi status section to
+generate the domain xml.
 
 ### Examples
 
@@ -232,17 +245,12 @@ spec:
 status:
   deviceStatus:
     gpuStatuses:
-    - deviceResourceClaimStatus:
-        deviceAttributes:
-          pciAddress:
-            string: 0000:65:00.0
-          productName:
-            string: RTX 4080
-          type:
-            string: gpu
-        deviceName: gpu-0
+    - name: pgpu
+      deviceResourceClaimStatus:
+        name: gpu-0
         resourceClaimName: virt-launcher-vmi-fedora-9bjwb-gpu-resource-claim-m4k28
-      name: pgpu     
+        attributes:
+          pciAddress: 0000:65:00.0
 –--
 apiVersion: v1
 kind: Pod
@@ -435,17 +443,12 @@ spec:
 status:
   deviceStatus:
     gpuStatuses:
-    - deviceResourceClaimStatus:
-        deviceAttributes:
-          pciAddress:
-            string: 0000:01:00.0
-          productName:
-            string: RTX 4080
-          type:
-            string: gpu
-        deviceName: gpu-0
+    - name: example-pgpu
+      deviceResourceClaimStatus:
+        name: gpu-0
         resourceClaimName: virt-launcher-vmi-fedora-hhzgn-gpu-resource-claim-c26kh
-      name: example-pgpu
+        attributes:
+          pciAddress: 0000:01:00.0
 ```
 
 ### DRA API for reading device related information
@@ -573,14 +576,14 @@ Note: All the following sections will assume that DRA feature gate is enabled
 
 ### Virt launcher changes
 
-1. For devices generated using DRA, virt-launcher needs to use the vmi.status.deviceStatus to generate the domxml
+1. For devices generated using DRA, virt-launcher needs to use the vmi.status.deviceStatus to generate the domain xml
    instead of environment variables as in the case of device-plugins
 1. The standard env variables `PCI_RESOURCE_<deviceName>` and `MDEV_PCI_RESOURCE_<deviceName>` may continue to be set
    as fallback mechanisms but the focus here is to ensure we can consume the device PCIe bus address attribute from the
-   allocated devices in virt-launcher to generate the domxml.
+   allocated devices in virt-launcher to generate the domain xml.
 1. Both GPU and HostDevice devices requested in the domain spec will have corresponding entries in the VMI status
    at `status.deviceStatus.gpuStatuses[*]`/`status.deviceStatus.hostDeviceStatuses[*]`. From here, the relevant
-   device attributes can be inferred by virt-launcher (`pcieAddress` attr) to generate the domxml with the appropriate
+   device attributes can be inferred by virt-launcher (`pcieAddress` attr) to generate the domain xml with the appropriate
    gpu/hostdev spec.
 
 # Alternate Designs
@@ -686,7 +689,7 @@ ResourceClaimName *string `json:"resourceClaimName,omitempty" protobuf:"bytes,2,
 
 virt-launcher will use the `vmistatus.resourClaimStatuses[*].ResourceClaimName` and `vmi.spec.domain.devices.gpu/hostdevices.claims[*].request`
 to look up the env variable: `PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>` or 
-`MDEV_PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>="uuid"` and generate the correct domxml
+`MDEV_PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>="uuid"` and generate the correct domain xml
 
 # References
 
