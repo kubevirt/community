@@ -24,20 +24,24 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"kubevirt.io/community/pkg/contributions"
+	"kubevirt.io/community/pkg/orgs"
 	"os"
 )
 
 type ContributionReportOptions struct {
-	org             string
-	repo            string
-	username        string
-	githubTokenPath string
-	months          int
+	org                string
+	repo               string
+	username           string
+	githubTokenPath    string
+	months             int
+	orgsConfigFilePath string
 }
 
 func (o ContributionReportOptions) validate() error {
-	if o.username == "" {
-		return fmt.Errorf("username is required")
+	if o.username != "" {
+		log.Infof("creating report for user %q", o.username)
+	} else if o.orgsConfigFilePath == "" {
+		return fmt.Errorf("username or orgs-config-file-path is required")
 	}
 	if o.githubTokenPath == "" {
 		return fmt.Errorf("github token path is required")
@@ -45,7 +49,7 @@ func (o ContributionReportOptions) validate() error {
 	return nil
 }
 
-func (o ContributionReportOptions) MakeGeneratorOptions() contributions.ContributionReportGeneratorOptions {
+func (o ContributionReportOptions) makeGeneratorOptions() contributions.ContributionReportGeneratorOptions {
 	return contributions.ContributionReportGeneratorOptions{
 		Org:             o.org,
 		Repo:            o.repo,
@@ -62,6 +66,7 @@ func gatherContributionReportOptions() (ContributionReportOptions, error) {
 	fs.StringVar(&o.username, "username", "", "github handle")
 	fs.IntVar(&o.months, "months", 6, "months to look back for fetching data")
 	fs.StringVar(&o.githubTokenPath, "github-token", "/etc/github/oauth", "path to github token to use")
+	fs.StringVar(&o.orgsConfigFilePath, "orgs-file-path", "../project-infra/github/ci/prow-deploy/kustom/base/configs/current/orgs/orgs.yaml", "file path to the orgs.yaml file to check")
 	err := fs.Parse(os.Args[1:])
 	return o, err
 }
@@ -79,24 +84,63 @@ func main() {
 	if err = contributionReportOptions.validate(); err != nil {
 		log.Fatalf("error validating arguments: %v", err)
 	}
-	err = generateReport(
-		[]string{contributionReportOptions.username},
-		contributionReportOptions.MakeGeneratorOptions(),
-	)
+
+	generator, err := contributions.NewContributionReportGenerator(contributionReportOptions.makeGeneratorOptions())
 	if err != nil {
-		log.Fatalf("failed to generate report: %v", err)
+		log.Fatalf("failed to create report generator: %v", err)
+	}
+
+	var reporter Reporter = DefaultReporter{}
+	userNames := []string{contributionReportOptions.username}
+	if contributionReportOptions.username == "" && contributionReportOptions.orgsConfigFilePath != "" {
+		orgsYAML, err := orgs.ReadFile(contributionReportOptions.orgsConfigFilePath)
+		if err != nil {
+			log.Fatalf("invalid arguments: %v", err)
+		}
+		userNames = orgsYAML.Orgs[contributionReportOptions.org].Members
+		reporter = InactiveReporter{}
+	}
+
+	for _, userName := range userNames {
+		activity, err := generator.GenerateReport(userName)
+		if err != nil {
+			log.Fatalf("failed to generate report: %v", err)
+		}
+		err = reporter.Report(activity, userName)
+		if err != nil {
+			log.Fatalf("failed to report: %v", err)
+		}
 	}
 }
 
-func generateReport(userNames []string, opts contributions.ContributionReportGeneratorOptions) error {
-	generator, err := contributions.NewContributionReportGenerator(opts)
+type Reporter interface {
+	Report(r contributions.ActivityReport, userName string) error
+}
+
+type DefaultReporter struct{}
+
+func (d DefaultReporter) Report(r contributions.ActivityReport, userName string) error {
+	fmt.Printf(r.GenerateActivityLog())
+	_, err := r.WriteToFile("/tmp", userName)
 	if err != nil {
-		return fmt.Errorf("failed to create report generator: %v", err)
+		return fmt.Errorf("failed to write file: %v", err)
 	}
-	for _, userName := range userNames {
-		if err := generator.GenerateReport(userName); err != nil {
-			return err
-		}
+	return nil
+}
+
+type InactiveReporter struct {
+	inactiveUsers []string
+}
+
+func (d InactiveReporter) Report(r contributions.ActivityReport, userName string) error {
+	if r.HasActivity() {
+		return nil
 	}
+	fmt.Printf(r.GenerateActivityLog())
+	_, err := r.WriteToFile("/tmp", userName)
+	if err != nil {
+		return fmt.Errorf("failed to write file: %v", err)
+	}
+	d.inactiveUsers = append(d.inactiveUsers, userName)
 	return nil
 }

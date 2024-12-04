@@ -31,8 +31,9 @@ import (
 )
 
 type ContributionReportGenerator struct {
-	client *githubv4.Client
-	opts   ContributionReportGeneratorOptions
+	client        *githubv4.Client
+	opts          ContributionReportGeneratorOptions
+	ReportingMode interface{}
 }
 
 func NewContributionReportGenerator(opts ContributionReportGeneratorOptions) (*ContributionReportGenerator, error) {
@@ -48,23 +49,18 @@ func NewContributionReportGenerator(opts ContributionReportGeneratorOptions) (*C
 	return &ContributionReportGenerator{client: client, opts: opts}, nil
 }
 
-func (g ContributionReportGenerator) GenerateReport(userName string) error {
+func (g ContributionReportGenerator) GenerateReport(userName string) (ActivityReport, error) {
 	var activity ActivityReport
 	var err error
 	if g.opts.Repo != "" {
 		activity, err = generateUserActivityReportInRepository(g.client, g.opts.Org, g.opts.Repo, userName, g.opts.startFrom())
 	} else {
-		activity, err = generateUserActivityReportInOrganization(g.client, g.opts.Org, userName, g.opts.startFrom())
+		activity, err = generateUserActivityReportInOrg2(g.client, g.opts.Org, userName, g.opts.startFrom())
 	}
 	if err != nil {
-		return fmt.Errorf("failed to query: %v", err)
+		return nil, fmt.Errorf("failed to query: %v", err)
 	}
-	fmt.Printf(activity.GenerateActivityLog())
-	err = writeActivityToFile(activity, "/tmp", activity.GenerateLogFileName(userName))
-	if err != nil {
-		return fmt.Errorf("failed to write file: %v", err)
-	}
-	return nil
+	return activity, nil
 }
 
 type ContributionReportGeneratorOptions struct {
@@ -164,6 +160,78 @@ func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, 
 	}, nil
 }
 
+func generateUserActivityReportInOrg2(client *githubv4.Client, org, username string, startFrom time.Time) (*UserActivityReportInOrg2, error) {
+	userid, err := getUserId(client, username)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query: %v", err)
+	}
+
+	var query struct {
+		IssuesCreated         IssuesCreated         `graphql:"issuesCreated: search(first: 5, type: ISSUE, query: $authorSearchQuery)"`
+		IssuesCommented       IssuesCommented       `graphql:"issuesCommented: search(first: 5, type: ISSUE, query: $commenterSearchQuery)"`
+		PullRequestsCreated   PullRequestsCreated   `graphql:"prsCreated: search(type: ISSUE, first: 5, query: $pullRequestsCreatedQuery)"`
+		PullRequestsReviewed  PullRequestsReviewed  `graphql:"prsReviewed: search(type: ISSUE, first: 5, query: $pullRequestsReviewedQuery)"`
+		PullRequestsCommented PullRequestsCommented `graphql:"prsCommented: search(last: 100, type: ISSUE, query: $pullRequestsCommentedQuery)"`
+		CommitsByUserInOrg    CommitsByUserInOrg    `graphql:"commitsByUserInOrg: organization(login: $org)"`
+	}
+
+	fromDate := startFrom.Format("2006-01-02")
+
+	variables := map[string]interface{}{
+		"org":       githubv4.String(org),
+		"username":  githubv4.String(username),
+		"userID":    githubv4.ID(userid),
+		"startFrom": githubv4.GitTimestamp{Time: startFrom},
+		"authorSearchQuery": githubv4.String(fmt.Sprintf(
+			"org:%s author:%s is:issue created:>=%s",
+			org,
+			username,
+			fromDate,
+		)),
+		"commenterSearchQuery": githubv4.String(fmt.Sprintf(
+			"org:%s commenter:%s is:issue created:>=%s",
+			org,
+			username,
+			fromDate,
+		)),
+		"pullRequestsCreatedQuery": githubv4.String(fmt.Sprintf(
+			"org:%s author:%s is:pr created:>=%s",
+			org,
+			username,
+			fromDate,
+		)),
+		"pullRequestsReviewedQuery": githubv4.String(fmt.Sprintf(
+			"org:%s reviewed-by:%s is:pr updated:>=%s",
+			org,
+			username,
+			fromDate,
+		)),
+		"pullRequestsCommentedQuery": githubv4.String(fmt.Sprintf(
+			"org:%s commenter:%s is:pr updated:>=%s",
+			org,
+			username,
+			fromDate,
+		)),
+	}
+
+	err = client.Query(context.Background(), &query, variables)
+	if err != nil {
+		return nil, fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
+	}
+	return &UserActivityReportInOrg2{
+		IssuesCreated:         query.IssuesCreated,
+		IssuesCommented:       query.IssuesCommented,
+		PullRequestsCreated:   query.PullRequestsCreated,
+		PullRequestsReviewed:  query.PullRequestsReviewed,
+		PullRequestsCommented: query.PullRequestsCommented,
+		CommitsByUserInOrg:    query.CommitsByUserInOrg,
+		Org:                   org,
+		UserName:              username,
+		UserID:                userid,
+		StartFrom:             startFrom,
+	}, nil
+}
+
 func getUserId(client *githubv4.Client, username string) (string, error) {
 	var query struct {
 		User struct {
@@ -180,37 +248,6 @@ func getUserId(client *githubv4.Client, username string) (string, error) {
 	return query.User.ID, nil
 }
 
-func generateUserActivityReportInOrganization(client *githubv4.Client, org, username string, startFrom time.Time) (*UserActivityReportInOrg, error) {
-	organizationId, err := getOrganizationId(client, org)
-	if err != nil {
-		return nil, err
-	}
-
-	var query struct {
-		UserContributionsInOrg UserContributionsInOrg `graphql:"userContributionsInOrg: user(login: $username)"`
-	}
-
-	variables := map[string]interface{}{
-		"username":       githubv4.String(username),
-		"organizationID": githubv4.ID(organizationId),
-		"startFrom":      githubv4.DateTime{Time: startFrom},
-	}
-
-	err = client.Query(context.Background(), &query, variables)
-	if err != nil {
-		return nil, fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
-	}
-
-	collection := &query.UserContributionsInOrg.ContributionsCollection
-	result := &UserActivityReportInOrg{
-		Collection: collection,
-		Org:        org,
-		UserName:   username,
-		StartFrom:  startFrom,
-	}
-	return result, nil
-}
-
 func writeActivityToFile(yamlObject interface{}, dir, fileName string) error {
 	tempFile, err := os.CreateTemp(dir, fileName)
 	defer tempFile.Close()
@@ -221,20 +258,4 @@ func writeActivityToFile(yamlObject interface{}, dir, fileName string) error {
 	}
 	fmt.Printf(`user activity log: %q`, tempFile.Name())
 	return nil
-}
-
-func getOrganizationId(client *githubv4.Client, organizationName string) (string, error) {
-	var query struct {
-		Organization struct {
-			ID string
-		} `graphql:"organization(login: $organizationName)"`
-	}
-	variables := map[string]interface{}{
-		"organizationName": githubv4.String(organizationName),
-	}
-	err := client.Query(context.Background(), &query, variables)
-	if err != nil {
-		return "", fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
-	}
-	return query.Organization.ID, nil
 }

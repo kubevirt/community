@@ -21,44 +21,15 @@ package contributions
 
 import (
 	"fmt"
+	"path/filepath"
 	"time"
 )
 
 type ActivityReport interface {
 	GenerateActivityLog() string
 	GenerateLogFileName(userName string) string
-}
-
-type UserActivityReportInOrg struct {
-	Collection *ContributionsCollection
-	Org        string
-	UserName   string
-	StartFrom  time.Time
-}
-
-func (u *UserActivityReportInOrg) GenerateActivityLog() string {
-	return fmt.Sprintf(`activity log:
-	user:         %s
-	organization: %s
-	since:        %s
-
-	hasContributions:                    %t
-	totalIssueContributions:             %d
-	totalPullRequestContributions:       %d
-	totalPullRequestReviewContributions: %d
-	totalCommitContributions:            %d
-
-`, u.UserName, u.Org, u.StartFrom.Format(time.DateTime),
-		u.Collection.HasAnyContributions,
-		u.Collection.TotalIssueContributions,
-		u.Collection.TotalPullRequestContributions,
-		u.Collection.TotalPullRequestReviewContributions,
-		u.Collection.TotalCommitContributions,
-	)
-}
-
-func (u *UserActivityReportInOrg) GenerateLogFileName(userName string) string {
-	return fmt.Sprintf("user-activity-%s-%s-*.yaml", userName, u.Org)
+	HasActivity() bool
+	WriteToFile(dir, userName string) (string, error)
 }
 
 type UserActivityReportInRepository struct {
@@ -77,18 +48,18 @@ type UserActivityReportInRepository struct {
 
 func (u *UserActivityReportInRepository) GenerateActivityLog() string {
 	return fmt.Sprintf(`activity log:
-	user:       %s
-	repository: %s/%s
-	since:      %s
+    user:          %s
+    repository:    %s/%s
+    since:         %s
 
-	issues
-		created:   %d
-		commented: %d
-	pull requests:
-		reviewed:  %d
-		created:   %d
-		commented: %d
-	commits:       %d
+    issues
+        created:   %d
+        commented: %d
+    pull requests:
+        reviewed:  %d
+        created:   %d
+        commented: %d
+    commits:       %d
 `, u.UserName, u.Org, u.Repo, u.StartFrom.Format(time.DateTime),
 		u.IssuesCreated.IssueCount,
 		u.IssuesCommented.IssueCount,
@@ -101,6 +72,91 @@ func (u *UserActivityReportInRepository) GenerateActivityLog() string {
 
 func (u *UserActivityReportInRepository) GenerateLogFileName(userName string) string {
 	return fmt.Sprintf("user-activity-%s-%s_%s-*.yaml", userName, u.Org, u.Repo)
+}
+
+func (u *UserActivityReportInRepository) HasActivity() bool {
+	return u.IssuesCreated.IssueCount > 0 ||
+		u.IssuesCommented.IssueCount > 0 ||
+		u.PullRequestsReviewed.IssueCount > 0 ||
+		u.PullRequestsCreated.IssueCount > 0 ||
+		u.PullRequestsCommented.IssueCount > 0 ||
+		u.CommitsByUser.DefaultBranchRef.Target.Fragment.History.TotalCount > 0
+}
+
+func (u *UserActivityReportInRepository) WriteToFile(dir string, userName string) (string, error) {
+	logFileName := u.GenerateLogFileName(userName)
+	err := writeActivityToFile(u, dir, logFileName)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, logFileName), nil
+}
+
+type UserActivityReportInOrg2 struct {
+	IssuesCreated         IssuesCreated         `yaml:"issuesCreated"`
+	IssuesCommented       IssuesCommented       `yaml:"issuesCommented"`
+	PullRequestsCreated   PullRequestsCreated   `yaml:"pullRequestsCreated"`
+	PullRequestsReviewed  PullRequestsReviewed  `yaml:"pullRequestsReviewed"`
+	PullRequestsCommented PullRequestsCommented `yaml:"pullRequestsCommented"`
+	CommitsByUserInOrg    CommitsByUserInOrg    `yaml:"commitsByUserInOrg"`
+	Org                   string
+	UserName              string
+	UserID                string
+	StartFrom             time.Time
+}
+
+func (u *UserActivityReportInOrg2) GenerateActivityLog() string {
+	return fmt.Sprintf(`activity log:
+    user:          %s
+    org:           %s
+    since:         %s
+
+    issues
+        created:   %d
+        commented: %d
+    pull requests:
+        reviewed:  %d
+        created:   %d
+        commented: %d
+    commits:       %d
+`, u.UserName, u.Org, u.StartFrom.Format(time.DateTime),
+		u.IssuesCreated.IssueCount,
+		u.IssuesCommented.IssueCount,
+		u.PullRequestsReviewed.IssueCount,
+		u.PullRequestsCreated.IssueCount,
+		u.PullRequestsCommented.IssueCount,
+		u.totalCommitCount(),
+	)
+}
+
+func (u *UserActivityReportInOrg2) totalCommitCount() int {
+	totalCommitCount := 0
+	for _, node := range u.CommitsByUserInOrg.Repositories.Nodes {
+		totalCommitCount += node.DefaultBranchRef.Target.Fragment.History.TotalCount
+	}
+	return totalCommitCount
+}
+
+func (u *UserActivityReportInOrg2) GenerateLogFileName(userName string) string {
+	return fmt.Sprintf("user-activity-%s-%s-*.yaml", userName, u.Org)
+}
+
+func (u *UserActivityReportInOrg2) HasActivity() bool {
+	return u.IssuesCreated.IssueCount > 0 ||
+		u.IssuesCommented.IssueCount > 0 ||
+		u.PullRequestsReviewed.IssueCount > 0 ||
+		u.PullRequestsCreated.IssueCount > 0 ||
+		u.PullRequestsCommented.IssueCount > 0 ||
+		u.totalCommitCount() > 0
+}
+
+func (u *UserActivityReportInOrg2) WriteToFile(dir, userName string) (string, error) {
+	logFileName := u.GenerateLogFileName(userName)
+	err := writeActivityToFile(u, dir, logFileName)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, logFileName), nil
 }
 
 type Repository struct {
@@ -281,87 +337,47 @@ type CommitsByUser struct {
 	DefaultBranchRef CommitsByUserRef `yaml:"defaultBranchRef"`
 }
 
-type IssueContributionNodeFragment struct {
-	URL string `yaml:"URL"`
-}
-
-type IssueContributionNode struct {
-	Issue      IssueContributionNodeFragment `yaml:"issue"`
-	OccurredAt time.Time                     `yaml:"occurredAt"`
-}
-
-type IssueContributions struct {
-	TotalCount int                     `yaml:"totalCount"`
-	Nodes      []IssueContributionNode `yaml:"nodes"`
-}
-
-type PullRequestContributionNodeFragment struct {
-	URL string `yaml:"URL"`
-}
-
-type PullRequestContributionNode struct {
-	PullRequest PullRequestContributionNodeFragment `yaml:"pullRequest"`
-	OccurredAt  time.Time                           `yaml:"occurredAt"`
-}
-
-type PullRequestContributions struct {
-	TotalCount int                           `yaml:"totalCount"`
-	Nodes      []PullRequestContributionNode `yaml:"nodes"`
-}
-
-type PullRequestReviewContributionNodePullRequest struct {
-	URL string `yaml:"URL"`
-}
-type PullRequestReviewContributionNodeRepository struct {
-	NameWithOwner string `yaml:"nameWithOwner"`
-}
-type PullRequestReviewContributionNodeFragment struct {
-	Repository  PullRequestReviewContributionNodeRepository  `yaml:"repository"`
-	PullRequest PullRequestReviewContributionNodePullRequest `yaml:"pullRequest"`
-	CreatedAt   time.Time                                    `yaml:"createdAt"`
-	State       string                                       `yaml:"state"`
-}
-type PullRequestReviewContributionNode struct {
-	PullRequestReview PullRequestReviewContributionNodeFragment `yaml:"pullRequestReview"`
-}
-type PullRequestReviewContributions struct {
-	TotalCount int                                 `yaml:"totalCount"`
-	Nodes      []PullRequestReviewContributionNode `yaml:"nodes"`
-}
-
-type CommitContributionsByRepositoryContributionUser struct {
+type RepositoryNodeRefTargetHistoryNodeAuthorUser struct {
 	Name string `yaml:"name"`
 }
-type CommitContributionsByRepositoryContributionRepository struct {
-	NameWithOwner string `yaml:"nameWithOwner"`
+
+type RepositoryNodeRefTargetHistoryNodeAuthor struct {
+	User RepositoryNodeRefTargetHistoryNodeAuthorUser `yaml:"user"`
 }
 
-type CommitContributionsByRepositoryContributionsNode struct {
-	Repository CommitContributionsByRepositoryContributionRepository `yaml:"repository"`
-	User       CommitContributionsByRepositoryContributionUser       `yaml:"user"`
-	OccurredAt time.Time                                             `yaml:"occurredAt"`
+type RepositoryNodeRefTargetHistoryNode struct {
+	URL           string                                   `yaml:"URL"`
+	CommittedDate time.Time                                `yaml:"committedDate"`
+	Author        RepositoryNodeRefTargetHistoryNodeAuthor `yaml:"author"`
 }
 
-type CommitContributionsByRepositoryContributions struct {
-	TotalCount int                                                `yaml:"totalCount"`
-	Nodes      []CommitContributionsByRepositoryContributionsNode `yaml:"nodes"`
-}
-type CommitContributionsByRepository struct {
-	Contributions CommitContributionsByRepositoryContributions `graphql:"contributions(first: 10,orderBy: {field: OCCURRED_AT, direction: DESC})"`
+type RepositoryNodeRefTargetHistory struct {
+	TotalCount int                                  `yaml:"totalCount"`
+	Nodes      []RepositoryNodeRefTargetHistoryNode `yaml:"nodes"`
 }
 
-type ContributionsCollection struct {
-	HasAnyContributions                 bool `yaml:"hasAnyContributions"`
-	TotalCommitContributions            int  `yaml:"totalCommitContributions"`
-	TotalIssueContributions             int  `yaml:"totalIssueContributions"`
-	TotalPullRequestContributions       int  `yaml:"totalPullRequestContributions"`
-	TotalPullRequestReviewContributions int  `yaml:"totalPullRequestReviewContributions"`
-	IssueContributions                  `graphql:"issueContributions(first: 1, orderBy: {direction: DESC})" yaml:"issueContributions"`
-	PullRequestContributions            `graphql:"pullRequestContributions(first: 1, orderBy: {direction: DESC})" yaml:"pullRequestContributions"`
-	PullRequestReviewContributions      `graphql:"pullRequestReviewContributions(first: 1, orderBy: {direction: DESC})" yaml:"pullRequestReviewContributions"`
-	CommitContributionsByRepository     []CommitContributionsByRepository `graphql:"commitContributionsByRepository(maxRepositories: 10)" yaml:"commitContributionsByRepository"`
+type RepositoryNodeRefTargetFragment struct {
+	CommitURL string                         `yaml:"commitURL"`
+	History   RepositoryNodeRefTargetHistory `graphql:"history(first: 3, author: {id: $userID}, since: $startFrom)" yaml:"history"`
 }
 
-type UserContributionsInOrg struct {
-	ContributionsCollection `graphql:"contributionsCollection(organizationID: $organizationID, from: $startFrom)" yaml:"contributionsCollection"`
+type RepositoryNodeRefTargetItem struct {
+	Fragment RepositoryNodeRefTargetFragment `graphql:"... on Commit" yaml:"fragment"`
+}
+
+type RepositoryNodeRef struct {
+	Target RepositoryNodeRefTargetItem `yaml:"target"`
+}
+
+type RepositoryNode struct {
+	Name             string            `yaml:"name"`
+	DefaultBranchRef RepositoryNodeRef `yaml:"defaultBranchRef"`
+}
+
+type Repositories struct {
+	Nodes []RepositoryNode `yaml:"nodes"`
+}
+
+type CommitsByUserInOrg struct {
+	Repositories Repositories `graphql:"repositories(first: 25, isArchived: false, visibility: PUBLIC)" yaml:"repositories"`
 }
