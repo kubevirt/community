@@ -1,4 +1,6 @@
-The current Maintainers Group for the Kubevirt Project consists of:
+## KubeVirt Project Maintainers
+
+The current Maintainers Group for the KubeVirt Project consists of:
 
 | Name | Employer | Responsibilities |
 | ----------- | ------- | -------------------------------- |
@@ -14,3 +16,10 @@ The current Maintainers Group for the Kubevirt Project consists of:
 This list must be kept in sync with the [CNCF Project Maintainers list](https://github.com/cncf/foundation/blob/master/project-maintainers.csv).
 
 See [the project Governance](GOVERNANCE.md) for how maintainers are selected and replaced.
+
+## Emeritus Maintainers
+
+| Name | Date of Retirement |
+| ---- | ------------------ |
+| [Chris Calligari](https://github.com/mazzystr) | 4 April, 2022 |
+| [Federico Gimenez](https://github.com/fgimenez) | 9 May, 2022 |
