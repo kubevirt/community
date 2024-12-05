@@ -20,10 +20,28 @@
 package owners
 
 type Owners struct {
-	Reviewers         []string            `yaml:"reviewers"`
-	Approvers         []string            `yaml:"approvers"`
-	EmeritusApprovers []string            `yaml:"emeritus_approvers"`
-	Filters           map[string][]string `yaml:"filters"`
+	Reviewers         []string          `yaml:"reviewers"`
+	Approvers         []string          `yaml:"approvers"`
+	EmeritusApprovers []string          `yaml:"emeritus_approvers"`
+	Filters           map[string]Owners `yaml:"filters"`
+}
+
+func (o *Owners) AllReviewers() []string {
+	var allReviewers []string
+	allReviewers = o.Reviewers
+	for _, filter := range o.Filters {
+		allReviewers = append(allReviewers, filter.Reviewers...)
+	}
+	return allReviewers
+}
+
+func (o *Owners) AllApprovers() []string {
+	var allApprovers []string
+	allApprovers = o.Approvers
+	for _, filter := range o.Filters {
+		allApprovers = append(allApprovers, filter.Approvers...)
+	}
+	return allApprovers
 }
 
 type OwnersAliases struct {

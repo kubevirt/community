@@ -169,8 +169,8 @@ func main() {
 					log.Fatalf("invalid aliases file %q: %v", ownersAliasesPath, err)
 				}
 			}
-			userNames = ownersYAML.Reviewers
-			userNames = append(userNames, ownersYAML.Approvers...)
+			userNames = ownersYAML.AllReviewers()
+			userNames = append(userNames, ownersYAML.AllApprovers()...)
 			userNames = ownersAliases.Resolve(userNames)
 			userNames = uniq(userNames)
 			sort.Strings(userNames)
