@@ -1,0 +1,38 @@
+# skipInactive holds configurations for which github users
+# need not get checked, either per org or repos
+skipInactive:
+
+  # kubevirt org
+  kubevirt:
+
+  - name: "bots"
+    github:
+    - kubevirt-bot
+    - kubevirt-commenter-bot
+    - kubevirt-snyk
+    - openshift-ci-robot
+    - openshift-merge-robot
+    - thelinuxfoundation
+
+  - name: "orgAdmins"
+    # skip KubeVirt org admins (security measure so that we don't lose GitHub org access)
+    github:
+    - brianmcarey
+    - davidvossel
+    - dhiller
+    - fabiand
+    - rmohr
+
+  - name: "invisibleContributions"
+    # skip users with invisible contributions (i.e. OSPO, KubeVirt community manager etc)
+    github:
+    - aburdenthehand
+    - jberkus
+
+  # community repo
+  kubevirt/community:
+  - name: "communityAdmin"
+    # skip community manager, they should never get removed
+    github:
+    - aburdenthehand
+
