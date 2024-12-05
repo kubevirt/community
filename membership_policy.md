@@ -11,6 +11,7 @@ This document outlines the various responsibilities of contributor roles in Kube
 | [SIG Chair](#special-interest-group-sig-chair) | Lead a SIG aligned to the goals of the SIG charter                                                           | * Can be sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project      | [sigs.yaml] chair entry              |
 | [SIG Subproject Lead](#sig-subproject-lead)    | Lead a subproject aligned to the goals of the SIG charter                                                    | * sig-reviewer<br>* Highly experienced in SIG subproject matters<br> * Active reviewer & contributor to the project  | [sigs.yaml] subproject leads entry   |
 | [WG Chair](#working-group-wg-chair)            | Lead a WG aligned to the goals of the WG charter                                                             | * Highly experienced in WG matters<br> * Active reviewer & contributor to the project                                | [sigs.yaml] WG chairs entry          |
+| [Project Maintainers](./GOVERNANCE.md)         | Steer the project from the highest level                                                                     | * Demonstrated leadership in the community<br>  See the [Governance doc](./GOVERNANCE.md) for more details | [MAINTAINERS](./MAINTAINERS.md) file |
 
 ## New contributors
 
