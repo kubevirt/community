@@ -20,7 +20,25 @@
 package owners
 
 type Owners struct {
-	Reviewers         []string `yaml:"reviewers"`
-	Approvers         []string `yaml:"approvers"`
-	EmeritusApprovers []string `yaml:"emeritus_approvers"`
+	Reviewers         []string            `yaml:"reviewers"`
+	Approvers         []string            `yaml:"approvers"`
+	EmeritusApprovers []string            `yaml:"emeritus_approvers"`
+	Filters           map[string][]string `yaml:"filters"`
+}
+
+type OwnersAliases struct {
+	Aliases map[string][]string `yaml:"aliases"`
+}
+
+func (a OwnersAliases) Resolve(aliases []string) []string {
+	var resolved []string
+	for _, alias := range aliases {
+		resolvedUserNames, exists := a.Aliases[alias]
+		if !exists {
+			resolved = append(resolved, alias)
+			continue
+		}
+		resolved = append(resolved, resolvedUserNames...)
+	}
+	return resolved
 }

@@ -29,20 +29,22 @@ import (
 	"kubevirt.io/community/pkg/orgs"
 	"kubevirt.io/community/pkg/owners"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 )
 
 type ContributionReportOptions struct {
-	Org                  string `yaml:"org"`
-	Repo                 string `yaml:"repo"`
-	Username             string `yaml:"username"`
-	GithubTokenPath      string `yaml:"githubTokenPath"`
-	Months               int    `yaml:"months"`
-	OrgsConfigFilePath   string `yaml:"orgsConfigFilePath"`
-	OwnersFilePath       string `yaml:"ownersFilePath"`
-	ReportAll            bool   `yaml:"reportAll"`
-	ReportOutputFilePath string `yaml:"reportOutputFilePath"`
+	Org                   string `yaml:"org"`
+	Repo                  string `yaml:"repo"`
+	Username              string `yaml:"username"`
+	GithubTokenPath       string `yaml:"githubTokenPath"`
+	Months                int    `yaml:"months"`
+	OrgsConfigFilePath    string `yaml:"orgsConfigFilePath"`
+	OwnersFilePath        string `yaml:"ownersFilePath"`
+	ReportAll             bool   `yaml:"reportAll"`
+	ReportOutputFilePath  string `yaml:"reportOutputFilePath"`
+	OwnersAliasesFilePath string `yaml:"ownersAliasesFilePath"`
 }
 
 type SkipInactiveCheckConfig struct {
@@ -115,6 +117,7 @@ func gatherContributionReportOptions() (*ContributionReportOptions, error) {
 	fs.StringVar(&o.OwnersFilePath, "owners-file-path", "", "file path to the OWNERS file to check")
 	fs.BoolVar(&o.ReportAll, "report-all", false, "whether to only report inactive users or all users")
 	fs.StringVar(&o.ReportOutputFilePath, "report-output-file-path", "", "file path to write the report output into")
+	fs.StringVar(&o.OwnersAliasesFilePath, "owners-aliases-file-path", "", "file path to resolve OWNERS file references with")
 	err := fs.Parse(os.Args[1:])
 	return &o, err
 }
@@ -154,7 +157,22 @@ func main() {
 			if err != nil {
 				log.Fatalf("invalid arguments: %v", err)
 			}
-			userNames = uniq(ownersYAML.Reviewers, ownersYAML.Approvers)
+			ownersAliasesPath := defaultOwnersAsiasesPath(contributionReportOptions)
+			if contributionReportOptions.OwnersAliasesFilePath != "" {
+				ownersAliasesPath = contributionReportOptions.OwnersAliasesFilePath
+			}
+			stat, err := os.Stat(ownersAliasesPath)
+			ownersAliases := &owners.OwnersAliases{}
+			if err == nil && !stat.IsDir() {
+				ownersAliases, err = owners.ReadAliasesFile(ownersAliasesPath)
+				if err != nil {
+					log.Fatalf("invalid aliases file %q: %v", ownersAliasesPath, err)
+				}
+			}
+			userNames = ownersYAML.Reviewers
+			userNames = append(userNames, ownersYAML.Approvers...)
+			userNames = ownersAliases.Resolve(userNames)
+			userNames = uniq(userNames)
 			sort.Strings(userNames)
 		} else if contributionReportOptions.OrgsConfigFilePath != "" {
 			orgsYAML, err := orgs.ReadFile(contributionReportOptions.OrgsConfigFilePath)
@@ -192,6 +210,10 @@ func main() {
 			log.Fatalf("failed to write report: %v", err)
 		}
 	}
+}
+
+func defaultOwnersAsiasesPath(contributionReportOptions *ContributionReportOptions) string {
+	return filepath.Join(filepath.Dir(contributionReportOptions.OwnersFilePath), "OWNERS_ALIASES")
 }
 
 func uniq(elements ...[]string) []string {

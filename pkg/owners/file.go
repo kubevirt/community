@@ -38,3 +38,17 @@ func ReadFile(path string) (*Owners, error) {
 	}
 	return owners, err
 }
+
+func ReadAliasesFile(path string) (*OwnersAliases, error) {
+	buf, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("error reading %s: %v", path, err)
+	}
+
+	ownersAliases := &OwnersAliases{}
+	err = yaml.Unmarshal(buf, ownersAliases)
+	if err != nil {
+		return nil, fmt.Errorf("in file %q: %v", path, err)
+	}
+	return ownersAliases, err
+}
