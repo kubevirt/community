@@ -25,14 +25,14 @@ import (
 	"time"
 )
 
-type ActivityReport interface {
-	GenerateActivityLog() string
-	GenerateLogFileName(userName string) string
-	HasActivity() bool
+type ContributionReport interface {
+	Summary() string
+	ReportFileName(userName string) string
+	HasContributions() bool
 	WriteToFile(dir, userName string) (string, error)
 }
 
-type UserActivityReportInRepository struct {
+type UserContributionReportForRepository struct {
 	IssuesCreated         IssuesCreated         `yaml:"issuesCreated"`
 	IssuesCommented       IssuesCommented       `yaml:"issuesCommented"`
 	PullRequestsCreated   PullRequestsCreated   `yaml:"pullRequestsCreated"`
@@ -46,7 +46,7 @@ type UserActivityReportInRepository struct {
 	StartFrom             time.Time
 }
 
-func (u *UserActivityReportInRepository) GenerateActivityLog() string {
+func (u *UserContributionReportForRepository) Summary() string {
 	return fmt.Sprintf(`activity log:
     user:          %s
     repository:    %s/%s
@@ -70,11 +70,11 @@ func (u *UserActivityReportInRepository) GenerateActivityLog() string {
 	)
 }
 
-func (u *UserActivityReportInRepository) GenerateLogFileName(userName string) string {
+func (u *UserContributionReportForRepository) ReportFileName(userName string) string {
 	return fmt.Sprintf("user-activity-%s-%s_%s-*.yaml", userName, u.Org, u.Repo)
 }
 
-func (u *UserActivityReportInRepository) HasActivity() bool {
+func (u *UserContributionReportForRepository) HasContributions() bool {
 	return u.IssuesCreated.IssueCount > 0 ||
 		u.IssuesCommented.IssueCount > 0 ||
 		u.PullRequestsReviewed.IssueCount > 0 ||
@@ -83,8 +83,8 @@ func (u *UserActivityReportInRepository) HasActivity() bool {
 		u.CommitsByUser.DefaultBranchRef.Target.Fragment.History.TotalCount > 0
 }
 
-func (u *UserActivityReportInRepository) WriteToFile(dir string, userName string) (string, error) {
-	logFileName := u.GenerateLogFileName(userName)
+func (u *UserContributionReportForRepository) WriteToFile(dir string, userName string) (string, error) {
+	logFileName := u.ReportFileName(userName)
 	err := writeActivityToFile(u, dir, logFileName)
 	if err != nil {
 		return "", err
@@ -92,7 +92,7 @@ func (u *UserActivityReportInRepository) WriteToFile(dir string, userName string
 	return filepath.Join(dir, logFileName), nil
 }
 
-type UserActivityReportInOrg2 struct {
+type UserContributionReportForOrganization struct {
 	IssuesCreated         IssuesCreated         `yaml:"issuesCreated"`
 	IssuesCommented       IssuesCommented       `yaml:"issuesCommented"`
 	PullRequestsCreated   PullRequestsCreated   `yaml:"pullRequestsCreated"`
@@ -105,7 +105,7 @@ type UserActivityReportInOrg2 struct {
 	StartFrom             time.Time
 }
 
-func (u *UserActivityReportInOrg2) GenerateActivityLog() string {
+func (u *UserContributionReportForOrganization) Summary() string {
 	return fmt.Sprintf(`activity log:
     user:          %s
     org:           %s
@@ -129,7 +129,7 @@ func (u *UserActivityReportInOrg2) GenerateActivityLog() string {
 	)
 }
 
-func (u *UserActivityReportInOrg2) totalCommitCount() int {
+func (u *UserContributionReportForOrganization) totalCommitCount() int {
 	totalCommitCount := 0
 	for _, node := range u.CommitsByUserInOrg.Repositories.Nodes {
 		totalCommitCount += node.DefaultBranchRef.Target.Fragment.History.TotalCount
@@ -137,11 +137,11 @@ func (u *UserActivityReportInOrg2) totalCommitCount() int {
 	return totalCommitCount
 }
 
-func (u *UserActivityReportInOrg2) GenerateLogFileName(userName string) string {
+func (u *UserContributionReportForOrganization) ReportFileName(userName string) string {
 	return fmt.Sprintf("user-activity-%s-%s-*.yaml", userName, u.Org)
 }
 
-func (u *UserActivityReportInOrg2) HasActivity() bool {
+func (u *UserContributionReportForOrganization) HasContributions() bool {
 	return u.IssuesCreated.IssueCount > 0 ||
 		u.IssuesCommented.IssueCount > 0 ||
 		u.PullRequestsReviewed.IssueCount > 0 ||
@@ -150,8 +150,8 @@ func (u *UserActivityReportInOrg2) HasActivity() bool {
 		u.totalCommitCount() > 0
 }
 
-func (u *UserActivityReportInOrg2) WriteToFile(dir, userName string) (string, error) {
-	logFileName := u.GenerateLogFileName(userName)
+func (u *UserContributionReportForOrganization) WriteToFile(dir, userName string) (string, error) {
+	logFileName := u.ReportFileName(userName)
 	err := writeActivityToFile(u, dir, logFileName)
 	if err != nil {
 		return "", err

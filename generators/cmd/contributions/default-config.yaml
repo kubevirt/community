@@ -1,0 +1,33 @@
+skipInactive:
+  kubevirt:
+  # bots (kubevirt, openshift, the linux foundation)
+  - name: "bots"
+    github:
+    - kubevirt-bot
+    - kubevirt-commenter-bot
+    - kubevirt-snyk
+    - openshift-ci-robot
+    - openshift-merge-robot
+    - thelinuxfoundation
+
+  # KubeVirt org admins (security measure so that we don't lose GitHub org access)
+  - name: "orgAdmins"
+    github:
+    - brianmcarey
+    - davidvossel
+    - dhiller
+    - fabiand
+    - rmohr
+
+  # users with invisible contributions (i.e. OSPO, KubeVirt community manager etc)
+  - name: "invisibleContributions"
+    github:
+    - aburdenthehand
+    - jberkus
+
+  kubevirt/community:
+  - name: "communityAdmin"
+    github:
+    - aburdenthehand
+    - jberkus
+

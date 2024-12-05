@@ -23,6 +23,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/shurcooL/githubv4"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v3"
 	"os"
@@ -49,13 +50,13 @@ func NewContributionReportGenerator(opts ContributionReportGeneratorOptions) (*C
 	return &ContributionReportGenerator{client: client, opts: opts}, nil
 }
 
-func (g ContributionReportGenerator) GenerateReport(userName string) (ActivityReport, error) {
-	var activity ActivityReport
+func (g ContributionReportGenerator) GenerateReport(userName string) (ContributionReport, error) {
+	var activity ContributionReport
 	var err error
 	if g.opts.Repo != "" {
 		activity, err = generateUserActivityReportInRepository(g.client, g.opts.Org, g.opts.Repo, userName, g.opts.startFrom())
 	} else {
-		activity, err = generateUserActivityReportInOrg2(g.client, g.opts.Org, userName, g.opts.startFrom())
+		activity, err = generateUserContributionReportForOrganization(g.client, g.opts.Org, userName, g.opts.startFrom())
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to query: %v", err)
@@ -81,7 +82,7 @@ func (o ContributionReportGeneratorOptions) startFrom() time.Time {
 	return time.Now().AddDate(0, -1*o.Months, 0)
 }
 
-func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, username string, startFrom time.Time) (*UserActivityReportInRepository, error) {
+func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, username string, startFrom time.Time) (*UserContributionReportForRepository, error) {
 	userid, err := getUserId(client, username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query: %v", err)
@@ -145,7 +146,7 @@ func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, 
 	if err != nil {
 		return nil, fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
 	}
-	return &UserActivityReportInRepository{
+	return &UserContributionReportForRepository{
 		IssuesCreated:         query.IssuesCreated,
 		IssuesCommented:       query.IssuesCommented,
 		PullRequestsCreated:   query.PullRequestsCreated,
@@ -160,7 +161,7 @@ func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, 
 	}, nil
 }
 
-func generateUserActivityReportInOrg2(client *githubv4.Client, org, username string, startFrom time.Time) (*UserActivityReportInOrg2, error) {
+func generateUserContributionReportForOrganization(client *githubv4.Client, org, username string, startFrom time.Time) (*UserContributionReportForOrganization, error) {
 	userid, err := getUserId(client, username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query: %v", err)
@@ -218,7 +219,7 @@ func generateUserActivityReportInOrg2(client *githubv4.Client, org, username str
 	if err != nil {
 		return nil, fmt.Errorf("failed to use github query %+v with variables %v: %w", query, variables, err)
 	}
-	return &UserActivityReportInOrg2{
+	return &UserContributionReportForOrganization{
 		IssuesCreated:         query.IssuesCreated,
 		IssuesCommented:       query.IssuesCommented,
 		PullRequestsCreated:   query.PullRequestsCreated,
@@ -256,6 +257,6 @@ func writeActivityToFile(yamlObject interface{}, dir, fileName string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf(`user activity log: %q`, tempFile.Name())
+	log.Debugf(`user activity log: %q`, tempFile.Name())
 	return nil
 }
