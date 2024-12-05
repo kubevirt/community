@@ -184,11 +184,13 @@ func main() {
 	}
 
 	for _, userName := range userNames {
-		shouldSkip, reason := defaultConfig.ShouldSkip(contributionReportOptions.Org, contributionReportOptions.Repo, userName)
-		if shouldSkip {
-			log.Debugf("skipping user %s (reason: %s)", userName, reason)
-			reporter.Skip(userName, reason)
-			continue
+		if contributionReportOptions.Username == "" {
+			shouldSkip, reason := defaultConfig.ShouldSkip(contributionReportOptions.Org, contributionReportOptions.Repo, userName)
+			if shouldSkip {
+				log.Debugf("skipping user %s (reason: %s)", userName, reason)
+				reporter.Skip(userName, reason)
+				continue
+			}
 		}
 		activity, err := generator.GenerateReport(userName)
 		if err != nil {

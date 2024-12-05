@@ -22,6 +22,7 @@ package contributions
 import (
 	"context"
 	"fmt"
+	"github.com/avast/retry-go"
 	"github.com/shurcooL/githubv4"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
@@ -51,17 +52,26 @@ func NewContributionReportGenerator(opts ContributionReportGeneratorOptions) (*C
 }
 
 func (g ContributionReportGenerator) GenerateReport(userName string) (ContributionReport, error) {
-	var activity ContributionReport
-	var err error
-	if g.opts.Repo != "" {
-		activity, err = generateUserActivityReportInRepository(g.client, g.opts.Org, g.opts.Repo, userName, g.opts.startFrom())
-	} else {
-		activity, err = generateUserContributionReportForOrganization(g.client, g.opts.Org, userName, g.opts.startFrom())
+	var contributionReport ContributionReport
+	err := retry.Do(
+		func() error {
+			var err error
+			if g.opts.Repo != "" {
+				contributionReport, err = generateUserActivityReportForRepository(g.client, g.opts.Org, g.opts.Repo, userName, g.opts.startFrom())
+			} else {
+				contributionReport, err = generateUserContributionReportForOrganization(g.client, g.opts.Org, userName, g.opts.startFrom())
+			}
+			if err != nil {
+				log.Errorf("query failed (will retry): %v", err)
+			}
+			return err
+		},
+		retry.LastErrorOnly(true),
+	)
+	if contributionReport == nil && err != nil {
+		return nil, fmt.Errorf("query failed (aborting): %v", err)
 	}
-	if err != nil {
-		return nil, fmt.Errorf("failed to query: %v", err)
-	}
-	return activity, nil
+	return contributionReport, nil
 }
 
 type ContributionReportGeneratorOptions struct {
@@ -82,7 +92,7 @@ func (o ContributionReportGeneratorOptions) startFrom() time.Time {
 	return time.Now().AddDate(0, -1*o.Months, 0)
 }
 
-func generateUserActivityReportInRepository(client *githubv4.Client, org, repo, username string, startFrom time.Time) (*UserContributionReportForRepository, error) {
+func generateUserActivityReportForRepository(client *githubv4.Client, org, repo, username string, startFrom time.Time) (*UserContributionReportForRepository, error) {
 	userid, err := getUserId(client, username)
 	if err != nil {
 		return nil, fmt.Errorf("failed to query: %v", err)
