@@ -239,6 +239,6 @@ After an extended period away from the project with no activity
 those members would need to re-familiarize themselves with the current state
 before being able to contribute effectively.
 
-[CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/48/users-statistics-by-repository-group?orgId=1&from=now-1y&to=now&var-period=w&var-metric=activity&var-repogroup_name=All&var-users=All
+[CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/9/developer-activity-counts-by-repository-group-table?orgId=1&var-period_name=Last%20year&var-metric=contributions&var-repogroup_name=All&var-country_name=All
 [OWNERS_ALIASES]: https://github.com/kubevirt/kubevirt/tree/main/OWNERS_ALIASES
 [sigs.yaml]: ./sigs.yaml
