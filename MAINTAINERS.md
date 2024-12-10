@@ -7,7 +7,7 @@ The current Maintainers Group for the Kubevirt Project consists of:
 | [Roman Mohr](https://github.com/rmohr) | Google | |
 | [Fabian Deutsch](https://github.com/fabiand) | Red Hat | |
 | [Stu Gott](https://github.com/stu-gott) | Red Hat | |
-| [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | SUSE | |
+| [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | SUSE | _[On temporary leave](https://github.com/kubevirt/kubevirt/pull/13370)_ |
 | [Ryan Hallisey](https://github.com/rthallisey) | Nvidia | |
 | [Andrew Burden](https://github.com/aburdenthehand) | Red Hat | Community Facilitator |
 
