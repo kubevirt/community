@@ -202,7 +202,7 @@ func validateSubprojects(groupToValidate *sigs.Group, groupLog *log.Entry, kubev
 }
 
 func validateOwnersReferences(subProject *sigs.SubProject, subprojectLog *log.Entry) []string {
-	foundOwners := make([]string, 0)
+	var foundOwners []string
 	for _, ownersFileURL := range subProject.Owners {
 		response, err := http.DefaultClient.Head(ownersFileURL)
 		if err != nil {
