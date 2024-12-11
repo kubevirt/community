@@ -14,6 +14,9 @@ generate:
 validate-sigs:
 	go run ./validators/cmd/sigs
 
+test:
+	go test ./...
+
 install-metrics-binaries:
 	if ! command -V golangci-lint; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ${GOPATH}/bin ${GOLANGCI_LINT_VERSION} ; fi
 
