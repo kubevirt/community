@@ -74,21 +74,7 @@ func main() {
 
 	kubevirtOrg := orgsYAML.Orgs["kubevirt"]
 
-	for _, sig := range sigsYAML.Sigs {
-		validateGroup("sig", sig, labelsYAML, kubevirtOrg)
-	}
-
-	for _, wg := range sigsYAML.Workinggroups {
-		validateGroup("wg", wg, labelsYAML, kubevirtOrg)
-	}
-
-	for _, ug := range sigsYAML.Usergroups {
-		validateGroup("ug", ug, labelsYAML, kubevirtOrg)
-	}
-
-	for _, committee := range sigsYAML.Committees {
-		validateGroup("committee", committee, labelsYAML, kubevirtOrg)
-	}
+	validateGroups(sigsYAML, labelsYAML, kubevirtOrg)
 
 	output, err := yaml.Marshal(sigsYAML)
 	if err != nil {
@@ -112,10 +98,34 @@ func main() {
 
 }
 
+func validateGroups(sigsYAML *sigs.Sigs, labelsYAML *labels.LabelsYAML, kubevirtOrg orgs.Org) {
+	for _, sig := range sigsYAML.Sigs {
+		validateGroup("sig", sig, labelsYAML, kubevirtOrg)
+	}
+
+	for _, wg := range sigsYAML.Workinggroups {
+		validateGroup("wg", wg, labelsYAML, kubevirtOrg)
+	}
+
+	for _, ug := range sigsYAML.Usergroups {
+		validateGroup("ug", ug, labelsYAML, kubevirtOrg)
+	}
+
+	for _, committee := range sigsYAML.Committees {
+		validateGroup("committee", committee, labelsYAML, kubevirtOrg)
+	}
+}
+
 func validateGroup(groupType string, groupToValidate *sigs.Group, labelsYAML *labels.LabelsYAML, kubevirtOrg orgs.Org) {
 	groupLog := log.WithField(groupType, groupToValidate.Name)
+	validateDirectoryExists(groupToValidate, groupLog)
+	validateLabelExists(groupToValidate, labelsYAML, groupLog)
+	validateLeads(groupToValidate, kubevirtOrg, groupLog)
+	validateChairs(groupToValidate, kubevirtOrg, groupLog)
+	validateSubprojects(groupToValidate, groupLog, kubevirtOrg)
+}
 
-	// check dir exists
+func validateDirectoryExists(groupToValidate *sigs.Group, groupLog *log.Entry) {
 	if groupToValidate.Dir != "" {
 		stat, err := os.Stat(groupToValidate.Dir)
 		if err != nil {
@@ -126,8 +136,9 @@ func validateGroup(groupType string, groupToValidate *sigs.Group, labelsYAML *la
 			groupToValidate.Dir = ""
 		}
 	}
+}
 
-	// check label exists
+func validateLabelExists(groupToValidate *sigs.Group, labelsYAML *labels.LabelsYAML, groupLog *log.Entry) {
 	if groupToValidate.Label != "" {
 		foundLabel := false
 		for _, label := range labelsYAML.Default.Labels {
@@ -141,8 +152,10 @@ func validateGroup(groupType string, groupToValidate *sigs.Group, labelsYAML *la
 			groupToValidate.Label = ""
 		}
 	}
+}
 
-	// check leads - github handles are part of org
+// validateLeads checks that leads github handles are part of org, removes all that don't satisfy this requirement
+func validateLeads(groupToValidate *sigs.Group, kubevirtOrg orgs.Org, groupLog *log.Entry) {
 	var checkedMembers []*sigs.Lead
 	for _, orgMember := range groupToValidate.Leads {
 		if !kubevirtOrg.HasMember(orgMember.Github) {
@@ -152,8 +165,10 @@ func validateGroup(groupType string, groupToValidate *sigs.Group, labelsYAML *la
 		}
 	}
 	groupToValidate.Leads = checkedMembers
+}
 
-	// check chairs - github handles are part of org
+// validateLeads checks that chairs github handles are part of org, removes all that don't satisfy this
+func validateChairs(groupToValidate *sigs.Group, kubevirtOrg orgs.Org, groupLog *log.Entry) {
 	if groupToValidate.Leadership != nil {
 		var checkedLeadership []*sigs.Chair
 		for _, orgMember := range groupToValidate.Leadership.Chairs {
@@ -165,8 +180,9 @@ func validateGroup(groupType string, groupToValidate *sigs.Group, labelsYAML *la
 		}
 		groupToValidate.Leadership.Chairs = checkedLeadership
 	}
+}
 
-	// check subprojects
+func validateSubprojects(groupToValidate *sigs.Group, groupLog *log.Entry, kubevirtOrg orgs.Org) {
 	for _, subProject := range groupToValidate.SubProjects {
 		subprojectLog := groupLog.WithField("subproject", subProject.Name)
 		foundOwners := validateOwnersReferences(subProject, subprojectLog)
@@ -182,7 +198,6 @@ func validateGroup(groupType string, groupToValidate *sigs.Group, labelsYAML *la
 			}
 		}
 		subProject.Leads = checkedSubprojectChairs
-
 	}
 }
 
