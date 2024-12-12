@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"kubevirt.io/community/pkg/labels"
 	"kubevirt.io/community/pkg/orgs"
 	"kubevirt.io/community/pkg/sigs"
@@ -105,7 +104,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("stat for file %q failed: %v", opts.sigsFilePath, err)
 		}
-		err = ioutil.WriteFile(opts.sigsFilePath, output, stat.Mode())
+		err = os.WriteFile(opts.sigsFilePath, output, stat.Mode())
 		if err != nil {
 			log.Fatalf("write to file %q failed: %v", opts.sigsFilePath, err)
 		}
