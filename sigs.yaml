@@ -44,6 +44,7 @@ sigs:
         - name: instancetype
           description: The instance type and preference CRDs, APIs and feature set.
           owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/hack/common-instancetypes/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/libinstancetype/OWNERS
