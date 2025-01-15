@@ -114,7 +114,7 @@ Depending on individual topics, follow-up proposals may extend the basic
 points raised in this proposal.
 
 ### Terminology
-Feature Gates and feature configuration are often used interchangeable or not differentiated.
+It is important to differentiate between Feature Gates and feature configuration.
 - Feature Gate: A flag that controls the presence or availability of a feature in the cluster.
 - Feature configuration: Cluster or workload level configuration that allows an admin or user
   (depending on the feature) to control aspects of a feature operation.
