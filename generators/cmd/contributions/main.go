@@ -158,11 +158,7 @@ func main() {
 		log.Fatalf("failed to create report generator: %v", err)
 	}
 
-	communityReportGen := newCommunityReportGenerator(contributionReportOpts, generator)
-	communityReportGen.determineReporterAndUserNames()
-	communityReportGen.generateReportPerUser()
-	communityReportGen.printReportSummary()
-	communityReportGen.handleReportOutput()
+	newCommunityReportGenerator(contributionReportOpts, generator).generateRequestedCommunityReport()
 }
 
 func newCommunityReportGenerator(contributionReportOpts *contributionReportOptions, generator *contributions.ContributionReportGenerator) *communityReportGenerator {
@@ -180,15 +176,22 @@ type communityReportGenerator struct {
 	userNames                   []string
 }
 
-func (g *communityReportGenerator) determineReporterAndUserNames() communityReportGenerator {
-	reporter := NewDefaultReporter(g.contributionReportOpts, defaultConfig)
-	userNames := []string{g.contributionReportOpts.Username}
+func (g *communityReportGenerator) generateRequestedCommunityReport() {
+	g.determineReporterAndUserNames()
+	g.generateReportPerUser()
+	g.printReportSummary()
+	g.handleReportOutput()
+}
+
+func (g *communityReportGenerator) determineReporterAndUserNames() {
+	g.reporter = NewDefaultReporter(g.contributionReportOpts, defaultConfig)
+	g.userNames = []string{g.contributionReportOpts.Username}
 	if g.contributionReportOpts.Username != "" {
-		return communityReportGenerator{reporter: reporter, userNames: userNames}
+		return
 	}
 
 	if !g.contributionReportOpts.ReportAll {
-		reporter = NewInactiveOnlyReporter(g.contributionReportOpts, defaultConfig)
+		g.reporter = NewInactiveOnlyReporter(g.contributionReportOpts, defaultConfig)
 	}
 
 	if g.contributionReportOpts.OwnersFilePath != "" {
@@ -196,8 +199,8 @@ func (g *communityReportGenerator) determineReporterAndUserNames() communityRepo
 		if err != nil {
 			log.Fatalf("invalid arguments: %v", err)
 		}
-		userNames = ownersYAML.AllReviewers()
-		userNames = append(userNames, ownersYAML.AllApprovers()...)
+		g.userNames = ownersYAML.AllReviewers()
+		g.userNames = append(g.userNames, ownersYAML.AllApprovers()...)
 
 		ownersAliasesPath := g.contributionReportOpts.ownersAliasesFilePath()
 		stat, err := os.Stat(ownersAliasesPath)
@@ -208,18 +211,16 @@ func (g *communityReportGenerator) determineReporterAndUserNames() communityRepo
 				log.Fatalf("invalid aliases file %q: %v", ownersAliasesPath, err)
 			}
 		}
-		userNames = ownersAliases.Resolve(userNames)
-		userNames = uniq(userNames)
-		sort.Strings(userNames)
+		g.userNames = ownersAliases.Resolve(g.userNames)
+		g.userNames = uniq(g.userNames)
+		sort.Strings(g.userNames)
 	} else if g.contributionReportOpts.OrgsConfigFilePath != "" {
 		orgsYAML, err := orgs.ReadFile(g.contributionReportOpts.OrgsConfigFilePath)
 		if err != nil {
 			log.Fatalf("invalid arguments: %v", err)
 		}
-		userNames = orgsYAML.Orgs[g.contributionReportOpts.Org].Members
+		g.userNames = orgsYAML.Orgs[g.contributionReportOpts.Org].Members
 	}
-
-	return communityReportGenerator{reporter: reporter, userNames: userNames}
 }
 
 func uniq(elements ...[]string) []string {
