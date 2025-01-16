@@ -40,13 +40,13 @@ func (receiver *ReportResult) SkipUser(reason, userName string) {
 }
 
 type Report struct {
-	ReportOptions *ContributionReportOptions `yaml:"reportOptions"`
-	ReportConfig  *ContributionReportConfig  `yaml:"reportConfig"`
+	ReportOptions *contributionReportOptions `yaml:"reportOptions"`
+	ReportConfig  *contributionReportConfig  `yaml:"reportConfig"`
 	Result        *ReportResult              `yaml:"result"`
 	Log           []string                   `yaml:"log"`
 }
 
-func NewReportWithConfiguration(options *ContributionReportOptions, config *ContributionReportConfig) *Report {
+func NewReportWithConfiguration(options *contributionReportOptions, config *contributionReportConfig) *Report {
 	return &Report{
 		ReportConfig:  config,
 		ReportOptions: options,
@@ -65,7 +65,7 @@ type DefaultReporter struct {
 	report *Report
 }
 
-func NewDefaultReporter(options *ContributionReportOptions, config *ContributionReportConfig) Reporter {
+func NewDefaultReporter(options *contributionReportOptions, config *contributionReportConfig) Reporter {
 	d := &DefaultReporter{}
 	d.report = NewReportWithConfiguration(options, config)
 	return d
@@ -76,7 +76,7 @@ func (d *DefaultReporter) Skip(userName string, reason string) {
 }
 
 func (d *DefaultReporter) Report(r contributions.ContributionReport, userName string) error {
-	fmt.Printf(r.Summary())
+	fmt.Print(r.Summary())
 	_, err := r.WriteToFile("/tmp", userName)
 	if err != nil {
 		return fmt.Errorf("failed to write file: %v", err)
@@ -100,7 +100,7 @@ func (d *InactiveOnlyReporter) Skip(userName string, reason string) {
 	d.report.Result.SkipUser(reason, userName)
 }
 
-func NewInactiveOnlyReporter(options *ContributionReportOptions, config *ContributionReportConfig) Reporter {
+func NewInactiveOnlyReporter(options *contributionReportOptions, config *contributionReportConfig) Reporter {
 	i := &InactiveOnlyReporter{}
 	i.report = NewReportWithConfiguration(options, config)
 	return i
