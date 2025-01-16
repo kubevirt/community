@@ -59,6 +59,19 @@ sigs:
             - github: 0xFelix
               name: Felix Matouschek
               company: Red Hat
+        - name: virtctl
+          description: The KubeVirt CLI tool.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/cmd/virtctl/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/virtctl/OWNERS
+          leads:
+            - github: 0xFelix
+              name: Felix Matouschek
+              company: Red Hat
+            - github: fossedihelm
+              name: Federico Fossemo
+              company: Red Hat
     - name: documentation
       label: sig/documentation
       subprojects:
