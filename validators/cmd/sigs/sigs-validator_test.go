@@ -29,7 +29,7 @@ import (
 	"testing"
 )
 
-func Test_validateGroups(t *testing.T) {
+func TestValidateGroups(t *testing.T) {
 	type args struct {
 		sigsYAML         *sigs.Sigs
 		expectedSigsYAML *sigs.Sigs
