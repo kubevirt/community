@@ -32,9 +32,9 @@ The `vhostuser` secondary interfaces configuration in the dataplane is under the
 Kubevirt repo, and most specificaly [cmd/sidecars](https://github.com/kubevirt/kubevirt/tree/main/cmd/sidecars).
 
 ## Design
-This proposal leverages the KubeVirt Network Binding Plugin sidecar framework to implement a new `network-vhostuser-binding`.
+This proposal leverages the KubeVirt Network Binding Plugin sidecar framework to implement a new `network-vhostuser-binding-plugin`.
 
-`network-vhostuser-binding` role is to implement the modification to the domain XML according to the VMI definition passed through its gRPC service by the `virt-launcher` pod on `OnDefineDomain` event from `virt-handler`.
+`network-vhostuser-binding-plugin` role is to implement the modification to the domain XML according to the VMI definition passed through its gRPC service by the `virt-launcher` pod on `OnDefineDomain` event from `virt-handler`.
 
 `vhostuser` interfaces are defined in the VMI under `spec/domain/devices/interfaces` using the binding name `vhostuser`:
 
@@ -59,7 +59,7 @@ spec:
 4. If `networkInterfaceMultiqueue` is set to `true`, add the number of queues calculated after the number of cores of the VMI
 5. Add `memAccess='shared'` to all NUMA cells elements
 6. Define the device name according to Kubevirt naming schema
-7. Define the `vhostuser` socket path
+7. Define the `vhostuser` socket path, immutable accross Live Migration
 
 As `OnDefineDomain` hook can be called multiple times by KubeVirt, `network-vhostuser-binding` modification must be idempotent.
 
@@ -74,7 +74,7 @@ Below is an example of modified domain XML:
         </numa>
 </cpu>
 <interface type='vhostuser'>
-    <source type='unix' path='/var/run/vhostuser/poda08a0fcbdea' mode='server'/>
+    <source type='unix' path='/var/run/kubevirt/sockets/net1/poda08a0fcbdea' mode='server'/>
     <target dev='poda08a0fcbdea'/>
     <model type='virtio-non-transitional'/>
     <mac address='ca:fe:ca:fe:42:42'/>
@@ -96,43 +96,52 @@ This design proposal relies on a device plugin that would manage two kinds of re
 - **dataplane**: `1`  
   This resource give access to all sub directories of `/var/run/vhost_sockets`, and to sockets inside.  
   It is requested by the dataplane itself.  
-  Device plugin injects `/var/run/vhost_sockets` mount in the container.
+  Kubelet injects `/var/run/vhost_sockets` mount in the container.
 - **vhostuser sockets**: `n`  
   This resource can be thought as a virtual switch port, and can have a limit related to dataplane own limitation (performance, CPU, etc.).  
   It can help schedule workloads on node where dataplane has available resources.  
   It is requested through VM or VMI definition in resources request spec. In turn the `compute` container of the `virt-launcher` pod will request the same resources.  
-  This makes the device plugin allocates a sub directory `/var/run/vhost_sockets/<socketXX>`, and mount it into the `virt-launcher` pod in a well known location `/var/run/vhostuser/<socketXX>`.  
+  This makes the device plugin allocates a sub directory `/var/run/vhost_sockets/<socketXX>`, and mount it into the `virt-launcher` pod.
 
+The device plugin has to comply with [`device-info-spec`](https://github.com/k8snetworkplumbingwg/device-info-spec/blob/main/SPEC.md#device-information-specification). This allows information sharing between device plugin and the CNI. Thanks to Multus being compliant with this spec, the CNI can retrieve device information (socket path and and type) to be used to configure the dataplane accordingly. Multus will  annotate the `virt-launcher` pod with this information, KubeVirt extracts only a part into `kubevirt.io/network-info`.
+   
 The device plugin has to care about directory permissions and SELinux, for the sockets to be accessible from requesting pods.
-
-The device plugin has to comply with [`device-info-spec`](https://github.com/k8snetworkplumbingwg/device-info-spec/blob/main/SPEC.md#device-information-specification). This allows information sharing between device plugin and the CNI. Thanks to Multus being compliant with this spec, the CNI can retrieve device information (socket path and and type) to be used to configure the dataplane accordingly. Multus will also annotate the `compute` container with this information, KubeVirt extracts only a part into `kubevirt.io/network-info`.
 
 #### Network Binding Plugin and Kubevirt requirements
 
 Network Binding Plugin then can leverage `downwardAPI` feature available from Kubevirt v1.3.0, in order to retrieve the `kubevirt.io/network-info` annotation values, and extract the socket path to configure the interface in the domain XML.
 
 But it can't use it directly as it would break Live Migration of VMs:   
-The socket directories `/var/run/vhostuser/<socketXX>` are not predictable, and new ones get allocated when the destination pod is being created.  
+The socket directories `/var/run/vhost_sockets/<socketXX>` are not predictable, and new ones get allocated when the destination pod is being created.  
 Unfortunately the domain XML is the one from the source pod (migration domain), and references sockets paths allocated to source pod.
 
 Hence, Network Binding Plugin needs to use immutable paths to sockets. This can be achieved using the interface name (or its hash version) in symbolic links to the real socket path: `/var/run/kubevirt/sockets/net1` -> `/var/run/vhostuser/<socketXX>`.
 
-But the symbolic link needs to be created in the `compute` container mount namespace, for `qemu` to be able to access it.
-
-This requires the `virt-launcher` pod to be created with `shareProcessNamespace` enabled.
-
-Then Network Binding Plugin can target one of the `compute` processes root dir through `/proc/<pid>/root` to create the symbolic link.
-
-Unfortunately not all processes can be targetted. For example it does not work with `virt-launcher` or `virt-launcher-monitor`, but it's working with `virtlogd`.
-
-Enabling `shareProcessNamespace` in KubeVirt is part of this PR: [Refactor containerdisks by accessing the artifacts via proc and pid namespace sharing](https://github.com/kubevirt/kubevirt/pull/11845)
+This requires an enhancement in KubeVirt, and Network Binding Plugin KubeVirt CRD spec, in order for `virt-launcher` pod to have a shared `emptyDir` volume, mounted in both `compute` and `vhostuser-network-binding-plugin` containers.
 
 #### Implementation diagram
 
-![kubevirt-vhostuser-shared-sockets](kubevirt-vhostuser-binding-plugin-device-plugin.png)
+![kubevirt-vhostuser-shared-sockets](kubevirt-vhostuser-binding-plugin-device-plugin.drawio.png)
 
 ## API Examples
-No modification needed to KubeVirt API.
+
+### KubeVirt CRD
+
+A new parameter for the shared directory must be defined in the Network Binding Plugin spec of the KubeVirt CR:
+
+```yaml
+apiVersion: kubevirt.io/v1
+kind: KubeVirt
+spec:
+  configuration:
+    network:
+      binding:
+        vhostuser:
+          sidecarImage: network-vhostuser-binding:main
+          sharedDir: /var/run/kubevirt/sockets
+```
+
+### No modification to VM
 
 Example of a `VirtualMachine` definition using `network-vhostuser-binding` plugin and device plugin resources requests:
 
@@ -209,6 +218,7 @@ Create a VM with several `vhostuser` interfaces then:
 - check VM network connectivity
 
 # Implementation Phases
-1. First implementation of the `network-vhostuser-binding` done
-2. Implement vhostuser device plugin done
-3. Upstream `network-vhostuser-binding`
+- [ ] Implement network binding plugin sharedDir spec in KubeVirt 
+- [x] First implementation of the `network-vhostuser-binding`
+- [x] Implement vhostuser device plugin, based on [generic-device-plugin](https://github.com/squat/generic-device-plugingeneric-device-plugin)
+- [ ] Upstream `network-vhostuser-binding`
