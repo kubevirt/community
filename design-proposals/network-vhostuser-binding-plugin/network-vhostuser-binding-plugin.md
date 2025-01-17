@@ -74,7 +74,7 @@ Below is an example of modified domain XML:
         </numa>
 </cpu>
 <interface type='vhostuser'>
-    <source type='unix' path='/var/run/kubevirt/sockets/net1/poda08a0fcbdea' mode='server'/>
+    <source type='unix' path='/var/run/kubevirt/vhostuser/net1/poda08a0fcbdea' mode='server'/>
     <target dev='poda08a0fcbdea'/>
     <model type='virtio-non-transitional'/>
     <mac address='ca:fe:ca:fe:42:42'/>
@@ -94,14 +94,14 @@ Device plugins can instructs kubelet to add mounts into the containers when mana
 
 This design proposal relies on a device plugin that would manage two kinds of resources on the userspace dataplane that we can think of a virtual switch:
 - **dataplane**: `1`  
-  This resource give access to all sub directories of `/var/run/vhost_sockets`, and to sockets inside.  
+  This resource give access to all sub directories of `/var/run/vhostuser`, and to sockets inside.  
   It is requested by the dataplane itself.  
-  Kubelet injects `/var/run/vhost_sockets` mount in the container.
+  Kubelet injects `/var/run/vhostuser` mount in the container.
 - **vhostuser sockets**: `n`  
   This resource can be thought as a virtual switch port, and can have a limit related to dataplane own limitation (performance, CPU, etc.).  
   It can help schedule workloads on node where dataplane has available resources.  
   It is requested through VM or VMI definition in resources request spec. In turn the `compute` container of the `virt-launcher` pod will request the same resources.  
-  This makes the device plugin allocates a sub directory `/var/run/vhost_sockets/<socketXX>`, and mount it into the `virt-launcher` pod.
+  This makes the device plugin allocates a sub directory `/var/run/vhostuser/<socketXX>`, and mount it into the `virt-launcher` pod.
 
 The device plugin has to comply with [`device-info-spec`](https://github.com/k8snetworkplumbingwg/device-info-spec/blob/main/SPEC.md#device-information-specification). This allows information sharing between device plugin and the CNI. Thanks to Multus being compliant with this spec, the CNI can retrieve device information (socket path and and type) to be used to configure the dataplane accordingly. Multus will  annotate the `virt-launcher` pod with this information, KubeVirt extracts only a part into `kubevirt.io/network-info`.
    
@@ -112,10 +112,10 @@ The device plugin has to care about directory permissions and SELinux, for the s
 Network Binding Plugin then can leverage `downwardAPI` feature available from Kubevirt v1.3.0, in order to retrieve the `kubevirt.io/network-info` annotation values, and extract the socket path to configure the interface in the domain XML.
 
 But it can't use it directly as it would break Live Migration of VMs:   
-The socket directories `/var/run/vhost_sockets/<socketXX>` are not predictable, and new ones get allocated when the destination pod is being created.  
+The socket directories `/var/run/vhostuser/<socketXX>` are not predictable, and new ones get allocated when the destination pod is being created.  
 Unfortunately the domain XML is the one from the source pod (migration domain), and references sockets paths allocated to source pod.
 
-Hence, Network Binding Plugin needs to use immutable paths to sockets. This can be achieved using the interface name (or its hash version) in symbolic links to the real socket path: `/var/run/kubevirt/sockets/net1` -> `/var/run/vhostuser/<socketXX>`.
+Hence, Network Binding Plugin needs to use immutable paths to sockets. This can be achieved using the interface name (or its hash version) in symbolic links to the real socket path: `/var/run/kubevirt/vhostuser/net1` -> `/var/run/vhostuser/<socketXX>`.
 
 This requires an enhancement in KubeVirt, and Network Binding Plugin KubeVirt CRD spec, in order for `virt-launcher` pod to have a shared `emptyDir` volume, mounted in both `compute` and `vhostuser-network-binding-plugin` containers.
 
@@ -138,7 +138,7 @@ spec:
       binding:
         vhostuser:
           sidecarImage: network-vhostuser-binding:main
-          sharedDir: /var/run/kubevirt/sockets
+          sharedDir: /var/run/kubevirt/vhostuser
 ```
 
 ### No modification to VM
