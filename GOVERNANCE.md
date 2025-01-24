@@ -10,15 +10,20 @@
   - [SIG Subprojects](#subprojects)
 - [WGs (Working Groups)](#working-groups)
 
+## Membership Policy
+
+This document is primarily concerned with governance for project maintainers, as well as Special Interest Groups (SIGs), Subprojects, and Working Groups (WGs).
+We have a separate [membership policy](.membership-policy.md) document that details our contributor ladder and criteria for our other roles, such as new members, reviewers, approvers, SIG and WG chairs, and Subproject leads.
+
 ## Maintainers
 
-KubeVirt Maintainers govern the project. Maintainers collectively manage the 
-project's resources and contributors, and speak for the project in public.  The
+KubeVirt maintainers govern the project. Maintainers collectively manage the 
+project's resources and contributors, and speak for the project in public. The
 maintainers collectively decide any questions that cannot be resolved at the 
 individual repository level, and provide strategic guidance for the project
 overall.
 
-The current maintainers can be found in [MAINTAINERS](./MAINTAINERS.md).  
+The current maintainers can be found in [MAINTAINERS](./MAINTAINERS.md).
 
 This privilege is granted with some expectation of responsibility: maintainers
 are people who care about the KubeVirt project and want to help it grow and
@@ -29,6 +34,23 @@ follow through to fix issues.
 
 A maintainer is a contributor to the project's success and a citizen helping
 the project succeed.
+
+### Maintainer Responsibilities
+
+Maintainers share the highest level of responsibilities for the project and take the broadest viewpoint.
+They help steer the technical direction of the project as well as shepherd the community so that it is always forward thinking and sustainable.
+
+The core responsibilities of our maintainers are: 
+
+  * Responsive to issues raised on the [cncf-maintainers list](mailto:cncf-kubevirt-maintainers@lists.cncf.io).
+  * Responsive to issues raised on the [security list and CVEs](https://github.com/kubevirt/kubevirt/blob/main/SECURITY.md) to coordinate and prioritize remediation.
+  * Guide the direction of the project by regularly reviewing and facilitating:
+  	** Enhancement Proposals.
+  	** Critical PRs.
+  	** Organizational changes.
+  * Lead by example with regard to following and working to improve processes and workflows in the project.
+  * Mediate any conflict that may arise on reviews, proposals, in meetings, or on the mailing list or slack channels.
+  * Represent the project by speaking at events and meetups and participating in interviews and press releases.
 
 ### Selecting Maintainers
 
@@ -50,64 +72,76 @@ For nominations, the maintainers will look at the following criteria:
 
 A candidate must be proposed by an existing maintainer by filing an PR in the
 [Community Repo](https://github.com/kubevirt/community) against the MAINTAINERS.md file. 
-A simple majority vote of +1s from existing Maintainers approves the application. 
+A simple majority vote of +1s from existing maintainers approves the application. 
 Approved maintainers will be added to the [private maintainer mailing list](mailto:cncf-kubevirt-maintainers@lists.cncf.io).
 
 ### Meetings
 
-Time zones permitting, Maintainers are expected to participate in the weekly public
-community meeting. More details can be found [here](commnuity_meeting.md).
+Time zones permitting, maintainers are expected to participate in the weekly public
+community meeting or SIG meetings. A list of these meetings is available in our [sig-list](sig-list.md).
 
 Maintainers will also have closed meetings in order to discuss security reports
 or Code of Conduct violations.  Such meetings should be scheduled by any
-Maintainer on receipt of a security issue or CoC report.  All current Maintainers
-must be invited to such closed meetings, except for any Maintainer who is
+maintainer on receipt of a security issue or CoC report.  All current maintainers
+must be invited to such closed meetings, except for any maintainer who is
 accused of a CoC violation.
 
 ### CNCF Resources
 
-Any Maintainer may suggest a request for CNCF resources, in the
+Any maintainer may suggest a request for CNCF resources, in the
 [developer mailing list](https://groups.google.com/forum/#!forum/kubevirt-dev), 
-the [Maintainer mailing list](mailto:cncf-kubevirt-maintainers@lists.cncf.io), on Github, 
-or during a community meeting.  A simple majority of Maintainers approves the 
-request.  The Maintainers may also choose to delegate working with the CNCF to 
-non-Maintainer community members.
+the [maintainer mailing list](mailto:cncf-kubevirt-maintainers@lists.cncf.io), on Github, 
+or during a community meeting.  A simple majority of maintainers approves the 
+request.  The maintainers may also choose to delegate working with the CNCF to 
+non-maintainer community members.
 
 ### Code of Conduct
 
 [Code of Conduct](./code-of-conduct.md)
 violations by community members will be discussed and resolved
-on the [private Maintainer mailing list](mailto:cncf-kubevirt-maintainers@lists.cncf.io).  If the reported CoC violator
-is a Maintainer, the Maintainers will instead designate two Maintainers to work
+on the [private maintainer mailing list](mailto:cncf-kubevirt-maintainers@lists.cncf.io).  If the reported CoC violator
+is a maintainer, the maintainers will instead designate two maintainers to work
 with CNCF staff in resolving the report.
 
-### Removing Maintainers
+### Off-boarding Maintainers and Mentorship
 
-Maintainers may voluntarily retire at any time.  Should a maintainer retire, 
-it requires a majority vote of the current maintainers to reinstate them.
+Maintainers can voluntarily retire at any time, and should always feel that they can rely
+on others to continue their good work. When a maintainer leaves, the project loses valuable 
+knowledge and history.
+
+To facilitate this process, it is encouraged that maintainers recognize when they no longer
+have sufficient time to give to the project and engage in a mentorship with a possible
+maintainer candidate from the community. Through this process, they can help transition some of their experience
+and guide the candidate through expectations of the role.
+
+### Retiring and Removing Maintainers
+
+A maintainer can retire or be removed as a maintainer by filing an PR in the
+[Community repo](https://github.com/kubevirt/community) against the [MAINTAINERS](./MAINTAINERS.md) file and moving to Emeritus.
 
 Maintainers may also be demoted at any time for one of the following reasons:
 
 * Inactivity, including 6 months or more of non-participation or non-communication,
 * Refusal to abide by this Governance,
 * Violations of the Code of Conduct,
-* Other actions that harm the reputation, stability, or harmony of the Kubevirt
+* Other actions that harm the reputation, stability, or harmony of the KubeVirt
   project.
 
 Removing a maintainer requires a 2/3 majority vote of the other maintainers.
+An emeritus maintainer holds a special place in the project's history and can be reinstated by a majority vote of the current maintainers.
 
 ### Voting
 
 While most business in KubeVirt is conducted by "lazy consensus", periodically
-the Maintainers may need to vote on specific actions or changes.
+the maintainers may need to vote on specific actions or changes.
 A vote can be taken on [the developer mailing list](https://groups.google.com/forum/#!forum/kubevirt-dev) or
-the private Maintainer mailing list for security or conduct matters.  
-Votes may also be taken at the community meeting.  Any Maintainer may
+the private maintainer mailing list for security or conduct matters. 
+Votes may also be taken at the community meeting.  Any maintainer may
 request a vote be taken.
 
-Most votes require a simple majority of all Maintainers to succeed. Maintainers
-can be removed by a 2/3 majority vote of all Maintainers, and changes to this
-Governance require a 2/3 vote of all Maintainers.
+Most votes require a simple majority of all maintainers to succeed. maintainers
+can be removed by a 2/3 majority vote of all maintainers, and changes to this
+Governance require a 2/3 vote of all maintainers.
 
 ## SIGs
 
