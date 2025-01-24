@@ -33,6 +33,9 @@ to start.
 ## Scalability
 (overview of how the design scales)
 
+## Security
+(overview of all associated security risks)
+
 ## Update/Rollback Compatibility
 (does this impact update compatibility and how)
 
