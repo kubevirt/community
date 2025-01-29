@@ -402,7 +402,7 @@ workinggroups:
           tz: UTC
           frequency: biweekly
           url: https://zoom.us/j/93168599900
-          archive_url: https://docs.google.com/document/d/1fBgXan7AQ1LZOmQpNq38H11MmtfuWxOz9DPypyV9UL0/edit
+          archive_url: https://docs.google.com/document/d/1okUpVvBkzpocnJrIDnSRhDyTJJoM8v6qWqhgGRWu3bQ/edit
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
