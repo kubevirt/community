@@ -691,6 +691,73 @@ virt-launcher will use the `vmistatus.resourClaimStatuses[*].ResourceClaimName` 
 to look up the env variable: `PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>` or 
 `MDEV_PCI_RESOURCE_<RESOURCE-CLAIM-NAME>_<REQUEST-NAME>="uuid"` and generate the correct domain xml
 
+### Handling Future usecase of Live Migration
+
+For the purposes of this document, live migrating a VMI with GPU design is currently out-of-scope as it is not currently
+supported in KubeVirt. However, in the future this usecase could be supported. The following are two ways in which it 
+could be handled
+
+#### Alternative 1
+
+1. The status section of VMI has a field called MigrationState. A new field called TargetDeviceStatus will be added to 
+MigrationState struct.
+2. MigrationState struct will be populated by target virt-handler
+3. When target virt-launcher generates the domxml it will use `vmi.status.migrationState.targetDeviceStatus` to generate
+   domxml
+
+```go
+type MigrationState struct {
+    ..
+	..	
+    // DeviceStatus reflects the state of devices requested in spec.domain.devices from the 
+	// target virt-launcher pod.
+    // This is an optional field available only when DRA feature gate is enabled
+    // +optional
+    TargetDeviceStatus *DeviceStatus `json:"targetDeviceStatus,omitempty"`
+}
+```
+
+
+#### Alternative 2
+
+In order to handle the live-migration usecase, the following changes are required to the API:
+```go
+// DeviceStatus has the information of all devices allocated spec.domain.devices
+type DeviceStatus struct {
+    // PodName is the name of the virt-launcher that these devices belong to
+	// In case of live-migration there could be more than one pods in which case
+	// dra controller will look at the target pod and update its information
+	// the source pod information will be lost. At any give time, there should only be 
+	// one pod reflected here and true holder of device resources
+	PodName *string `json:"gpuStatuses,omitempty"`
+	// GPUStatuses reflects the state of GPUs requested in spec.domain.devices.gpus
+	// +listType=atomic
+	// +optional
+	GPUStatuses []DeviceStatusInfo `json:"gpuStatuses,omitempty"`
+	// HostDeviceStatuses reflects the state of GPUs requested in spec.domain.devices.hostDevices
+	// +listType=atomic
+	// +optional
+	HostDeviceStatuses []DeviceStatusInfo `json:"hostDeviceStatuses,omitempty"`
+}
+
+type DeviceStatusInfo struct {
+	// Name of the device as specified in spec.domain.devices.gpus.name or spec.domain.devices.hostDevices.name
+	Name string `json:"name"`
+	// DeviceResourceClaimStatus reflects the DRA related information for the device
+	DeviceResourceClaimStatus *DeviceResourceClaimStatus `json:"deviceResourceClaimStatus,omitempty"`
+}
+```
+
+Steps to make live migration work:
+1. DRA Status controller will include looking at target pods updating the above fields with device information
+2. Migration Controller currently, moves the migration from Scheduling to Scheduled when the target pod is running. At 
+   this point the dra controller should have update the target pod information. Migration Controller should assert that
+   DRA status it sees is from the target pod by comparing the target pod name with podName in the status. The changes 
+   should go here: https://github.com/kubevirt/kubevirt/blob/ada65cb7d99033baa3c096820027d08532e25c1e/pkg/virt-controller/watch/migration/migration.go#L624
+3. Once the above is asserted, the migration will continue to flow in the same way as it does today. When target 
+   virt-handler will call SyncVMI on the virt-launcher, the virt-launcher will use the same code to convert the 
+   deviceStatus into domxml.
+
 # References
 
 - Structured parameters
