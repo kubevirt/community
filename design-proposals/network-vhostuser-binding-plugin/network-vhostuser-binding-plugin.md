@@ -26,10 +26,12 @@ The `vhostuser` secondary interfaces configuration in the dataplane is under the
 - As a Cluster Admin, I want to be able to enable `network-vhostuser-binding`
 - As a Network Binding Plugin Developer, I want the shared socket path to be accessible to `virt-launcher` pod 
 - As a Dataplane Developer, I want to access all `vhostuser` sockets of VM pods
-- As a CNI Developer, I want to know whet vhostuser sockets are located
+- As a CNI Developer, I want to know where vhostuser sockets are located
  
 ## Repos
-Kubevirt repo, and most specificaly [cmd/sidecars](https://github.com/kubevirt/kubevirt/tree/main/cmd/sidecars).
+As far as possible, `network-vhostuser-binding` could be hosted in Kubevirt repo, and most specificaly in [cmd/sidecars](https://github.com/kubevirt/kubevirt/tree/main/cmd/sidecars).  
+However, if Kubevirt repo is not meant to host other plugins than reference ones, `network-vhostuser-binding` could be hosted out-of-tree.
+
 
 ## Design
 This proposal leverages the KubeVirt Network Binding Plugin sidecar framework to implement a new `network-vhostuser-binding-plugin`.
@@ -118,6 +120,7 @@ Unfortunately the domain XML is the one from the source pod (migration domain), 
 Hence, Network Binding Plugin needs to use immutable paths to sockets. This can be achieved using the interface name (or its hash version) in symbolic links to the real socket path: `/var/run/kubevirt/vhostuser/net1` -> `/var/run/vhostuser/<socketXX>`.
 
 This requires an enhancement in KubeVirt, and Network Binding Plugin KubeVirt CRD spec, in order for `virt-launcher` pod to have a shared `emptyDir` volume, mounted in both `compute` and `vhostuser-network-binding-plugin` containers.
+An alternative would be to use a hard-coded path for this `emptyDir`, but would require to insure that a same path is not used by several plugins.
 
 #### Implementation diagram
 
