@@ -11,31 +11,42 @@ In a nutshell: if tide is enabled then for any created PR that has `lgtm` and `a
 
 Example configuration PR to enable tide for KubeVirt [prow]: https://github.com/kubevirt/project-infra/pull/653/
 
-Example workflow:
-- tide is configured for PRs on a repository to require `lgtm` and `approved` labels and missing `needs-rebase` label
+## Example workflow
+
+Initial situation: `tide` is configured for PRs on a repository to require `lgtm` and `approved` labels and missing `needs-rebase` label
+
 - Alice creates a pull request, which triggers presubmit jobs to run for the PR
 - Some presubmit jobs have `optional: false` set, which makes their status required to be successful
 - All jobs succeed and add a success status to the commit object in GitHub
-- Note: tide does not consider this PR to be in the merge pool as it misses the `lgtm` and `approved` labels
+> [!NOTE]
+> `tide` does **not** consider this PR to be in the merge pool as it misses the `lgtm` and `approved` labels
 - Alice asks Bob and Charles for a review on the pull request
 - Bob (a member) reviews and adds a `/lgtm` comment
-- Note: a GitHub review automatically acts as if the `/lgtm` comment had been placed on the PR (see [config](https://github.com/kubevirt/project-infra/blob/main/github/ci/prow-deploy/kustom/base/configs/current/plugins/plugins.yaml#L463))
+> [!NOTE]
+> A GitHub review automatically _may_ act as if the `/lgtm` comment had been placed on the PR (see [config](https://github.com/kubevirt/project-infra/blob/fbb84ab7a4206079c94c1ee226a5af12915d9f0b/github/ci/prow-deploy/kustom/base/configs/current/plugins/plugins.yaml#L747))
 - After that the default branch gets updated by another merge, where merging Alice's PR would cause a conflict, which adds a `needs-rebase` label
-- Charles (a maintainer) reviews and adds an `/approve` comment
-- Note: tide does not consider this PR to be in the merge pool as it has the `needs-rebase` label
+- Charles - an approver listed in the [OWNERS] files for _all the files_ touched in the PR - reviews and adds an `/approve` comment
+> [!NOTE]
+> tide does **not** consider this PR to be in the merge pool as it has the `needs-rebase` label
 - Alice rebases the PR on the default branch, which in turn removes the `lgtm` and `needs-rebase` labels, also this triggers presubmit jobs to run for the PR
-- Note: The approve label is not affected by PR modifications.
-- Bob (a member) reviews and adds a `/lgtm` comment
-- Note: the `lgtm` and `approved` labels added to the PR and the missing `needs-rebase` label enable automatic retesting on the PR (done by a [periodic commenter job](https://github.com/kubevirt/project-infra/blob/97ce8b6cc7bf8c66c58e02f47c1ce31e580c8181/github/ci/prow-deploy/files/jobs/kubevirt/project-infra/project-infra-periodics.yaml#L2))
-- Note: tide does not consider this PR to be in the merge pool as it matches the label configuration, but misses successful status on the required presubmit jobs (see above)
-- All jobs succeed and add a success status to the commit object in GitHub
-- Note: tide considers this PR to be in the merge pool as it has all required labels and none of the missing labels, additionally all required status are successful
-- tide will then [eventually merge](https://github.com/kubernetes/test-infra/blob/master/prow/cmd/tide/pr-authors.md) the PR into the default branch
+> [!NOTE]
+> The `approved` label is not affected by PR modifications.
+- Bob - a member of KubeVirt GitHub org - reviews and adds a `/lgtm` comment
+> [!NOTE]
+> the `lgtm` and `approved` labels added to the PR and the missing `needs-rebase` label enable automatic retesting on the PR (done by a [periodic commenter job](https://github.com/kubevirt/project-infra/blob/97ce8b6cc7bf8c66c58e02f47c1ce31e580c8181/github/ci/prow-deploy/files/jobs/kubevirt/project-infra/project-infra-periodics.yaml#L2))
 
-[approve]: https://github.com/kubernetes/test-infra/blob/master/prow/plugins/approve/approve.go#L132
-[branch-protection]: https://github.com/kubernetes/test-infra/blob/master/prow/cmd/branchprotector/README.md
-[lgtm]: https://github.com/kubernetes/test-infra/tree/master/prow/plugins/lgtm
-[presubmit]: https://github.com/kubernetes/test-infra/blob/master/prow/jobs.md#how-to-configure-new-jobs
-[prow]: https://github.com/kubernetes/test-infra/tree/master/prow#
-[tide]: https://github.com/kubernetes/test-infra/tree/master/prow/tide
-[trigger]: https://github.com/kubernetes/test-infra/blob/master/prow/plugins/trigger/trigger.go#L107
+> [!NOTE]
+> `tide` does **not** consider this PR to be in the merge pool as it matches the label configuration, but misses successful status on the required presubmit jobs (see above)
+- All jobs succeed and add a success status to the commit object in GitHub
+> [!NOTE]
+> tide considers this PR to be in the merge pool as it has all required labels and none of the missing labels, additionally all required status are successful
+- tide will then [eventually merge](https://github.com/kubernetes-sigs/prow/blob/main/site/content/en/docs/components/core/tide/pr-authors.md) the PR into the default branch
+
+[prow]: https://docs.prow.k8s.io/docs/
+[approve]: https://github.com/kubernetes-sigs/prow/blob/0e909e33e02e45dcb2f2fc5b605f8057e44f1c5a/pkg/plugins/approve/approve.go#L132
+[branch-protection]: https://docs.prow.k8s.io/docs/components/optional/branchprotector/
+[lgtm]: https://docs.prow.k8s.io/docs/components/plugins/approve/approvers/#lgtm-label
+[presubmit]: https://docs.prow.k8s.io/docs/jobs/
+[tide]: https://docs.prow.k8s.io/docs/components/core/tide/
+[trigger]: https://github.com/kubernetes-sigs/prow/blob/0e909e33e02e45dcb2f2fc5b605f8057e44f1c5a/pkg/plugins/trigger/trigger.go#L107
+[OWNERS]: https://www.kubernetes.dev/docs/guide/owners/#owners-spec
