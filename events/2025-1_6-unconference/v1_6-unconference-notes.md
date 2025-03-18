@@ -22,8 +22,8 @@ These notes come from the hedgedoc notes that we used for the unconference and h
 - Add a guide for VEP process
 -  Add notes for expectations of VEP approvers
 -  One of the problems is understanding the new process
-        - A step by step doc should be provided
-        - A person who will guide authors would be helpful
+  - A step by step doc should be provided
+  - A person who will guide authors would be helpful
 -  What is the process bringing
 -  Checkpoints, more specifically it was mentioned that it would be valuable to have "gut check" if the feature is on time
 -  More experience/KEPs is needed to iron this out
