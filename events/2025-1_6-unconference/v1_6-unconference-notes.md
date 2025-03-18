@@ -124,18 +124,18 @@ Related:
 
 ## SIG-compute 1.6 feature prioritization
 
--  Change the default rolloutStrategy to LiveUpdate
-        - Add periodic lane to test Staging
--  Live migration bug(s) [+1 @ibezukh]
-        - Post-copy hotplug
+- Change the default rolloutStrategy to LiveUpdate
+  - Add periodic lane to test Staging
+- Live migration bug(s) [+1 @ibezukh]
+  - Post-copy hotplug
 -  Removing (deprecate/GA) some feature gates
-        - List TBD
+  - List TBD
 -  SWAP?
-        - David's Node Pressure Eviction VEP (https://github.com/kubevirt/community/pull/390)
+  - David's Node Pressure Eviction VEP (https://github.com/kubevirt/community/pull/390)
 -  DRA?
-        - See dedicated session
+  - See dedicated session
 -  Persistent Firmware UUID
-        - https://github.com/kubevirt/community/pull/347
+  - https://github.com/kubevirt/community/pull/347
 
 
 ## SIG-network 1.6 feature prioritization:
