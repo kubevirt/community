@@ -91,11 +91,11 @@ Related:
 -  Stay close to Kubernetes, they dropped Bazel as well (investigate what K8S is using for CI caching)
 
 - Potential issues when removing Bazel:
--  How do we handle backports to branches that still use Bazel?
--  Need to handle cross-compile or use a different method
--  rpm caching could potentially be handled standalone by bazeldnf?
--  BUILD.bazel files are mostly generated, targets and containerfiles are not
--  Build caching could be replaced by backing up / restoring the GO cache
+  - How do we handle backports to branches that still use Bazel?
+  - Need to handle cross-compile or use a different method
+  - rpm caching could potentially be handled standalone by bazeldnf?
+  - BUILD.bazel files are mostly generated, targets and containerfiles are not
+  - Build caching could be replaced by backing up / restoring the GO cache
 
 - Security updates could be possible with Prow / Bazel
 
