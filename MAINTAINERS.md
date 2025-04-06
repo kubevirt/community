@@ -9,7 +9,6 @@ The current Maintainers Group for the KubeVirt Project consists of:
 | [Roman Mohr](https://github.com/rmohr) | Google | |
 | [Fabian Deutsch](https://github.com/fabiand) | Red Hat | |
 | [Stu Gott](https://github.com/stu-gott) | Red Hat | |
-| [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | SUSE | _[On temporary leave](https://github.com/kubevirt/kubevirt/pull/13370)_ |
 | [Ryan Hallisey](https://github.com/rthallisey) | Nvidia | |
 | [Andrew Burden](https://github.com/aburdenthehand) | Red Hat | Community Facilitator |
 
@@ -23,3 +22,4 @@ See [the project Governance](GOVERNANCE.md) for how maintainers are selected and
 | ---- | ------------------ |
 | [Chris Calligari](https://github.com/mazzystr) | 4 April, 2022 |
 | [Federico Gimenez](https://github.com/fgimenez) | 9 May, 2022 |
+| [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | 6 April, 2025 |
