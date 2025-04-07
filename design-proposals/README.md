@@ -1,3 +1,8 @@
+> **WARNING** This process is now deprecated for kubevirt/kubevirt and many
+> other repos ahead of removal in the v1.7.0 release cycle. Contributors
+> are encouraged to use the new kubevirt/enhancements project and processes
+> for new proposals.
+
 This repo contains design proposals for features impacting repos across the
 KubeVirt GitHub organization.
 
