@@ -12,6 +12,8 @@ The current Maintainers Group for the KubeVirt Project consists of:
 | [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | SUSE | _[On temporary leave](https://github.com/kubevirt/kubevirt/pull/13370)_ |
 | [Ryan Hallisey](https://github.com/rthallisey) | Nvidia | |
 | [Andrew Burden](https://github.com/aburdenthehand) | Red Hat | Community Facilitator |
+| [Alice Frosi](https://github.com/alicefr) | Red Hat | |
+| [Ľuboslav Pivarč](https://github.com/xpivarc) | Red Hat | |
 
 This list must be kept in sync with the [CNCF Project Maintainers list](https://github.com/cncf/foundation/blob/master/project-maintainers.csv).
 
