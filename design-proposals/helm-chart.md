@@ -169,6 +169,11 @@ The CDI project has the same `CRD-Operator-CR` setup so all of the above applies
 Note that the file structures above are purely for illustrative purposes.
 Different Kubernetes resources (e.g. `rbac`) could be extracted as separate templates (files) in order to keep the charts cleaner and easier to navigate.
 
+### Decision
+
+After careful evaluation of all the different options by the community, [Approach 2](#approach-2-one-crd-chart-and-one-cr--operator-chart) 
+is by far the most favoured one taking into account popularity, maintainability, as well as extensibility.
+
 ## Chart Management
 
 The second problem which needs to be addressed is how Helm charts are going to be created and modified.
@@ -204,9 +209,13 @@ but it should be stable and both manifests and charts would be released simultan
 however, we need to keep in mind that the complete manifests are not version controlled.
 This would also mean that updated Helm charts are released separately from the manifests.
 
-Unfortunately, I'm still very new to KubeVirt so feedback in this section would be more than welcome.
-
 I'm not familiar with CDI's current manifest creation flow yet, but I *believe* it is similar.
+
+### Decision
+
+[Approach 2](#approach-2-manually-curate-a-helm-chart) is the preferred option by the community.
+The Helm charts will be created based on the KubeVirt (and CDI) manifests that are published
+with each KubeVirt (and CDI) release and will be hosted in a separate GitHub repository (e.g. `kubevirt/charts`).
 
 ## Helm repository
 
@@ -231,17 +240,35 @@ We should be able to use Quay OCI considering all other artefacts are already st
 
 ## API Examples
 
-Working with Helm charts is fairly straightforward. Users should be able to manage the applications by:
+Working with Helm charts is fairly straightforward. Users should be able to manage the applications via Helm CLI.
+
+### Add Chart Repository 
 
 ```shell
 $ helm repo add kubevirt <repo-url>
+```
+
+Note that this is not necessary if we use OCI registry as opposed to a standard HTTP(s) repository.
+
+### Install Charts
+
+```shell
+$ helm install kubevirt-crd kubevirt/kubevirt-crd --version <version>
 $ helm install kubevirt kubevirt/kubevirt --version <version> \
       # additional configuration
+$ helm install cdi-crd kubevirt/cdi-crd --version <version>
 $ helm install cdi kubevirt/cdi --version <version> \
       # additional configuration
+```
+
+### Uninstall Charts
+
+```shell
 $ helm uninstall kubevirt
 $ helm uninstall cdi
 ```
+
+Note that it is a good practice to also uninstall the CRD charts (following the same example) in order not to have unused CRDs on the cluster.
 
 ## Scalability
 
