@@ -1,5 +1,5 @@
 sigs:
-    - name: sig-compute
+    - name: compute
       dir: sig-compute
       label: sig/compute
       leadership:
