@@ -1,5 +1,5 @@
 sigs:
-    - name: sig-compute
+    - name: compute
       dir: sig-compute
       label: sig/compute
       leadership:
@@ -10,6 +10,14 @@ sigs:
             - github: jean-edouard
               name: Jed Lejosne
               company: Red Hat
+      meetings:
+        - description: KubeVirt Compute SIG Meeting
+          day: Wednesday
+          time: 2:30 PM
+          tz: UTC
+          frequency: weekly
+          url: https://zoom.us/j/98091854677
+          archive_url: https://docs.google.com/document/d/1VTeHa-QxppNcDQbpoddrucBz1vXjxWB0JLARfS5Uuqs
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
