@@ -5,7 +5,7 @@
 SIG-compute's scope is enormous, and includes node configurations, live-migration,
 virtualization, and much more.  
 
-In fact, currently sig-compute's scope captures the vast majority of the ares in the
+In fact, currently sig-compute's scope captures the vast majority of the areas in the
 project, being the "default" sig for everything not directly related to the scope of other
 SIGs (such as storage and network).
 
@@ -51,12 +51,12 @@ We can use these topics as a base ground for thinking how to break sig-compute i
 
 ## Roles and Organization Management
 
-This sig follows the Roles and Organization Management outlined in [OWNER_ALIASES](https://github.com/kubevirt/kubevirt/blob/main/OWNERS_ALIASES)
+This sig follows the Roles and Organization Management outlined in [OWNERS_ALIASES](https://github.com/kubevirt/kubevirt/blob/main/OWNERS_ALIASES)
 file.
 
 SIG chairs:
-- jean-edouard
-- iholder101
+- [@jean-edouard](https://github.com/jean-edouard)
+- [@iholder101](https://github.com/iholder101)
 
 ### Additional responsibilities of Chairs
 
