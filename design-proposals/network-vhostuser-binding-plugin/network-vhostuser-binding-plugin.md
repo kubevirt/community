@@ -119,8 +119,12 @@ Unfortunately the domain XML is the one from the source pod (migration domain), 
 
 Hence, Network Binding Plugin needs to use immutable paths to sockets. This can be achieved using the interface name (or its hash version) in symbolic links to the real socket path: `/var/run/kubevirt/vhostuser/net1` -> `/var/run/vhostuser/<socketXX>`.
 
-This requires an enhancement in KubeVirt, and Network Binding Plugin KubeVirt CRD spec, in order for `virt-launcher` pod to have a shared `emptyDir` volume, mounted in both `compute` and `vhostuser-network-binding-plugin` containers.
-An alternative would be to use a hard-coded path for this `emptyDir`, but would require to insure that a same path is not used by several plugins.
+This requires an enhancement in KubeVirt in order for `virt-launcher` pod to have a shared `emptyDir` volume, mounted in both `compute` and `vhostuser-network-binding-plugin` containers. This `emptyDir` path can be either:
+- a paramater in Network Binding Plugin KubeVirt CRD spec, but would require a spec evolution.
+- a well-known fixed path for this `emptyDir`, that may be used by any binding plugin.
+
+It appears that a well-known fixed path is sufficient and can be simpler to implement.
+
 
 #### Implementation diagram
 
@@ -130,19 +134,7 @@ An alternative would be to use a hard-coded path for this `emptyDir`, but would 
 
 ### KubeVirt CRD
 
-A new parameter for the shared directory must be defined in the Network Binding Plugin spec of the KubeVirt CR:
-
-```yaml
-apiVersion: kubevirt.io/v1
-kind: KubeVirt
-spec:
-  configuration:
-    network:
-      binding:
-        vhostuser:
-          sidecarImage: network-vhostuser-binding:main
-          sharedDir: /var/run/kubevirt/vhostuser
-```
+No modification tothe Network Binding Plugin spec of the KubeVirt CR is necessary as we will use a well-known fixed path for the shared `emptyDir` volume.
 
 ### No modification to VM
 
