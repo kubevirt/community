@@ -63,7 +63,7 @@ Defined by: Member of the KubeVirt GitHub organization
   * Addresses bugs or issues discovered after contribution is accepted
   * Members can do /lgtm on open PRs.
   * They can be assigned to issues and PRs, and people can ask members for reviews with a /cc @username.
-  * Tests are run against their PRs automatically. No /test from other KubeVirt org members needed any more.
+  * Tests do run against their PRs automatically. No /test from other KubeVirt org members needed any more.
   * Members can use commands like /close to close PRs as well.
 
 > [!NOTE]
