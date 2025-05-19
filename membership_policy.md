@@ -57,17 +57,17 @@ Defined by: Member of the KubeVirt GitHub organization
 
   * Responsive to issues and PRs assigned to them
   * Responsive to mentions
-  * Active owner their contributions (unless ownership is explicitly transferred)
-  * Contribution is well tested
+  * Actively own their contributions (unless ownership is explicitly transferred)
+  * Contributions are well tested
   * Tests consistently pass
   * Addresses bugs or issues discovered after contribution is accepted
   * Members can do /lgtm on open PRs.
   * They can be assigned to issues and PRs, and people can ask members for reviews with a /cc @username.
-  * Tests can be run against their PRs automatically. No /ok-to-test needed.
-  * Members can do /ok-to-test for PRs that have a needs-ok-to-test label, and use commands like /close to close PRs as well.
+  * Tests are run against their PRs automatically. No /test from other KubeVirt org members needed any more.
+  * Members can use commands like /close to close PRs as well.
 
-!! note
-Members who frequently contribute are expected to proactively perform reviews and work towards becoming a primary reviewer.
+> [!NOTE]
+> Members who frequently contribute are expected to proactively perform reviews and work towards becoming a primary reviewer.
 
 ## Reviewer
 
