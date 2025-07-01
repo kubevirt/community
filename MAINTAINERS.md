@@ -24,4 +24,4 @@ See [the project Governance](GOVERNANCE.md) for how maintainers are selected and
 | [Chris Calligari](https://github.com/mazzystr) | 4 April, 2022 |
 | [Federico Gimenez](https://github.com/fgimenez) | 9 May, 2022 |
 | [Vasiliy Ulyanov](https://github.com/vasiliy-ul) | 6 April, 2025 |
-| [Alice Frosi](https://github.com/alicefr) | Red Hat | 1 June, 2025 |
+| [Alice Frosi](https://github.com/alicefr) | 1 June, 2025 |
