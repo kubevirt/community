@@ -1,11 +1,17 @@
 # Community membership
 
-This document outlines the various responsibilities of contributor roles in KubeVirt.
+The KubeVirt project is committed to inclusive, vendor-neutral decision making that serves the broader community's interests. The KubeVirt community prioritizes transparency in all discussions and decisions. Our Special Interest Group (SIG), Working Group (WG), and KubeVirt Community meetings are all open for anyone to join and contribute. Details for all of our meetings and events can be found on the [KubeVirt calendar](https://calendar.google.com/calendar/u/0/embed?src=kubevirt@cncf.io).
+
+It is our intention to actively foster a welcoming environment that values all types of contributions across the ecosystem. Enhancing our project's diversity and long-term sustainability through any and all of the following: code and non-code PRs; reviewing and providing feedback on PRs; involvement on our mailing list and/or chat forums; raising bugs and issues; and active participation in meetings, meetups, and conferences.
+
+Active and interested contributors are encouraged to step into positions of responsibility and leadership through our contributor ladder.
+
+## Contributor ladder
 
 | Role                                           | Responsibilities                                                                                             | Requirements                                                                                                         | Defined by                           |
 |------------------------------------------------|--------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| [Contributor](#new-contributors)               | Adhere to the [KubeVirt code of conduct](https://github.com/kubevirt/community/blob/main/code-of-conduct.md) | Submit at least one pull request                                                                                     | Active GitHub account                |
-| [Member](#member)                              | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                          | KubeVirt GitHub org member           |
+| [Contributor](#new-contributors)               | Adhere to the [KubeVirt Code of Conduct] | Submit at least one pull request                                                                                     | Active GitHub account                |
+| [Org Member](#org-member)                              | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                          | KubeVirt GitHub org member           |
 | [Reviewer](#reviewer)                          | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver                         | [OWNERS_ALIASES] file reviewer entry |
 | [Approver](#approver)                          | Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br> * Sponsored by 2 approvers | [OWNERS_ALIASES] file approver entry |
 | [SIG Chair](#special-interest-group-sig-chair) | Lead a SIG aligned to the goals of the SIG charter                                                           | * Can be sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project      | [sigs.yaml] chair entry              |
@@ -16,15 +22,15 @@ This document outlines the various responsibilities of contributor roles in Kube
 ## New contributors
 
 [New contributors](https://github.com/kubevirt/kubevirt/blob/main/CONTRIBUTING.md) should be welcomed to the community by existing members, helped with PR workflow, and directed to relevant documentation and communication channels.
-All contributors are expected to adhere to the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
+All contributors are expected to adhere to the [KubeVirt Code of Conduct] and by extension the [CNCF Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md).
 
 ## Established community members
 
 Established community members are expected to demonstrate their adherence to the principles in this document, familiarity with project organization, roles, policies, procedures, conventions, etc., and technical and/or writing ability. Role-specific expectations, responsibilities, and requirements are enumerated below.
 
-## Member
+## Org member
 
-Members are continuously active contributors in the community. They can have issues and PRs assigned to them, participate in community related meetings (e.g. bug scrub), and pre-submit tests are automatically run for their PRs. Members are expected to remain active contributors to the community.
+Members of the KubeVirt Github organization are continuously active contributors in the community. They can have issues and PRs assigned to them, participate in community related meetings (e.g. bug scrub), and pre-submit tests are automatically run for their PRs. Members are expected to remain active contributors to the community.
 Defined by: Member of the KubeVirt GitHub organization
 
 ### Requirements
@@ -36,7 +42,7 @@ Defined by: Member of the KubeVirt GitHub organization
     * Contributing to community discussions (e.g. meetings, Slack, email discussion forums, Stack Overflow)
     * GitHub Insight metrics will be reviewed periodically
   * Subscribed to kubevirt-dev@googlegroups.com
-  * Has read the [contributor guide](contributors/contributing.md)
+  * Has read the [contributor guide](https://kubevirt.io/user-guide/contributing/)
   * Actively contributing to the project
     * Contributions according to GitHub and/or Kubernetes metrics in the past 90 days.
   * Sponsored by 2 org members. Note the following requirements for sponsors:
@@ -80,7 +86,7 @@ Reviewer Status is scoped to a part of the project.
 
 The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
 
-  * Member for at least 3 months
+  * Org member for at least 3 months
   * Primary reviewer for at least 5 PRs to the project
   * Reviewed or merged at least 20 substantial PRs to the project
   * Knowledgeable about the project
@@ -241,5 +247,6 @@ those members would need to re-familiarize themselves with the current state
 before being able to contribute effectively.
 
 [CNCF DevStats project]: https://kubevirt.devstats.cncf.io/d/9/developer-activity-counts-by-repository-group-table?orgId=1&var-period_name=Last%20year&var-metric=contributions&var-repogroup_name=All&var-country_name=All
+[KubeVirt Code of Conduct]: ./code-of-conduct.md
 [OWNERS_ALIASES]: https://github.com/kubevirt/kubevirt/tree/main/OWNERS_ALIASES
 [sigs.yaml]: ./sigs.yaml
