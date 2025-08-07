@@ -1,7 +1,8 @@
 # Project Governance
 
 - [Maintainers](#maintainers)
-  - [Becoming a Maintainer](#becoming-a-maintainer)
+  - [Maintainer Responsibilities](#maintainer-responsibilities)
+  - [Becoming a Maintainer](#selecting-maintainers)
   - [Meetings](#meetings)
   - [CNCF Resources](#cncf-resources)
   - [Code of Conduct Enforcement](#code-of-conduct)
@@ -13,7 +14,7 @@
 ## Membership Policy
 
 This document is primarily concerned with governance for project maintainers, as well as Special Interest Groups (SIGs), Subprojects, and Working Groups (WGs).
-We have a separate [membership policy](.membership-policy.md) document that details our contributor ladder and criteria for our other roles, such as new members, reviewers, approvers, SIG and WG chairs, and Subproject leads.
+We have a separate [membership policy] document that details our contributor ladder and criteria for our other roles, such as new members, reviewers, approvers, SIG and WG chairs, and Subproject leads.
 
 ## Maintainers
 
@@ -44,10 +45,10 @@ The core responsibilities of our maintainers are:
 
   * Responsive to issues raised on the [cncf-maintainers list](mailto:cncf-kubevirt-maintainers@lists.cncf.io).
   * Responsive to issues raised on the [security list and CVEs](https://github.com/kubevirt/kubevirt/blob/main/SECURITY.md) to coordinate and prioritize remediation.
-  * Guide the direction of the project by regularly reviewing and facilitating:
-  	** Enhancement Proposals.
-  	** Critical PRs.
-  	** Organizational changes.
+  * Guide the direction of the project to ensure vendor neutrality, feature prioritization, and long-term sustainability by regularly reviewing and facilitating:
+  	* [Enhancement Proposals](https://github.com/kubevirt/enhancements?tab=readme-ov-file#kubevirt-enhancements-tracking-and-backlog)
+  	* Critical PRs
+  	* Organizational changes
   * Lead by example with regard to following and working to improve processes and workflows in the project.
   * Mediate any conflict that may arise on reviews, proposals, in meetings, or on the mailing list or slack channels.
   * Represent the project by speaking at events and meetups and participating in interviews and press releases.
