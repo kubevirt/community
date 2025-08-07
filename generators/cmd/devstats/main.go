@@ -72,6 +72,27 @@ func main() {
 		log.Fatalf("failed to read sigs.yaml: %v", err)
 	}
 
+	d := extractRepoGroups(sigsYAML)
+
+	sql, err := generateRepoGroupsSQL(d)
+	if err != nil {
+		log.Fatal(fmt.Errorf("failed to generate sql: %w", err))
+	}
+
+	file, err := os.OpenFile(opts.outputPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(fmt.Errorf("failed to write to file %q, %w", opts.outputPath, err))
+	}
+	defer file.Close()
+	_, err = file.WriteString(sql)
+	if err != nil {
+		log.Fatal(fmt.Errorf("failed to write to file %q, %w", opts.outputPath, err))
+	}
+
+	log.Printf("output written to %q", opts.outputPath)
+}
+
+func extractRepoGroups(sigsYAML *sigs.Sigs) RepoGroupsTemplateData {
 	var d RepoGroupsTemplateData
 	for _, sig := range sigsYAML.Sigs {
 		repoGroup := RepoGroup{
@@ -102,23 +123,7 @@ func main() {
 		repoGroup.Repos = repos
 		d.RepoGroups = append(d.RepoGroups, repoGroup)
 	}
-
-	sql, err := generateRepoGroupsSQL(d)
-	if err != nil {
-		log.Fatal(fmt.Errorf("failed to generate sql: %w", err))
-	}
-
-	file, err := os.OpenFile(opts.outputPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
-	if err != nil {
-		log.Fatal(fmt.Errorf("failed to write to file %q, %w", opts.outputPath, err))
-	}
-	defer file.Close()
-	_, err = file.WriteString(sql)
-	if err != nil {
-		log.Fatal(fmt.Errorf("failed to write to file %q, %w", opts.outputPath, err))
-	}
-
-	log.Printf("output written to %q", opts.outputPath)
+	return d
 }
 
 //go:embed repo_groups.gosql
