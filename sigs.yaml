@@ -94,8 +94,8 @@ sigs:
       label: sig/storage
       leadership:
         chairs:
-            - github: alicefr
-              name: Alice Frosi
+            - github: akalenyu
+              name: Alex Kalenyuk
               company: Red Hat
             - github: mhenriks
               name: Michael Henriksen
