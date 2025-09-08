@@ -1,18 +1,21 @@
 .PHONY: generate validate-sigs test coverage lint
 
-export GOLANGCI_LINT_VERSION := v1.62.2
 ifndef GOPATH
     GOPATH=$(shell go env GOPATH)
     export GOPATH
 endif
 WORKDIR := /tmp
-LOCAL_BIN := $(WORKDIR)/local_bin
+ifndef LOCAL_BIN
+    LOCAL_BIN=$(WORKDIR)/local_bin
+    export LOCAL_BIN
+endif
 PATH := $(LOCAL_BIN):${PATH}
 ifndef ARTIFACTS
 	export ARTIFACTS := $(WORKDIR)/artifacts
 endif
 ifndef COVERAGE_OUTPUT_PATH
-	COVERAGE_OUTPUT_PATH := ${ARTIFACTS}/coverage.html
+	COVERAGE_OUTPUT_PATH=${ARTIFACTS}/coverage.html
+	export COVERAGE_OUTPUT_PATH
 endif
 
 work-dirs:
@@ -31,10 +34,7 @@ test:
 	go test ./...
 
 coverage: work-dirs
-	if ! command -V covreport; then GOBIN=$(LOCAL_BIN) go install github.com/cancue/covreport@latest; fi
-	go test ./... -coverprofile=/tmp/coverage.out
-	covreport -i /tmp/coverage.out -o $(COVERAGE_OUTPUT_PATH)
+	./hack/coverage.sh
 
 lint: work-dirs
-	if ! command -V golangci-lint; then curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "${LOCAL_BIN}" ${GOLANGCI_LINT_VERSION} ; fi
-	golangci-lint run --verbose
+	./hack/lint.sh
