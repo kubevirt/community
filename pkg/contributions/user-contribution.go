@@ -268,7 +268,12 @@ func writeActivityToFile(yamlObject interface{}, dir, fileName string) error {
 	if err != nil {
 		return err
 	}
-	defer tempFile.Close()
+	defer func() {
+		err := tempFile.Close()
+		if err != nil {
+			log.WithError(err).Errorf("failed to close tempFile")
+		}
+	}()
 	encoder := yaml.NewEncoder(tempFile)
 	err = encoder.Encode(&yamlObject)
 	if err != nil {

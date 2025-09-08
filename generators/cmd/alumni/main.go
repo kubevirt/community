@@ -73,7 +73,12 @@ func main() {
 	if err != nil {
 		log().Fatalf("could not open file: %v", err)
 	}
-	defer alumniFile.Close()
+	defer func() {
+		err := alumniFile.Close()
+		if err != nil {
+			log().WithError(err).Errorf("failed to close alumniFile")
+		}
+	}()
 
 	t, err := template.New("report").Parse(alumniTemplate)
 	if err != nil {

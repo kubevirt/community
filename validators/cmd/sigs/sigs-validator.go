@@ -205,7 +205,12 @@ func validateOwnersReferences(subProject *sigs.SubProject, subprojectLog *log.En
 			subprojectLog.Errorf("failed to retrieve %q, continuing with next", ownersFileURL)
 			continue
 		}
-		defer response.Body.Close()
+		defer func() {
+			err := response.Body.Close()
+			if err != nil {
+				log.WithError(err).Errorf("failed to close responseBody")
+			}
+		}()
 		if response.StatusCode >= http.StatusOK && response.StatusCode < http.StatusMultipleChoices {
 			foundOwners = append(foundOwners, ownersFileURL)
 		} else {

@@ -83,7 +83,12 @@ func main() {
 	if err != nil {
 		log.Fatal(fmt.Errorf("failed to write to file %q, %w", opts.outputPath, err))
 	}
-	defer file.Close()
+	defer func() {
+		err := file.Close()
+		if err != nil {
+			log.Printf("failed to close file: %v", err)
+		}
+	}()
 	_, err = file.WriteString(sql)
 	if err != nil {
 		log.Fatal(fmt.Errorf("failed to write to file %q, %w", opts.outputPath, err))
