@@ -39,6 +39,10 @@ type ContributionReportGenerator struct {
 }
 
 func NewContributionReportGenerator(opts ContributionReportGeneratorOptions) (*ContributionReportGenerator, error) {
+	err := opts.validate()
+	if err != nil {
+		return nil, fmt.Errorf("validation failed: %v", err)
+	}
 	token, err := os.ReadFile(opts.GithubTokenPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to use github token path %s: %v", opts.GithubTokenPath, err)
@@ -261,7 +265,15 @@ func getUserId(client *githubv4.Client, username string) (string, error) {
 
 func writeActivityToFile(yamlObject interface{}, dir, fileName string) error {
 	tempFile, err := os.CreateTemp(dir, fileName)
-	defer tempFile.Close()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		err := tempFile.Close()
+		if err != nil {
+			log.WithError(err).Errorf("failed to close tempFile")
+		}
+	}()
 	encoder := yaml.NewEncoder(tempFile)
 	err = encoder.Encode(&yamlObject)
 	if err != nil {
