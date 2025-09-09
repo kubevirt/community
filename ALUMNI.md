@@ -11,6 +11,7 @@ These are the alumni of contributors to the KubeVirt Project, who have left the 
 
 * [AdamJ](https://github.com/AdamJ)
 * [ArthurSens](https://github.com/ArthurSens)
+* [EduardGomezEscandell](https://github.com/EduardGomezEscandell)
 * [ILpinto](https://github.com/ILpinto)
 * [InbarRose](https://github.com/InbarRose)
 * [JinjunXiong](https://github.com/JinjunXiong)
