@@ -6,11 +6,13 @@ aliases:
 
   approvers:
   - aburdenthehand
-  - davidvossel
   - fabiand
   - jean-edouard
   - rmohr
+  - rthallisey
+  - stu-gott
   - vladikr
+  - xpivarc
 
   #
   # automation stuff residing in this repo also needs approvers and reviewers
