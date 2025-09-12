@@ -13,12 +13,20 @@ If you need to change settings within kubevirt org regarding
 - org settings, i.e.
     - org admins
     - org members
-- repos, i.e.
-    - new repos
-    - repo settings
+- repo settings
 - teams, i.e.
     - team maintainers and members
     - team access to repositories
+
+please file a PR against the [org configuration file].
+
+## New repositories
+
+Creating new repositories is part of the [VEP process](https://github.com/kubevirt/enhancements#process), since there the VEP authors and the reviewers decide where to host the implementation. New repos are described in section [`Repos`](https://github.com/kubevirt/enhancements/blob/main/veps/NNNN-vep-template/vep.md#repos) of the VEP template.
+
+After the VEP is accepted the VEP authors can create a PR to describe the repositories and the teams maintaining them. See below for an example.
+
+## Applying changes
 
 Please file a PR against the [org configuration file].
 
