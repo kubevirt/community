@@ -65,7 +65,12 @@ func main() {
 	if err != nil {
 		log().Fatalf("could not open file: %v", err)
 	}
-	defer sigListFile.Close()
+	defer func() {
+		err := sigListFile.Close()
+		if err != nil {
+			log().WithError(err).Errorf("failed to close sigListFile")
+		}
+	}()
 
 	t, err := template.New("report").Parse(sigListTemplate)
 	if err != nil {
