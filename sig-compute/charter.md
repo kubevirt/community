@@ -2,23 +2,20 @@
 
 ## Scope
 
-SIG-compute's scope is enormous, and includes node configurations, live-migration,
-virtualization, and much more.  
+The scope of sig-compute is enormous, and includes node configurations,
+live-migration, virtualization, and much more.  
 
-In fact, currently sig-compute's scope captures the vast majority of the areas in the
-project, being the "default" sig for everything not directly related to the scope of other
-SIGs (such as storage and network).
-
-In the future we aim to break sig-compute into more sub-SIGs, which will be more granular
-and help define a concrete scope.
+In fact, currently sig-compute's scope captures the vast majority of the areas
+in the project, being the "default" sig for everything not directly related to
+the scope of other SIGs (such as storage and network).
 
 ### In scope
 
-Following topics are in-scope.
+Following topics are spread across a number of subprojects to help maintainers
+better focus their time and energy on specific areas of the codebase:
 
-We can use these topics as a base ground for thinking how to break sig-compute in the future.
+#### sig-compute-node
 
-#### Node
 - SELinux
 - Cgroups
 - TPM
@@ -27,23 +24,28 @@ We can use these topics as a base ground for thinking how to break sig-compute i
 - KSM
 - External kernel boot
 - seccomp
+- virt-launcher maintenance
 - node-labeller
-- and more
-
-#### Virtualization
-- virt-launcher
 - libvirt / QEMU configuration
 - CPU features
 - Dedicated CPUs
 - Hypervisor features (e.g. HyperV)
 - devices management: generic host devices interface, GPU and vGPU discovery configuration
-- and more
 
-#### Live-migration
+#### sig-compute-cluster
+
 - Migration policies
 - Migration configuration
 - Migration performance
-- and more
+- virt-{operator,controller,api} maintenance
+
+#### sig-compute-virtctl
+
+- virtctl maintenance
+
+#### sig-compute-instancetype
+
+- Instance type and preference graduation and maintenance
 
 ### Out of scope
 
@@ -55,6 +57,7 @@ This sig follows the Roles and Organization Management outlined in [OWNERS_ALIAS
 file.
 
 SIG chairs:
+
 - [@jean-edouard](https://github.com/jean-edouard)
 - [@iholder101](https://github.com/iholder101)
 
