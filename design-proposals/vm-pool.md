@@ -57,21 +57,20 @@ The VMPool API represents all the tunings necessary for managing a pool of state
 	* **Unmanaged** - No automation during updates. The VM is never touched after creation. Users manually update individual VMs in a pool.
 	* **Opportunistic** - Opportunistic update of VMs which are in a halted state.
 	* **Proactive** - (Default) Proactive update by forcing VMs to restart during update.
-		* **SelectionPolicy** - (Optional) (Defaults to "random" base policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
-			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Initial policies include [LabelSelector]. Future policies may include a [NodeSelector] or other selection mechanisms.
-			* **BasePolicy** - (Optional) Catch all polices [Oldest|Newest|Random]
+		* **SelectionPolicy** - (Optional) (Defaults to "random" sort policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
+			* **Selectors** - (Optional) Selectors is a list of selection policies including [LabelSelectors] and [NodeSelectors]
+			* **SortPolicy** - (Optional) Catch all polices [Oldest|Newest|Random|Ascending|Descending]
 * **ScaleInStrategy** - (Optional) Specifies how the VMPool controller manages scaling in VMs within a VMPool
 	* **Unmanaged** - No automation during scale-in. The VM is never touched after creation. Users manually delete individual VMs in a pool. Persistent state preservation is up to the user removing the VMs
 	* **Opportunistic** - Opportunistic scale-in of VMs which are in a halted state.
 		* **StatePreservation** - (Optional) specifies if and how to preserve state of VMs selected for scale-in.
 			* **Disabled** - (Default) all state for VMs selected for scale-in will be deleted
 			* **Offline** - PVCs for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning time during scale out)
-			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out)
-Each VM’s PVCs are preserved for future scale out
+			* **Online** - [NOTE we can't implement this until we have the ability to suspend VM memory state to a PVC] PVCs and memory for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning and boot time during scale out) Each VM’s PVCs are preserved for future scale out
 	* **Proactive** - (Default) Proactive scale-in by forcing VMs to shutdown during scale-in.
-		* **SelectionPolicy** - (Optional) (Defaults to "random" base policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
-			* **OrderedPolicies** - (Optional) Ordered list of selection policies. Initial policies include [LabelSelector]. Future policies may include a [NodeSelector] or other selection mechanisms.
-			* **BasePolicy** - (Optional) Catch all polices [Oldest|Newest|Random]
+		* **SelectionPolicy** - (Optional) (Defaults to "random" sort policy when no SelectionPolicy is configured) The priority in which VM instances are selected for proactive scale-in
+			* **Selectors** - (Optional) Selectors is a list of selection policies including [LabelSelectors] and [NodeSelectors]
+			* **SortPolicy** - (Optional) Catch all polices [Oldest|Newest|Random|Ascending|Descending]
 		* **StatePreservation** - (Optional) specifies if and how to preserve state of VMs selected for scale-in.
 			* **Disabled** - (Default) all state for VMs selected for scale-in will be deleted
 			* **Offline** - PVCs for VMs selected for scale-in will be preserved and reused on scale-out (decreases provisioning time during scale out)
@@ -79,6 +78,7 @@ Each VM’s PVCs are preserved for future scale out
 Each VM’s PVCs are preserved for future scale out
 * **Autohealing** - (Optional)  (Defaults to disabled with nil pointer) Pointer to struct which specifies when a VMPool should should completely replace a failing VM with a reprovisioned instance. 
 	* **StartupFailureThreshold** - (Optional) (Defaults to 3) An integer representing how many consecutive failures to reach a running state (which includes failing to pass liveness probes at startup when liveness probes are enabled) should result in reprovisioning.
+  * **MinFailingToStartDuration** - (Optional) (Defaults to 5 mins) It is the minimum time a VM must be in a failing status (applies to status conditions like CrashLoopBackOff, Unschedulable) before being replaced. It measures the duration since the VM's Ready condition transitioned to False.
 
 ## VMPool API Examples
 
@@ -96,11 +96,11 @@ spec:
     proactive:
       statePreservation: Offline
       selectionPolicy:
-        basePolicy: "Oldest"
+        sortPolicy: "Oldest"
   updateStrategy:
     proactive:
       selectionPolicy:
-        basePolicy: "Oldest"
+        sortPolicy: "Oldest"
   template:
     spec:
       dataVolumeTemplates:
@@ -176,7 +176,7 @@ spec:
             name: datavolumedisk
 ```
 
-**Automatic rolling updates and scale-in strategy with VM ordered selection policy on scale-in**
+**Automatic rolling updates and scale-in strategy with VM selector selection policy on scale-in**
 
 ```yaml
 apiVersion: kubevirt.io/v1
@@ -189,15 +189,15 @@ spec:
   scaleInStrategy:
     proactive:
       selectionPolicy:
-        orderedPolicies:
+        selectors:
           - labelSelector
             - non-important-vms
-        basePolicy: "Oldest"
+        sortPolicy: "Oldest"
       statePreservation: Offline
   updateStrategy:
     proactive:
       selectionPolicy:
-        basePolicy: "Oldest"
+        sortPolicy: "Oldest"
   template:
     spec:
       dataVolumeTemplates:
@@ -312,9 +312,9 @@ This setting is primarily meant as a way of preventing the VMPool controller fro
 
 The VMPool spec includes a `selectionPolicy` field for proactive scale-in and proactive updates. This field allows creators of a VMPool to define how VMs will be selected to proactively act upon.
 
-Within the `selectionPolicy` there's a tuning called the `basePolicy` that is meant to act as a "catch all" policy, meaning it is always possible to find a VM which matches the base policy. Examples of base policies are values such as "oldest", "newest", and "random". The "random" policy will include optimizations that attempt to select VMs in the pool based on the least amount of disruption.
+Within the `selectionPolicy` there's a tuning called the `sortPolicy` that is meant to act as a "catch all" policy, meaning it is always possible to find a VM which matches the sort policy. Examples of sort policies are values such as "oldest", "newest", "ascending", "descending" and "random". The "random" policy will include optimizations that attempt to select VMs in the pool based on the least amount of disruption.
 
-In addition to the base policy, there's an ordered list called `orderedPolicies` which allows the VMPool creator to define custom criteria for selecting VMs as well as a priority for the criteria. Initially for the first implementation of VMPools, the ordered policies will be limited to a `labelSelector`. Multiple label selectors can be defined in the ordered policies list and the priority each label selector has is based on its order in the list. In the future, new types of ordered policies may exist, such as node selector for example. The types of ordered policies can expanded as new use cases arise.
+In addition to the sort policy, there's an ordered list called `selectors` which allows the VMPool creator to define custom criteria for selecting VMs as well as a priority for the criteria. Initially for the first implementation of VMPools, the selector policies will be limited to a `labelSelector`. Multiple label selectors can be defined in the selectors list and the priority each label selector has is based on its order in the list. In the future, new types of selector policies may exist, such as node selector for example. The types of selector policies can expanded as new use cases arise.
 
 ## VirtualMachinePool vs VirtualMachineInstanceReplicaSet
 
@@ -331,4 +331,3 @@ While it is expected that the type and number of metrics collected that are spec
 * A rate metric measuring the number of VM starts within a pool
 * A rate metric measuring the number of VM stops within a pool
 * Adding a vmpool label to the phase transition time histograms allowing us to isolate transition times by pool
-
