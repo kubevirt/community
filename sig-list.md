@@ -30,6 +30,7 @@ Each group's material is in its subdirectory in this project.
 
 | Name | Label [1] | Chairs [2] | Contact | Meetings |
 |------|-----------|------------|---------|----------|
+|[control-plane](sig-control-plane/charter.md) | |<ol><li>[Lee Yarwood](https://github.com/lyarwood), Red Hat</li><li>[Luboslav Pivarc](https://github.com/xpivarc), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul></ul> |
 |[compute](sig-compute/charter.md) |[sig/compute](https://github.com/kubevirt/kubevirt/labels/sig/compute) |<ol><li>[Itamar Holder](https://github.com/iholder101), Red Hat</li><li>[Jed Lejosne](https://github.com/jean-edouard), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>KubeVirt Compute SIG Meeting: [ Wednesday at 2:30 PM UTC (weekly) ](https://zoom.us/j/98091854677)</li></ul> |
 |documentation |[sig/documentation](https://github.com/kubevirt/kubevirt/labels/sig/documentation) | | |<ul></ul> |
 |[storage](sig-storage/charter.md) |[sig/storage](https://github.com/kubevirt/kubevirt/labels/sig/storage) |<ol><li>[Alex Kalenyuk](https://github.com/akalenyu), Red Hat</li><li>[Michael Henriksen](https://github.com/mhenriks), Red Hat</li></ol> | |<ul><li>KubeVirt Storage SIG Meeting: [ Monday at 1:00 PM UTC (bimonthly) ](https://zoom.us/j/97050528531)</li></ul> |
