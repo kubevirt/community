@@ -1,4 +1,17 @@
 sigs:
+    - name: control-plane
+      dir: sig-control-plane
+      leadership:
+        chairs:
+            - github: lyarwood
+              name: Lee Yarwood
+              company: Red Hat
+            - github: xpivarc
+              name: Luboslav Pivarc
+              company: Red Hat
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
     - name: compute
       dir: sig-compute
       label: sig/compute

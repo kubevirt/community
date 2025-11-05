@@ -26,9 +26,14 @@ virt-controller is owned by sig-network.
 
 This SIG follows the Roles and Organization Management outlined in [OARP]
 
+SIG chairs:
+
+- [@lyarwoood](https://github.com/lyarwood)
+- [@xpivarc](https://github.com/xpivarc)
+
 ### Additional responsibilities of Chairs
 
-* Be welcoming to new contributors
-* Resolve conflicts
+- Be welcoming to new contributors
+- Resolve conflicts
 
 [OARP]: https://stumblingabout.com/tag/oarp/
