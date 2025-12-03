@@ -113,6 +113,7 @@ These are the alumni of contributors to the KubeVirt Project, who have left the 
 * [ronensdeor](https://github.com/ronensdeor)
 * [sandrobonazzola](https://github.com/sandrobonazzola)
 * [sarahbx](https://github.com/sarahbx)
+* [sbahar619](https://github.com/sbahar619)
 * [scollier](https://github.com/scollier)
 * [screeley44](https://github.com/screeley44)
 * [serenamarie125](https://github.com/serenamarie125)
