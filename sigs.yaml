@@ -56,7 +56,6 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/tests/libinstancetype/OWNERS
-            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virt-operator/resource/generate/components/data/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/staging/src/kubevirt.io/api/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/instancetype/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/pkg/virtctl/create/preference/OWNERS
