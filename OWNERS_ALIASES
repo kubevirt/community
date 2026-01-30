@@ -87,8 +87,8 @@ aliases:
   # Owns the API including API life-cycle, deprecation,
   # and backwards compatibility.
   #
-  sig-api-approvers: []
-  sig-api-reviewers: []
+  # sig-api-approvers: []
+  # sig-api-reviewers: []
 
   #
   # SIG Compute
@@ -145,30 +145,33 @@ aliases:
   # Owns bazel, and ensures that kubevirt can be build.
   #
   sig-buildsystem-approvers:
-    - brianmcarey
     - dhiller
     - xpivarc
   sig-buildsystem-reviewers:
     - brianmcarey
     - enp0s3
     - xpivarc
+  sig-buildsystem-emeritus_approvers:
+    - brianmcarey
 
   #
   # SIG CI
   #
   sig-ci-approvers:
-    - brianmcarey
     - dhiller
   sig-ci-reviewers:
     - brianmcarey
     - dhiller
+    - dollierp
     - enp0s3
     - xpivarc
+  sig-ci-emeritus_approvers:
+    - brianmcarey
 
   #
   # SIG Architecture
   # Owns the overall architecture, and supporting the growth, health,
   # openess of KubeVirt.
   #
-  sig-architecture-approvers: []
-  sig-architecture-reviewers: []
+  # sig-architecture-approvers: []
+  # sig-architecture-reviewers: []

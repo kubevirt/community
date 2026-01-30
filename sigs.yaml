@@ -273,6 +273,10 @@ sigs:
             - github: xpivarc
               name: Luboslav Pivarc
               company: Red Hat
+        emeritus_leads:
+            - github: brianmcarey
+              name: Brian Carey
+              company: Red Hat
       subprojects:
         - name: kubevirt-buildsystem
           owners:
@@ -317,6 +321,10 @@ sigs:
         chairs:
             - github: dhiller
               name: Daniel Hiller
+              company: Red Hat
+        emeritus_leads:
+            - github: brianmcarey
+              name: Brian Carey
               company: Red Hat
       meetings:
         - description: KubeVirt CI Taskforce Sync meeting

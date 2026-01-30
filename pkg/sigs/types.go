@@ -63,7 +63,8 @@ type Meeting struct {
 }
 
 type Leadership struct {
-	Chairs []*Chair `yaml:",omitempty"`
+	Chairs        []*Chair `yaml:",omitempty"`
+	EmeritusLeads []*Chair `yaml:"emeritus_leads,omitempty"`
 }
 
 type OrgMember struct {
