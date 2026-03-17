@@ -412,6 +412,19 @@ workinggroups:
             - github: zhlhahaha
               name: Howard Zhang
               company: ARM
+    - name: Accelerated Infrastructure Enablement
+      dir: wg-aie
+      mission_statement: |
+        The AIE working group aims to track and where possible extend KubeVirt in line with the CentOS Stream Accelerated Infrastructure Enablement SIG.
+      label: wg/aie
+      leadership:
+        chairs:
+            - github: lyarwood
+              name: Lee Yarwood
+              company: Red Hat
+            - github: alaypatel07
+              name: Alay Patel
+              company: Nvidia
     - name: Code-Quality Working Group
       dir: wg-code-quality
       mission_statement: |
