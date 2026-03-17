@@ -425,6 +425,14 @@ workinggroups:
             - github: alaypatel07
               name: Alay Patel
               company: Nvidia
+      meetings:
+        - description: AIE working group meeting
+          day: Thu
+          time: "15:00"
+          tz: UTC
+          frequency: fortnightly
+          url: https://zoom.us/j/92261532235
+          archive_url: https://docs.google.com/document/d/1Tz7GubzbSOliRv2kFXamVhV66v1Wo9HH9hwwRQVYrDk
     - name: Code-Quality Working Group
       dir: wg-code-quality
       mission_statement: |
