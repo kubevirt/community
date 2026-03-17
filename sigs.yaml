@@ -9,6 +9,14 @@ sigs:
             - github: xpivarc
               name: Luboslav Pivarc
               company: Red Hat
+      meetings:
+        - description: KubeVirt control-plane SIG Meeting
+          day: Thursday
+          time: 3:00 PM
+          tz: UTC
+          frequency: fortnightly
+          url: https://zoom.us/j/91685487747
+          archive_url: https://docs.google.com/document/d/1TxT1hxVjacsEIclyVK2cGC0ywkEYJqBTmziamFHPVzY
       contact:
         slack: kubevirt-dev
         mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
