@@ -322,6 +322,9 @@ sigs:
             - github: dhiller
               name: Daniel Hiller
               company: Red Hat
+            - github: dollierp
+              name: Denis Ollier Pinas
+              company: Red Hat
         emeritus_leads:
             - github: brianmcarey
               name: Brian Carey
