@@ -425,8 +425,8 @@ workinggroups:
             - github: lyarwood
               name: Lee Yarwood
               company: Red Hat
-            - github: alaypatel07
-              name: Alay Patel
+            - github: fanzhangio
+              name: Fan Zhang
               company: Nvidia
       meetings:
         - description: AIE working group meeting

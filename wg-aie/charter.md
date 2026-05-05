@@ -17,4 +17,4 @@ with the CentOS Stream Accelerated Infrastructure Enablement SIG.
 #### Chairs
 
 * @lyarwood
-* @alaypatel07
+* @fanzhangio
