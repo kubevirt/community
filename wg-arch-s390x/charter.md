@@ -25,6 +25,7 @@ subprojects:
 - @jschintag
 - @cfilleke
 - @vamsikrishna-siddu
+- @davo911
 
 #### Subproject leads
 ##### sig-buildsystem
