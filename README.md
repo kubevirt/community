@@ -13,6 +13,8 @@ Check out the [KubeVirt user guide](https://kubevirt.io/user-guide/) for all of 
 
 You can also find our [contributor guide](https://kubevirt.io/user-guide/contributing/) with resources for code and non-code contributions for beginners and those looking to contribute features and run a test cluster. 
 
+Review our [AI Contribution Policy](ai-contribution-policy.md) to understand guidelines for AI-assisted contributions.
+
 # Socializing
 
 If you've had enough of code and want to speak to people, then you have plenty of options:
