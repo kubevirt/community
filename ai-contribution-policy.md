@@ -73,11 +73,9 @@ acceptable and need not be changed to `Assisted-by`.
 Authors **MUST** still adhere to KubeVirt's Developer's Certificate of Origin
 (DCO) requirements and sign off commits.
 
-This will be aided through the use of the emerging
-[AGENT.md](https://ampcode.com/AGENT.md) standard with symlinks provided to the
-in project prompt configuration files of various agents. An example file will
-be created within the [`kubevirt/.github`](https://github.com/kubevirt/.github)
-repository for projects to use as a base.
+Disclosure requirements are documented in project contribution guidelines,
+making them discoverable by both human contributors and AI tools alike (see
+[Providing Context to AI Tools](docs/ai-tooling-guidelines.md)).
 
 ### Scope of Disclosure
 
@@ -205,6 +203,5 @@ repository](https://github.com/kubevirt/community)
 - [QEMU Code Provenance
   Policy](https://www.qemu.org/docs/master/devel/code-provenance.html#use-of-ai-content-generators)
 - [Ghostty AI Policy](https://github.com/ghostty-org/ghostty/blob/main/AI_POLICY.md)
-- [AGENT.md](https://ampcode.com/AGENT.md)
 - [KubeVirt Developer's Certificate of
   Origin](https://github.com/kubevirt/kubevirt/blob/main/DCO)
