@@ -16,7 +16,7 @@ At KubeVirt's present scale the community opts to host a weekly meetings for all
 * Meeting hosts: @ccallegar, @sgott
 
 * Transcription
-  * On going meeting notes file: [here](https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls)
+  * On going meeting notes file: [here](https://docs.google.com/document/d/1xkhG--2btgqTfvGBGu5BxnsesfgeCniaQg3yoZdzWyg)
   * Community organizers will attempt to transcribe each topic in the agenda
 
 * Recordings
