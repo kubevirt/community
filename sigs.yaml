@@ -491,7 +491,7 @@ usergroups:
           tz: UTC
           frequency: weekly
           url: https://zoom.us/j/92221936273
-          archive_url: https://docs.google.com/document/d/1kyhpWlEPzZtQJSjJlAqhPcn3t0Mt_o0amhpuNPGs1Ls/edit
+          archive_url: https://docs.google.com/document/d/1xkhG--2btgqTfvGBGu5BxnsesfgeCniaQg3yoZdzWyg/edit
           recordings_url: https://www.youtube.com/watch?v=2Jdb1uJSSs4&list=PLnLpXX8KHIYxs1c4QT0ohCOblKFa6dsIv
       contact:
         slack: virtualization
