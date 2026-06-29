@@ -5,7 +5,7 @@ the PR description: a note for any user- or operator-visible change, or `NONE`
 if the change doesn't need one.
 
 Notes are extracted automatically at release
-time and assembled into the changelog, 
+time and assembled into the changelog,
 so a note should be in its final form by the time the PR is approved.
 
 ## Does my pull request need a release note?
@@ -41,7 +41,9 @@ label and blocks the merge until a note is provided.
 
 Release notes are categorized in the changelog using GitHub labels: add the
 `/kind` and `/sig` commands (for example `/kind enhancement`, `/sig compute`)
-in the `release-note-labels` part of the PR description.
+in the PR description, in a subsequent comment, or by using the GitHub `Labels`
+filter. See the [release procedure](https://github.com/kubevirt/kubevirt/blob/main/docs/release-procedure.md)
+for more on these labels.
 
 ### Breaking changes
 
@@ -83,5 +85,5 @@ for the full rules.
   `[PR #N][author]` automatically.
 
 A release note should make sense to someone reading the changelog without
-opening the PR. Browsing the notes of
+opening the PR. See the release notes of
 [recent releases](https://github.com/kubevirt/kubevirt/releases) for reference.
