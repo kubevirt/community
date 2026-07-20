@@ -313,6 +313,9 @@ sigs:
             - github: davo911
               name: Thomas-David Griedel
               company: IBM
+            - github: nestoracunablanco
+              name: Nestor Acuna Blanco
+              company: IBM
         - name: arch-arm
           description: |
             The arch-arm subproject takes care of all matters related to building and compiling for arm architecture.
@@ -383,6 +386,9 @@ sigs:
             - github: davo911
               name: Thomas-David Griedel
               company: IBM
+            - github: nestoracunablanco
+              name: Nestor Acuna Blanco
+              company: IBM
         - name: ci-arm
           description: |
             The ciarch-arm subproject takes care of all matters related to CI for arm architecture.
@@ -412,6 +418,9 @@ workinggroups:
               company: IBM
             - github: davo911
               name: Thomas-David Griedel
+              company: IBM
+            - github: nestoracunablanco
+              name: Nestor Acuna Blanco
               company: IBM
     - name: ARM architecture working group
       dir: wg-arch-arm
