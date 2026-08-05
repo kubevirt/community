@@ -22,12 +22,12 @@ subprojects:
 ### Roles and responsibilities
 
 #### Chairs
-- @zhlhahaha
+- @lyarwood
 
 #### Subproject leads
 
 ##### sig-buildsystem
-- @zhlhahaha
+- @lyarwood
 
 ##### sig-ci
-- @zhlhahaha
+- @lyarwood
