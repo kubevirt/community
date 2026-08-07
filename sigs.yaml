@@ -323,9 +323,9 @@ sigs:
             - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
             - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
           leads:
-            - github: zhlhahaha
-              name: Howard Zhang
-              company: ARM
+            - github: lyarwood
+              name: Lee Yarwood
+              company: Red Hat
     - name: KubeVirt CI Operations Group
       dir: sig-ci
       mission_statement: |
@@ -395,9 +395,9 @@ sigs:
           owners:
             - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
           leads:
-            - github: zhlhahaha
-              name: Howard Zhang
-              company: ARM
+            - github: lyarwood
+              name: Lee Yarwood
+              company: Red Hat
 workinggroups:
     - name: S390x architecture working group
       dir: wg-arch-s390x
@@ -430,6 +430,10 @@ workinggroups:
       label: wg/arch-arm
       leadership:
         chairs:
+            - github: lyarwood
+              name: Lee Yarwood
+              company: Red Hat
+        emeritus_leads:
             - github: zhlhahaha
               name: Howard Zhang
               company: ARM
