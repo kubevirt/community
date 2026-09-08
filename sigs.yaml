@@ -326,6 +326,17 @@ sigs:
             - github: lyarwood
               name: Lee Yarwood
               company: Red Hat
+        - name: arch-ppc64le
+          description: |
+            The arch-ppc64le subproject takes care of all matters related to building and compiling for ppc64le architecture.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/kubevirt/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/kubevirtci/main/OWNERS
+            - https://raw.githubusercontent.com/kubevirt/containerized-data-importer/main/OWNERS
+          leads:
+            - github: pkenchap
+              name: Punith Kenchappa
+              company: IBM
     - name: KubeVirt CI Operations Group
       dir: sig-ci
       mission_statement: |
@@ -398,6 +409,15 @@ sigs:
             - github: lyarwood
               name: Lee Yarwood
               company: Red Hat
+        - name: ci-ppc64le
+          description: |
+            The ci-ppc64le subproject takes care of all matters related to CI for ppc64le architecture.
+          owners:
+            - https://raw.githubusercontent.com/kubevirt/project-infra/main/OWNERS
+          leads:
+            - github: pkenchap
+              name: Punith Kenchappa
+              company: IBM
 workinggroups:
     - name: S390x architecture working group
       dir: wg-arch-s390x
@@ -437,6 +457,17 @@ workinggroups:
             - github: zhlhahaha
               name: Howard Zhang
               company: ARM
+    - name: PPC64LE architecture working group
+      dir: wg-arch-ppc64le
+      mission_statement: |
+        WG ARCH ppc64le takes care of all things related to supporting ppc64le architecture on KubeVirt clusters.
+        This includes all build processes, also support of failing builds or test lanes.
+      label: wg/arch-ppc64le
+      leadership:
+        chairs:
+            - github: pkenchap
+              name: Punith Kenchappa
+              company: IBM
     - name: Accelerated Infrastructure Enablement
       dir: wg-aie
       mission_statement: |
