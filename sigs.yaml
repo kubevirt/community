@@ -117,6 +117,10 @@ sigs:
             - github: akalenyu
               name: Alex Kalenyuk
               company: Red Hat
+            - github: awels
+              name: Alexander Wels
+              company: Red Hat
+        emeritus_leads:
             - github: mhenriks
               name: Michael Henriksen
               company: Red Hat
