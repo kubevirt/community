@@ -461,6 +461,9 @@ workinggroups:
             - github: zhlhahaha
               name: Howard Zhang
               company: ARM
+      contact:
+        slack: https://kubernetes.slack.com/archives/C0163DT0R8X
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
     - name: PPC64LE architecture working group
       dir: wg-arch-ppc64le
       mission_statement: |
