@@ -523,6 +523,22 @@ workinggroups:
         liaison:
             github: dhiller
             name: Daniel Hiller
+    - name: Governance
+      dir: wg-governance
+      mission_statement: |
+        Coordinate implementation of automated governance tooling to ensure consistency between sigs.yaml, orgs.yaml, and OWNERS_ALIASES, reducing manual maintenance and preventing drift.
+      label: wg/governance
+      leadership:
+        chairs:
+            - github: aburdenthehand
+              name: Andrew Burden
+              company: Red Hat
+            - github: dhiller
+              name: Daniel Hiller
+              company: Red Hat
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
 usergroups:
     - name: KubeVirt Community
       mission_statement: |
