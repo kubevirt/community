@@ -9,11 +9,17 @@ KubeVirt control plane.
 
 #### Code, Binaries and Services
 
-Maintenance of core control plane components such as virt-api, virt-controller,
-virt-handler and virt-operator. This includes the deployment, scalability and
+Maintenance of core control plane components such as virt-api, virt-controller
+and virt-operator. This includes the deployment, scalability and
 overall performance of these components.
 
+This work in the `kubevirt/kubevirt` repository is recorded under the `kubevirt`
+subproject in [sigs.yaml](../sigs.yaml), which lists its leads and the OWNERS files
+defining code ownership.
+
 ### Out of scope
+
+The node-side virt-handler component is owned by SIG Compute.
 
 The contents of individual APIs are overseen by SIG Architecture and owned by
 specific SIGs.
