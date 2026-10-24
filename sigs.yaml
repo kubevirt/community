@@ -467,6 +467,17 @@ workinggroups:
             - github: nestoracunablanco
               name: Nestor Acuna Blanco
               company: IBM
+      meetings:
+        - description: s390x working group meeting
+          day: Tuesday
+          time: 11:30 AM
+          tz: CET/CEST
+          frequency: monthly
+          url: TODO
+          archive_url: TODO
+      contact:
+        slack: kubevirt-dev
+        mailing_list: https://groups.google.com/forum/#!forum/kubevirt-dev
     - name: ARM architecture working group
       dir: wg-arch-arm
       mission_statement: |
