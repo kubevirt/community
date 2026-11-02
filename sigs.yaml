@@ -52,6 +52,9 @@ sigs:
             - github: jean-edouard
               name: Jed Lejosne
               company: Red Hat
+            - github: enp0s3
+              name: Igor Bezukh
+              company: Red Hat
       meetings:
         - description: KubeVirt Compute SIG Meeting
           day: Wednesday
