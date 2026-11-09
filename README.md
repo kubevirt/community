@@ -15,6 +15,9 @@ You can also find our [contributor guide](https://kubevirt.io/user-guide/contrib
 
 Review our [AI Contribution Policy](ai-contribution-policy.md) to understand guidelines for AI-assisted contributions.
 
+For changes to this repository, see the [community tooling guide](docs/community-tooling.md)
+and the [community documentation index](docs/README.md).
+
 # Socializing
 
 If you've had enough of code and want to speak to people, then you have plenty of options:
@@ -26,4 +29,3 @@ If you've had enough of code and want to speak to people, then you have plenty o
 * Stay informed about designs and upcoming events by watching our [community content](https://github.com/kubevirt/community/)
 * Subscribe to [our calendar](https://calendar.google.com/calendar/embed?src=kubevirt@cncf.io) or add it to your personal calendar using this calendar ID `18pc0jur01k8f2cccvn5j04j1g@group.calendar.google.com` to stay up to date about upcoming events
 * Consider adding your organisation to our [Adopters list](https://github.com/kubevirt/kubevirt/blob/main/ADOPTERS.md)
-
