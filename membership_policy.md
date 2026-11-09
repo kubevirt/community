@@ -14,6 +14,7 @@ Active and interested contributors are encouraged to step into positions of resp
 | [Org Member](#org-member)                              | Active contributor in the community                                                                          | * Active contributor<br>* Sponsored by 2 members<br>* Multiple contributions to the project                          | KubeVirt GitHub org member           |
 | [Reviewer](#reviewer)                          | Review contributions from others                                                                             | * Member<br>* History of review and authorship in the project<br> * Sponsored by an approver                         | [OWNERS_ALIASES] file reviewer entry |
 | [Approver](#approver)                          | Approve accepting contributions                                                                              | * Reviewer<br>* Highly experienced<br> * Active reviewer & contributor to the project<br> * Sponsored by 2 approvers | [OWNERS_ALIASES] file approver entry |
+| [Root Approver](#root-approver)                | Approve contributions project-wide                                                                           | * Approver in at least 2 SIGs<br>* Cross-domain review experience<br>* Sponsored by 2 root approvers                | [OWNERS_ALIASES] file top-level approver entry |
 | [SIG Chair](#special-interest-group-sig-chair) | Lead a SIG aligned to the goals of the SIG charter                                                           | * Can be sig-approver<br>* Highly experienced in SIG matters<br> * Active reviewer & contributor to the project      | [sigs.yaml] chair entry              |
 | [SIG Subproject Lead](#sig-subproject-lead)    | Lead a subproject aligned to the goals of the SIG charter                                                    | * sig-reviewer<br>* Highly experienced in SIG subproject matters<br> * Active reviewer & contributor to the project  | [sigs.yaml] subproject leads entry   |
 | [WG Chair](#working-group-wg-chair)            | Lead a WG aligned to the goals of the WG charter                                                             | * Highly experienced in WG matters<br> * Active reviewer & contributor to the project                                | [sigs.yaml] WG chairs entry          |
@@ -111,9 +112,9 @@ The following apply to the part of project for which one would be a reviewer in 
 
 ## Approver
 
-Approvers are able to both review and approve contributions. While contribution review is focused on quality and correctness, approval is focused on holistic acceptance of a contribution including: backwards / forwards compatibility, adhering to API and flag conventions, subtle performance and correctness issues, interactions with other parts of the system, etc.
+Approvers (also referred to as SIG approvers) are able to both review and approve contributions. While contribution review is focused on quality and correctness, approval is focused on holistic acceptance of a contribution including: backwards / forwards compatibility, adhering to API and flag conventions, subtle performance and correctness issues, interactions with other parts of the system, etc.
 Defined by: Approvers entry in an OWNERS file in a repo owned by the KubeVirt project.
-Approver Status is scoped to a part of the project.
+Approver status is scoped to a part of the project (typically a SIG).
 
 ### Requirements
 The following apply to the part of project for which one would be an approver in the [OWNERS_ALIASES] file.
@@ -138,6 +139,39 @@ The following apply to the part of project for which one would be an approver in
   * Expected to be responsive to review requests as per community expectations
   * Mentor contributors and reviewers
   * May approve contributions for acceptance
+
+## Root Approver
+
+Root approvers are approvers whose scope covers the entire project rather than a specific SIG. Because their approval applies to all code paths, root approvers carry broader responsibility and are expected to demonstrate cross-domain judgment beyond their primary SIG.
+
+Defined by: Entry in the top-level `approvers` alias in [OWNERS_ALIASES].
+
+### Requirements
+
+The following apply to candidates for the root approver role:
+
+  * Already an approver for at least two SIGs
+  * Evidence of cross-cutting review quality, such as reviews touching API compatibility, upgrades, security, or VEPs
+  * SIG approver for at least 6 months
+  * Nominated by an existing root approver
+    * Supported by at least one additional root approver
+    * No objections from other root approvers within 14 days of the nomination PR
+    * Done through PR to update the top-level [OWNERS_ALIASES] file
+
+In exceptional circumstances, such as when the project is left without sufficient root approvers, the project maintainers can pass a majority vote to add root approvers that do not fulfill the requirements.
+
+### Responsibilities and privileges
+
+  * All responsibilities of a SIG approver, applied project-wide
+  * Exercise approval judiciously: familiarity with the specific area under review remains important, and deferring to the relevant SIG approver is encouraged when appropriate
+  * Help guard cross-cutting concerns such as API conventions, backward/forward compatibility, and upgrade safety
+  * Mentor SIG approvers toward broader project involvement
+
+### Limiting the role
+
+The project's long-term goal is to reduce reliance on root approvers by improving SIG code ownership. Root approver nominations should be evaluated with this goal in mind: the role exists to cover gaps in SIG ownership, not to replace it.
+
+The root approver list should be reviewed periodically and kept aligned with the [inactivity policy](#inactive-reviewersapproverschairsleads). Root approvers who have been inactive in their area for six months or more may be moved to `emeritus_approvers` in line with that policy.
 
 ## Special Interest Group (SIG) Chair
 
