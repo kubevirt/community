@@ -34,6 +34,8 @@ type Group struct {
 	Label            string        `yaml:",omitempty"`
 	Leads            []*Lead       `yaml:",omitempty"`
 	Leadership       *Leadership   `yaml:",omitempty"`
+	Approvers        []*OrgMember  `yaml:",omitempty"`
+	Reviewers        []*OrgMember  `yaml:",omitempty"`
 	Meetings         []*Meeting    `yaml:",omitempty"`
 	Contact          *Contact      `yaml:",omitempty"`
 	SubProjects      []*SubProject `yaml:",omitempty"`
