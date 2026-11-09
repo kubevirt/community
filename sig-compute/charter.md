@@ -57,6 +57,7 @@ file.
 SIG chairs:
 - [@jean-edouard](https://github.com/jean-edouard)
 - [@iholder101](https://github.com/iholder101)
+- [@enp0s3](https://github.com/enp0s3)
 
 ### Additional responsibilities of Chairs
 
