@@ -2,6 +2,9 @@
 
 # Topics
 
+- [Community repository tooling](./community-tooling.md): layout, SIG validation,
+  documentation generation, tests, and formatting.
+- [AI Contribution Policy](../ai-contribution-policy.md)
 - [KubeVirt GitHub Org management](./automating-github-org-management.md)
 - CI/CD
     - [Enabling automated merging with tide](./add-merge-automation-to-your-repository.md)
