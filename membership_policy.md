@@ -82,6 +82,13 @@ Defined by: reviewers entry in an OWNERS file of the KubeVirt project.
 Note: Acceptance of contributions requires at least one approver in addition to the assigned reviewers.
 Reviewer Status is scoped to a part of the project.
 
+For groups using `group.yaml`, its `reviewers` section records the shared review
+roster, independently of ownership of the group's community directory. Under the
+proposed synchronization model, changes to this roster will update managed
+`OWNERS_ALIASES` entries in enrolled repositories; local `OWNERS` changes will not
+update the shared roster. Each repository's `OWNERS` files determine where the
+alias applies. See [shared review rosters and directory ownership](./GOVERNANCE.md#shared-review-rosters-and-directory-ownership).
+
 ### Requirements
 
 The following apply to the part of project for which one would be a reviewer in the [OWNERS_ALIASES] file.
@@ -92,7 +99,8 @@ The following apply to the part of project for which one would be a reviewer in 
   * Knowledgeable about the project
   * Sponsored by an approver
     * With no objections from other approvers
-    * Done through PR to update the OWNERS file
+    * Done through PR to update the OWNERS file; once synchronization is enabled,
+      shared roster changes instead update the group's `group.yaml`, not generated aliases
   * May either be self-nominate or nominated by an approver
 
 ### Responsibilities and privileges
@@ -115,6 +123,13 @@ Approvers are able to both review and approve contributions. While contribution 
 Defined by: Approvers entry in an OWNERS file in a repo owned by the KubeVirt project.
 Approver Status is scoped to a part of the project.
 
+For groups using `group.yaml`, its `approvers` section records the shared approval
+roster, independently of ownership of the group's community directory. Under the
+proposed synchronization model, adding someone to this roster will expand their
+approval authority wherever the corresponding managed alias is referenced.
+Adding someone only to the directory's `OWNERS` file will not update the shared
+roster. See [shared review rosters and directory ownership](./GOVERNANCE.md#shared-review-rosters-and-directory-ownership).
+
 ### Requirements
 The following apply to the part of project for which one would be an approver in the [OWNERS_ALIASES] file.
 
@@ -123,7 +138,8 @@ The following apply to the part of project for which one would be an approver in
   * Reviewed or merged at least 30 PRs to the project
   * Nominated by an approver
     * With no objections from other approvers
-    * Done through PR to update the top-level OWNERS file
+    * Done through PR to update the top-level OWNERS file; once synchronization is enabled,
+      shared roster changes instead update the group's `group.yaml`, not generated aliases
     
 In exceptional circumstances, such as when a repo is left without sufficient approvers, the project maintainers can pass a majority vote to add approvers that do not fulfill the requirements.
 

@@ -8,6 +8,7 @@
   - [Code of Conduct Enforcement](#code-of-conduct)
   - [Voting](#voting)
 - [SIGs (Special Interest Groups)](#sigs)
+  - [Shared Review Rosters and Directory Ownership](#shared-review-rosters-and-directory-ownership)
   - [SIG Subprojects](#subprojects)
 - [WGs (Working Groups)](#working-groups)
 
@@ -157,14 +158,34 @@ is intended to be owned by some SIG.
 
 Our SIGs define mission and scope via their charters, ownership of code via
 [OWNERS](https://www.kubernetes.dev/docs/guide/owners/), and members and roles in
-[sigs.yaml].
+[sigs.yaml] or, for migrated groups, their directory's `group.yaml`.
 
 For more details see also the [Kubernetes SIGs] model.
 
 Examples:
 * [sig-network - charter](./sig-network/charter.md)
 * [sig-network - kubevirt/kubevirt OWNERS_ALIASES](https://github.com/kubevirt/kubevirt/blob/a7e0311d8704663351abd4bc9bbc8511753d2838/OWNERS_ALIASES#L60)
-* [sig-ci - sigs.yaml](https://github.com/kubevirt/community/blob/4f63a79c0ed810aa332cd6716d4986001d28bcd7/sigs.yaml#L119)
+* [sig-ci - group.yaml](./sig-ci/group.yaml)
+
+### Shared Review Rosters and Directory Ownership
+
+A group's `group.yaml` defines its shared reviewer and approver rosters in the
+`reviewers` and `approvers` sections. These are separate from the group's
+directory-local `OWNERS` file, which defines ownership of that directory.
+Adding someone to `sig-ci/OWNERS`, for example, does not add them to the shared
+SIG CI rosters.
+
+Under the proposed synchronization model, these rosters will be the authoritative
+input for the corresponding aliases in `OWNERS_ALIASES` in explicitly enrolled
+KubeVirt repositories. Synchronization will flow from `group.yaml` to those
+managed aliases, not from directory-local `OWNERS` files back into shared rosters.
+Automated synchronization is not yet enabled; this describes its intended design.
+
+Each consuming repository's `OWNERS` files determine where the shared aliases
+apply. Synchronizing an alias alone does not grant approval rights, but adding
+an approver to a shared roster expands their authority wherever the corresponding
+alias is referenced. Local `OWNERS` files may intentionally reference shared
+aliases without making local ownership the source of shared role membership.
 
 ### Subprojects
 
