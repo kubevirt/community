@@ -53,6 +53,7 @@ Each group's material is in its subdirectory in this project.
 |[PPC64LE architecture working group](wg-arch-ppc64le/charter.md) |[wg/arch-ppc64le](https://github.com/kubevirt/kubevirt/labels/wg/arch-ppc64le) |<ol><li>[Punith Kenchappa](https://github.com/pkenchap), IBM</li></ol> | |<ul></ul> |
 |[Accelerated Infrastructure Enablement](wg-aie/charter.md) |[wg/aie](https://github.com/kubevirt/kubevirt/labels/wg/aie) |<ol><li>[Lee Yarwood](https://github.com/lyarwood), Red Hat</li><li>[Fan Zhang](https://github.com/fanzhangio), Nvidia</li></ol> | |<ul><li>AIE working group meeting: [ Thu at 15:00 UTC (fortnightly) ](https://zoom.us/j/92261532235)</li></ul> |
 |[Code-Quality Working Group](wg-code-quality/charter.md) |[wg/code-quality](https://github.com/kubevirt/kubevirt/labels/wg/code-quality) |<ol><li>[Edward Haas](https://github.com/EdDev), Red Hat</li><li>[Itamar Holder](https://github.com/iholder101), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul><li>KubeVirt Code-Quality Working Group meeting: [ Thu at 09:00 UTC (biweekly) ](https://zoom.us/j/93168599900)</li></ul> |
+|[Governance](wg-governance/charter.md) |[wg/governance](https://github.com/kubevirt/kubevirt/labels/wg/governance) |<ol><li>[Andrew Burden](https://github.com/aburdenthehand), Red Hat</li><li>[Daniel Hiller](https://github.com/dhiller), Red Hat</li></ol> |[Slack](kubevirt-dev)<br/> [Mailing List](https://groups.google.com/forum/#!forum/kubevirt-dev) |<ul></ul> |
 
 
 
